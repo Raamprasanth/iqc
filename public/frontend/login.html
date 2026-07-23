@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SCHILLER Healthcare India – Staff Login</title>
+    
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --navy: #0D1B2A;
+            --red: #C8102E;
+            --white: #FFFFFF;
+            --fog: #F0F4F8;
+            --steel: #6B8CAE;
+            --mid: #2C4A6E;
+            --text: #1A2B3C;
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: 'Calibri', Calibri, sans-serif;
+            background: var(--navy);
+            color: var(--text);
+        }
+
+        /* ─── BACKGROUND ─── */
+        .bg {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Left panel – brand side */
+        .brand-panel {
+            background: var(--navy);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 48px 56px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Subtle radial glow */
+        .brand-panel::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 30% 60%, rgba(44, 74, 110, 0.55) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        /* Watermark ECG behind text */
+        .brand-panel::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 220px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 100'%3E%3Cpath d='M0,50 L60,50 L80,50 L100,20 L115,75 L130,5 L145,90 L160,50 L200,50 L240,50 L260,50 L280,20 L295,75 L310,5 L325,90 L340,50 L380,50 L420,50 L440,50 L460,20 L475,75 L490,5 L505,90 L520,50 L600,50' fill='none' stroke='%23C8102E' stroke-width='1.5' stroke-opacity='0.12'/%3E%3C/svg%3E") center/cover no-repeat;
+            pointer-events: none;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo-mark {
+            width: 40px;
+            height: 40px;
+            background: var(--red);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .logo-mark svg {
+            width: 24px;
+            height: 24px;
+            fill: none;
+            stroke: white;
+            stroke-width: 2.2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .logo-text {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--white);
+            letter-spacing: 0.04em;
+            line-height: 1.15;
+        }
+
+        .logo-text span {
+            color: var(--red);
+        }
+
+        .logo-sub {
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.38);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* Centre content */
+        .brand-center {
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .brand-eyebrow {
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--red);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-eyebrow::before {
+            content: '';
+            display: block;
+            width: 28px;
+            height: 2px;
+            background: var(--red);
+        }
+
+        .brand-headline {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: clamp(1.9rem, 2.8vw, 2.8rem);
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1.18;
+            margin-bottom: 20px;
+        }
+
+        .brand-headline em {
+            font-style: normal;
+            color: var(--red);
+        }
+
+        .brand-desc {
+            font-size: 0.88rem;
+            color: rgba(255, 255, 255, 0.52);
+            line-height: 1.8;
+            max-width: 360px;
+        }
+
+        /* ECG animated strip */
+        .ecg-strip {
+            margin-top: 44px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 8px;
+            padding: 20px 24px;
+            max-width: 380px;
+        }
+
+        .ecg-label-sm {
+            font-size: 0.6rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.28);
+            margin-bottom: 12px;
+        }
+
+        .ecg-svg {
+            width: 100%;
+            height: 52px;
+            overflow: visible;
+        }
+
+        .ecg-path-anim {
+            fill: none;
+            stroke: var(--red);
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 800;
+            stroke-dashoffset: 800;
+            animation: drawLine 2.2s ease forwards 0.4s;
+        }
+
+        .ecg-glow-anim {
+            fill: none;
+            stroke: var(--red);
+            stroke-width: 5;
+            opacity: 0.1;
+            stroke-linecap: round;
+            stroke-dasharray: 800;
+            stroke-dashoffset: 800;
+            animation: drawLine 2.2s ease forwards 0.4s;
+        }
+
+        @keyframes drawLine {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        /* Dept pills */
+        .dept-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .dept-pill {
+            font-size: 0.67rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 5px 13px;
+            border-radius: 100px;
+            transition: all 0.25s;
+        }
+
+        .dept-pill.active {
+            background: rgba(200, 16, 46, 0.15);
+            border-color: rgba(200, 16, 46, 0.5);
+            color: #f08090;
+        }
+
+        /* Bottom cert row */
+        .brand-footer {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .cert-badge {
+            font-size: 0.6rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 4px 10px;
+            border-radius: 2px;
+        }
+
+        /* ─── LOGIN PANEL ─── */
+        .login-panel {
+            background: var(--fog);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 40px;
+        }
+
+        .login-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 52px 48px;
+            width: 100%;
+            max-width: 440px;
+            box-shadow: 0 24px 64px rgba(13, 27, 42, 0.10);
+        }
+
+        .login-header {
+            margin-bottom: 36px;
+        }
+
+        .login-eyebrow {
+            font-size: 0.66rem;
+            font-weight: 600;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--red);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .login-eyebrow::before {
+            content: '';
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: var(--red);
+        }
+
+        .login-title {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: var(--navy);
+            line-height: 1.2;
+        }
+
+        .login-sub {
+            font-size: 0.82rem;
+            color: var(--steel);
+            margin-top: 8px;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--navy);
+            margin-bottom: 8px;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            stroke: var(--steel);
+            fill: none;
+            stroke-width: 1.8;
+            pointer-events: none;
+            transition: stroke 0.2s;
+        }
+
+        select,
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 13px 14px 13px 42px;
+            border: 1.5px solid #D4DCE5;
+            border-radius: 6px;
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 0.88rem;
+            color: var(--text);
+            background: var(--white);
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        select {
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B8CAE' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 40px;
+        }
+
+        select:focus,
+        input:focus {
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.10);
+        }
+
+        select:focus~.input-icon,
+        input:focus~.input-icon {
+            stroke: var(--red);
+        }
+
+        /* Department select — active dept highlight */
+        select option {
+            font-size: 0.88rem;
+        }
+
+        /* Selected department badge */
+        .dept-badge {
+            display: none;
+            align-items: center;
+            gap: 7px;
+            margin-top: 8px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .dept-badge.visible {
+            display: flex;
+        }
+
+        .dept-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--red);
+            flex-shrink: 0;
+        }
+
+        .dept-badge-text {
+            color: var(--red);
+        }
+
+        /* Password toggle */
+        .pw-toggle {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .pw-toggle svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--steel);
+            fill: none;
+            stroke-width: 1.8;
+            transition: stroke 0.2s;
+        }
+
+        .pw-toggle:hover svg {
+            stroke: var(--navy);
+        }
+
+        /* Divider */
+        .form-divider {
+            height: 1px;
+            background: var(--fog);
+            margin: 28px 0;
+        }
+
+        /* Submit button */
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            background: var(--red);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+        }
+
+        .btn-login:hover {
+            background: #a50d23;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(200, 16, 46, 0.28);
+        }
+
+        .btn-login:active {
+            transform: none;
+        }
+
+        .btn-login svg {
+            width: 16px;
+            height: 16px;
+            stroke: white;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* Loading state */
+        .btn-login.loading {
+            pointer-events: none;
+            background: #a50d23;
+        }
+
+        .spinner {
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        .btn-login.loading .btn-text {
+            display: none;
+        }
+
+        .btn-login.loading .btn-arrow {
+            display: none;
+        }
+
+        .btn-login.loading .spinner {
+            display: block;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Error state */
+        .error-msg {
+            display: none;
+            background: rgba(200, 16, 46, 0.06);
+            border: 1px solid rgba(200, 16, 46, 0.2);
+            border-radius: 6px;
+            padding: 12px 16px;
+            font-size: 0.8rem;
+            color: var(--red);
+            margin-bottom: 20px;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .error-msg.visible {
+            display: flex;
+        }
+
+        .error-msg svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--red);
+            fill: none;
+            stroke-width: 2;
+            flex-shrink: 0;
+        }
+
+        /* Success state */
+        .success-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(13, 27, 42, 0.82);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .success-overlay.visible {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .success-card {
+            background: white;
+            border-radius: 12px;
+            padding: 48px 44px;
+            text-align: center;
+            max-width: 360px;
+            animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.88);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .success-icon {
+            width: 64px;
+            height: 64px;
+            background: rgba(200, 16, 46, 0.08);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+        }
+
+        .success-icon svg {
+            width: 30px;
+            height: 30px;
+            stroke: var(--red);
+            fill: none;
+            stroke-width: 2.5;
+        }
+
+        .success-title {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 8px;
+        }
+
+        .success-dept {
+            font-size: 0.78rem;
+            color: var(--steel);
+        }
+
+        .success-dept strong {
+            color: var(--red);
+            font-weight: 600;
+        }
+
+        /* Forgot link */
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .form-footer a {
+            font-size: 0.78rem;
+            color: var(--steel);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .form-footer a:hover {
+            color: var(--red);
+        }
+
+        /* Dept-specific accent bar on card top */
+        .dept-accent-bar {
+            height: 4px;
+            border-radius: 12px 12px 0 0;
+            background: var(--fog);
+            margin: -52px -48px 48px;
+            border-radius: 12px 12px 0 0;
+            transition: background 0.4s;
+        }
+
+        /* Input field error highlight */
+        .input-wrap.error select,
+        .input-wrap.error input {
+            border-color: var(--red);
+            background: rgba(200, 16, 46, 0.03);
+        }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 820px) {
+            .bg {
+                grid-template-columns: 1fr;
+            }
+
+            .brand-panel {
+                display: none;
+            }
+
+            .login-panel {
+                padding: 32px 20px;
+                background: var(--navy);
+            }
+
+            .login-card {
+                box-shadow: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 40px 28px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .ecg-path-anim,
+            .ecg-glow-anim {
+                animation: none;
+                stroke-dashoffset: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Success overlay -->
+    <div class="success-overlay" id="successOverlay">
+        <div class="success-card">
+            <div class="success-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M20 6L9 17l-5-5" />
+                </svg>
+            </div>
+            <div class="success-title">Access Granted</div>
+            <p class="success-dept">Signed in to <strong id="successDept">—</strong></p>
+            <p style="font-size:0.76rem; color:#aab8c4; margin-top:8px;">Redirecting to your dashboard…</p>
+        </div>
+    </div>
+
+    <div class="bg">
+
+        <!-- ── LEFT: BRAND PANEL ── -->
+        <div class="brand-panel">
+            <div class="brand-logo" style="display: flex; justify-content: center; margin-bottom: 24px;">
+            <img src="logo.png" alt="SCHILLER Logo" style="height: 64px; width: auto; object-fit: contain;">
+        </div>
+
+            <div class="brand-center">
+                <div class="brand-eyebrow">Staff Portal</div>
+                <h1 class="brand-headline">
+                    Quality &amp; Operations<br /><em>Command Centre</em>
+                </h1>
+                <p class="brand-desc">
+                    Secure access for Schiller Healthcare India's production, quality control, and administration teams.
+                    Select your department to continue.
+                </p>
+
+                <div class="ecg-strip">
+                    <div class="ecg-label-sm">SCHILLER Quality Management System</div>
+                    <svg class="ecg-svg" viewBox="0 0 400 52" preserveAspectRatio="none">
+                        <path class="ecg-glow-anim" d="M0,26 L40,26 L55,26 L68,8 L80,44 L92,2 L104,50 L116,26 L140,26
+               L180,26 L193,26 L206,8 L218,44 L230,2 L242,50 L254,26 L278,26
+               L318,26 L331,26 L344,8 L356,44 L368,2 L380,50 L392,26 L400,26" />
+                        <path class="ecg-path-anim" d="M0,26 L40,26 L55,26 L68,8 L80,44 L92,2 L104,50 L116,26 L140,26
+               L180,26 L193,26 L206,8 L218,44 L230,2 L242,50 L254,26 L278,26
+               L318,26 L331,26 L344,8 L356,44 L368,2 L380,50 L392,26 L400,26" />
+                    </svg>
+                </div>
+
+                <div class="dept-pills">
+                    <span class="dept-pill" id="pill-iqc">IQC</span>
+                    <span class="dept-pill" id="pill-prod">Production</span>
+                    <span class="dept-pill" id="pill-admin">Admin</span>
+                </div>
+            </div>
+
+            <div class="brand-footer">
+                <span class="cert-badge">ISO 13485</span>
+                <span class="cert-badge">CDSCO Approved</span>
+                <span class="cert-badge">Make in India</span>
+            </div>
+        </div>
+
+        <!-- ── RIGHT: LOGIN PANEL ── -->
+        <div class="login-panel">
+            <div class="login-card">
+                <div class="dept-accent-bar" id="accentBar"></div>
+
+                <div class="login-header">
+                    <div class="login-eyebrow">Staff Login</div>
+                    <h2 class="login-title">Welcome Back</h2>
+                    <p class="login-sub">Sign in with your department credentials to continue.</p>
+                </div>
+
+                <!-- Error message -->
+                <div class="error-msg" id="errorMsg">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                    <span id="errorText">Please fill in all fields.</span>
+                </div>
+
+                <!-- DEPARTMENT -->
+                <div class="form-group">
+                    <label for="department">Department</label>
+                    <div class="input-wrap" id="deptWrap">
+                        <svg class="input-icon" viewBox="0 0 24 24">
+                            <rect x="2" y="7" width="20" height="14" rx="2" />
+                            <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
+                        </svg>
+                        <select id="department" name="department">
+                            <option value="" disabled selected>Select your department</option>
+                            <option value="IQC">IQC — Incoming Quality Control</option>
+                            <option value="Production">Production</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="dept-badge" id="deptBadge">
+                        <span class="dept-dot"></span>
+                        <span class="dept-badge-text" id="deptBadgeText"></span>
+                    </div>
+                </div>
+
+                <!-- USERNAME -->
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <div class="input-wrap" id="userWrap">
+                        <svg class="input-icon" viewBox="0 0 24 24">
+                            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg>
+                        <input type="text" id="username" name="username" placeholder="Enter your username"
+                            autocomplete="username" spellcheck="false" />
+                    </div>
+                </div>
+
+                <!-- PASSWORD -->
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrap" id="pwWrap" style="position:relative;">
+                        <svg class="input-icon" viewBox="0 0 24 24">
+                            <rect x="3" y="11" width="18" height="11" rx="2" />
+                            <path d="M7 11V7a5 5 0 0110 0v4" />
+                        </svg>
+                        <input type="password" id="password" name="password" placeholder="Enter your password"
+                            autocomplete="current-password" />
+                        <button class="pw-toggle" id="pwToggle" type="button" aria-label="Show password" tabindex="-1">
+                            <svg id="eyeIcon" viewBox="0 0 24 24">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-divider"></div>
+
+                <!-- SUBMIT -->
+                <button class="btn-login" id="loginBtn" type="button">
+                    <span class="btn-text">Sign In</span>
+                    <svg class="btn-arrow" viewBox="0 0 24 24">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                    <div class="spinner"></div>
+                </button>
+
+                <div class="form-footer">
+                    <a href="#">Forgot password? Contact IT Support</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const deptSelect = document.getElementById('department');
+        const deptBadge = document.getElementById('deptBadge');
+        const deptBadgeText = document.getElementById('deptBadgeText');
+        const accentBar = document.getElementById('accentBar');
+        const loginBtn = document.getElementById('loginBtn');
+        const errorMsg = document.getElementById('errorMsg');
+        const errorText = document.getElementById('errorText');
+        const pwToggle = document.getElementById('pwToggle');
+        const pwInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eyeIcon');
+        const successOverlay = document.getElementById('successOverlay');
+        const successDept = document.getElementById('successDept');
+
+        // Dept pills on left panel
+        const pillMap = {
+            'IQC': 'pill-iqc',
+            'Production': 'pill-prod',
+            'Admin': 'pill-admin'
+        };
+
+        const deptLabels = {
+            'IQC': 'Incoming Quality Control',
+            'Production': 'Production',
+            'Admin': 'Administration'
+        };
+
+        // Department change
+        deptSelect.addEventListener('change', () => {
+            const val = deptSelect.value;
+
+            // Badge
+            if (val) {
+                deptBadgeText.textContent = deptLabels[val];
+                deptBadge.classList.add('visible');
+            } else {
+                deptBadge.classList.remove('visible');
+            }
+
+            // Accent bar on card
+            accentBar.style.background = val ? 'var(--red)' : 'var(--fog)';
+
+            // Left panel pills
+            Object.entries(pillMap).forEach(([key, id]) => {
+                const el = document.getElementById(id);
+                if (el) el.classList.toggle('active', key === val);
+            });
+
+            // Clear error on change
+            errorMsg.classList.remove('visible');
+            document.getElementById('deptWrap').classList.remove('error');
+        });
+
+        // Password toggle
+        pwToggle.addEventListener('click', () => {
+            const show = pwInput.type === 'password';
+            pwInput.type = show ? 'text' : 'password';
+            eyeIcon.innerHTML = show
+                ? `<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/>
+         <line x1="1" y1="1" x2="23" y2="23"/>`
+                : `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+         <circle cx="12" cy="12" r="3"/>`;
+        });
+
+        // Clear error on input
+        [document.getElementById('username'), pwInput].forEach(el => {
+            el.addEventListener('input', () => {
+                errorMsg.classList.remove('visible');
+                document.getElementById('userWrap').classList.remove('error');
+                document.getElementById('pwWrap').classList.remove('error');
+            });
+        });
+
+        // Login submit
+        loginBtn.addEventListener('click', () => {
+            const dept = deptSelect.value;
+            const user = document.getElementById('username').value.trim();
+            const pass = pwInput.value;
+
+            // Reset errors
+            errorMsg.classList.remove('visible');
+            ['deptWrap', 'userWrap', 'pwWrap'].forEach(id =>
+                document.getElementById(id).classList.remove('error')
+            );
+
+            // Validate
+            let err = '';
+            if (!dept) {
+                err = 'Please select your department.';
+                document.getElementById('deptWrap').classList.add('error');
+            } else if (!user) {
+                err = 'Username is required.';
+                document.getElementById('userWrap').classList.add('error');
+            } else if (!pass) {
+                err = 'Password is required.';
+                document.getElementById('pwWrap').classList.add('error');
+            }
+
+            if (err) {
+                errorText.textContent = err;
+                errorMsg.classList.add('visible');
+                return;
+            }
+
+            // Loading
+            loginBtn.classList.add('loading');
+
+            // Real auth call to backend
+            fetch('http://localhost:5000/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: user, password: pass })
+            })
+            .then(res => res.json())
+            .then(data => {
+                loginBtn.classList.remove('loading');
+                if (data.success) {
+                    localStorage.setItem('token', data.token);
+                    if (data.name) localStorage.setItem('userName', data.name);
+                    if (data.role) localStorage.setItem('userRole', data.role);
+                    successDept.textContent = deptLabels[dept] || data.role;
+                    successOverlay.classList.add('visible');
+                    
+                    // Redirect based on role or selected department
+                    setTimeout(() => {
+                        if (data.role === 'admin' || dept === 'Admin') {
+                            window.location.href = 'admin.html';
+                        } else if (dept === 'IQC' || data.role === 'iqc') {
+                            window.location.href = 'iqc.html';
+                        } else if (dept === 'Production' || data.role === 'production') {
+                            window.location.href = 'production.html';
+                        } else {
+                            window.location.href = 'index.html'; // Default user redirect
+                        }
+                    }, 1500);
+                } else {
+                    errorText.textContent = data.error || 'Invalid credentials';
+                    errorMsg.classList.add('visible');
+                }
+            })
+            .catch(err => {
+                loginBtn.classList.remove('loading');
+                errorText.textContent = 'Server connection failed. Is the backend running?';
+                errorMsg.classList.add('visible');
+            });
+        });
+
+        // Enter key support
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') loginBtn.click();
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userName = localStorage.getItem('userName');
+            const userRole = localStorage.getItem('userRole');
+            if (userName) {
+                const nameEls = document.querySelectorAll('.sidebar-user-name');
+                const avatarEls = document.querySelectorAll('.sidebar-avatar');
+                const roleEls = document.querySelectorAll('.sidebar-user-role');
+                
+                nameEls.forEach(el => el.textContent = userName);
+                
+                const initials = userName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                avatarEls.forEach(el => el.textContent = initials);
+                
+                if (userRole) {
+                    const roleText = userRole.charAt(0).toUpperCase() + userRole.slice(1);
+                    roleEls.forEach(el => el.textContent = roleText);
+                }
+            }
+        });
+    </script>
+
+</body>
+
+</html>

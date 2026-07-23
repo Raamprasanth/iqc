@@ -1,0 +1,1463 @@
+
+        /* ── Sidebar toggle ── */
+        const sidebar = document.getElementById('sidebar');
+        const scrim = document.getElementById('scrim');
+        const menuToggle = document.getElementById('menuToggle');
+
+        function openSidebar() { sidebar.classList.add('open'); scrim.classList.add('show'); }
+        function closeSidebar() { sidebar.classList.remove('open'); scrim.classList.remove('show'); }
+        menuToggle.addEventListener('click', () => sidebar.classList.contains('open') ? closeSidebar() : openSidebar());
+        scrim.addEventListener('click', closeSidebar);
+
+        /* ── Helpers ── */
+        function formatDateDisplay(isoDate) {
+            if (!isoDate) return '—';
+            const d = isoDate.split('T')[0];
+            const [y, m, day] = d.split('-');
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return `${day} ${months[parseInt(m, 10) - 1]} ${y}`;
+        }
+
+        /* ── State ── */
+        let entries = [];
+        let rejectedEntries = [];
+        const tableBody = document.getElementById('entryTableBody');
+        const tableWrap = document.getElementById('tableWrap');
+        const emptyState = document.getElementById('emptyState');
+        const entryCount = document.getElementById('entryCount');
+        const searchInput = document.getElementById('searchInput');
+
+        async function fetchEntries() {
+            try {
+                const res = await fetch('/api/acceptedpro');
+                const rejRes = await fetch('/api/rejectedpro');
+                
+                if (res.ok && rejRes.ok) {
+                    entries = await res.json();
+                    rejectedEntries = await rejRes.json();
+                    rejectedEntries = rejectedEntries.filter(e => e.source === 'inwardp');
+                    renderTable();
+                    updateKPIs();
+                }
+            } catch (err) {
+                console.error('Error fetching entries:', err);
+                renderTable();
+                updateKPIs();
+            }
+        }
+
+        // Fetch dynamic count for sidebar badge "Inward from IQC"
+        async function fetchInwardpCount() {
+            try {
+                const res = await fetch('/api/inwardp');
+                if (res.ok) {
+                    const data = await res.json();
+                    const badge = document.getElementById('productionInwardBadge');
+                    if (badge) badge.textContent = data.length;
+                }
+            } catch (err) {
+                console.error('Error fetching production inward count:', err);
+            }
+        }
+
+        async function fetchReInwardCount() {
+            try {
+                const res = await fetch('/api/reinwardpro');
+                if (res.ok) {
+                    const data = await res.json();
+                    const badge = document.getElementById('productionReInwardBadge');
+                    if (badge) badge.textContent = data.length;
+                }
+            } catch (err) {
+                console.error('Error fetching reinward count:', err);
+            }
+        }
+
+        async function fetchRejectedproCount() {
+            try {
+                const res = await fetch('/api/rejectedpro');
+                if (res.ok) {
+                    const data = await res.json();
+                    const badge = document.getElementById('productionRejectedBadge');
+                    if (badge) badge.textContent = data.length;
+                }
+            } catch (err) {
+                console.error('Error fetching rejected pro count:', err);
+            }
+        }
+
+        function parseRemarksToItems(remarks, totalQty) {
+            const items = [];
+            if (remarks) {
+                const parts = remarks.split(', ');
+                parts.forEach(p => {
+                    let nature = p;
+                    let qty = 1;
+                    const splitIdx = p.lastIndexOf(': ');
+                    if (splitIdx !== -1 && !isNaN(p.substring(splitIdx + 2).trim())) {
+                        qty = parseInt(p.substring(splitIdx + 2).trim(), 10) || 1;
+                        nature = p.substring(0, splitIdx).trim();
+                    }
+                    items.push({ nature: nature, qty: qty });
+                });
+            } else if (totalQty > 0) {
+                items.push({ nature: '-', qty: totalQty });
+            }
+            return items;
+        }
+
+        function groupEntries(data, rejectedData) {
+            const groups = {};
+            data.forEach(e => {
+                const d = e.date ? e.date.split('T')[0] : '-';
+                const inv = e.invoiceNo || '-';
+                const key = d + '|' + inv + '|' + e.model;
+
+                if (!groups[key]) {
+                    groups[key] = {
+                        date: d,
+                        invoiceNo: inv,
+                        model: e.model,
+                        parts: [],
+                        mergedParts: {},
+                        totalParts: 0,
+                        totalQuantity: 0
+                    };
+                }
+
+                groups[key].parts.push(e);
+                groups[key].totalParts++;
+
+                const pKey = e.partNo;
+                if (!groups[key].mergedParts[pKey]) {
+                    groups[key].mergedParts[pKey] = {
+                        partNo: e.partNo,
+                        partDescription: e.partDescription,
+                        totalQty: 0,
+                        acceptedQty: 0,
+                        yetToAcceptQty: 0,
+                        yetToAcceptUpdatedAt: null,
+                        replacedQty: 0
+                    };
+                }
+
+                let origTotal = Number(e.totalQuantity || e.quantity || 0);
+                let origAccepted = Number(e.quantity || e.qty || 0);
+                let origYetToAccept = Number(e.yetToAcceptQty || 0);
+
+                groups[key].mergedParts[pKey].totalQty += origTotal;
+                groups[key].mergedParts[pKey].acceptedQty += origAccepted;
+                groups[key].mergedParts[pKey].yetToAcceptQty += origYetToAccept;
+                groups[key].totalQuantity += origTotal;
+            });
+
+            // Now apply rejected data replacements
+            if (rejectedData) {
+                rejectedData.forEach(r => {
+                    const d = r.date ? r.date.split('T')[0] : '-';
+                    const inv = r.invoiceNo || '-';
+                    const key = d + '|' + inv + '|' + r.model;
+                    
+                    if (groups[key]) {
+                        const pKey = r.partNo;
+                        if (groups[key].mergedParts[pKey]) {
+                            // find how many were replaced
+                            let replacedCount = 0;
+                            let latestReplaceDate = null;
+                            
+                            if (!groups[key].mergedParts[pKey].yetToAcceptHistory) {
+                                groups[key].mergedParts[pKey].yetToAcceptHistory = [];
+                            }
+                            if (!r.itemDetails || r.itemDetails.length === 0) {
+                                r.itemDetails = parseRemarksToItems(r.remarks, Number(r.quantity || r.qty || 0));
+                            }
+                            
+                            if (r.itemDetails && r.itemDetails.length > 0) {
+                                r.itemDetails.forEach(sub => {
+                                    if (sub.isReplaced) {
+                                        let rQty = Number(sub.qty || 1);
+                                        replacedCount += rQty;
+                                        const rAt = sub.replacedAt || r.updatedAt || new Date().toISOString();
+                                        groups[key].mergedParts[pKey].yetToAcceptHistory.push({
+                                            reducedBy: rQty,
+                                            updatedAt: rAt
+                                        });
+                                        const rDate = new Date(rAt);
+                                        if (!latestReplaceDate || rDate > latestReplaceDate) {
+                                            latestReplaceDate = rDate;
+                                        }
+                                    }
+                                });
+                            } else if (r.isReplaced) {
+                                let rQty = Number(r.quantity || 0);
+                                replacedCount = rQty;
+                                const rAt = r.updatedAt || r.createdAt;
+                                groups[key].mergedParts[pKey].yetToAcceptHistory.push({
+                                    reducedBy: rQty,
+                                    updatedAt: rAt
+                                });
+                                latestReplaceDate = new Date(rAt);
+                            }
+                            // Sort history by date descending
+                            groups[key].mergedParts[pKey].yetToAcceptHistory.sort((a,b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+
+                            if (replacedCount > 0) {
+                                groups[key].mergedParts[pKey].acceptedQty += replacedCount;
+                                groups[key].mergedParts[pKey].yetToAcceptQty = Math.max(0, groups[key].mergedParts[pKey].yetToAcceptQty - replacedCount);
+                                
+                                if (latestReplaceDate) {
+                                    const currentLatest = groups[key].mergedParts[pKey].yetToAcceptUpdatedAt ? new Date(groups[key].mergedParts[pKey].yetToAcceptUpdatedAt) : new Date(0);
+                                    if (latestReplaceDate > currentLatest) {
+                                        groups[key].mergedParts[pKey].yetToAcceptUpdatedAt = latestReplaceDate.toISOString();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            return Object.values(groups).filter(g => g.parts.length > 0);
+        }
+
+        <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Accepted Production — SCHILLER Healthcare India</title>
+    
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --navy: #0D1B2A;
+            --red: #C8102E;
+            --white: #FFFFFF;
+            --fog: #F0F4F8;
+            --steel: #6B8CAE;
+            --mid: #2C4A6E;
+            --text: #1A2B3C;
+            --amber: #C77B12;
+            --green: #1E7B4D;
+            --sidebar-w: 248px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Calibri', Calibri, sans-serif;
+            color: var(--text);
+            background: var(--fog);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* ───────────────────────── SIDEBAR ───────────────────────── */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: var(--sidebar-w);
+            background: var(--navy);
+            display: flex;
+            flex-direction: column;
+            z-index: 200;
+            transition: transform 0.25s ease;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 22px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .sidebar-logo-mark {
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
+            background: var(--red);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-logo-mark svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+
+        .sidebar-brand {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.02rem;
+            font-weight: 700;
+            color: var(--white);
+            letter-spacing: 0.02em;
+            line-height: 1.2;
+        }
+
+        .sidebar-brand span {
+            color: var(--red);
+        }
+
+        .sidebar-brand small {
+            display: block;
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 0.62rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 2px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            overflow-y: auto;
+            padding: 18px 14px;
+        }
+
+        .nav-group-label {
+            font-size: 0.64rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.28);
+            padding: 14px 12px 8px;
+        }
+
+        .nav-group-label:first-child {
+            padding-top: 4px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.58);
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 2px;
+            position: relative;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .sidebar-link svg {
+            width: 18px;
+            height: 18px;
+            min-width: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.7;
+        }
+
+        .sidebar-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .sidebar-link.active {
+            background: rgba(200, 16, 46, 0.14);
+            color: var(--white);
+        }
+
+        .sidebar-link.active::before {
+            content: '';
+            position: absolute;
+            left: -14px;
+            top: 8px;
+            bottom: 8px;
+            width: 3px;
+            background: var(--red);
+            border-radius: 0 3px 3px 0;
+        }
+
+        .sidebar-link .badge {
+            margin-left: auto;
+            background: var(--red);
+            color: white;
+            font-size: 0.66rem;
+            font-weight: 700;
+            padding: 1px 7px;
+            border-radius: 20px;
+            line-height: 1.5;
+        }
+
+        .sidebar-foot {
+            padding: 16px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-avatar {
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
+            border-radius: 50%;
+            background: var(--mid);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.74rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .sidebar-user-name {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .sidebar-user-role {
+            font-size: 0.68rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* ───────────────────────── MAIN ───────────────────────── */
+        .main {
+            margin-left: var(--sidebar-w);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            background: var(--white);
+            border-bottom: 1px solid rgba(13, 27, 42, 0.08);
+            padding: 0 32px;
+            height: 68px;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            color: var(--navy);
+        }
+
+        .menu-toggle svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--fog);
+            border-radius: 6px;
+            padding: 8px 14px;
+            min-width: 240px;
+        }
+
+        .search-box svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--steel);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .search-box input {
+            border: none;
+            background: none;
+            outline: none;
+            font-size: 0.82rem;
+            color: var(--text);
+            width: 100%;
+            font-family: 'Calibri', Calibri, sans-serif;
+        }
+
+        .search-box input::placeholder {
+            color: #9ab0c2;
+        }
+
+        .icon-btn {
+            position: relative;
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            border: 1px solid rgba(13, 27, 42, 0.08);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--mid);
+            transition: background 0.15s;
+        }
+
+        .icon-btn:hover {
+            background: var(--fog);
+        }
+
+        .icon-btn svg {
+            width: 17px;
+            height: 17px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+        }
+
+        .icon-btn .dot {
+            position: absolute;
+            top: 7px;
+            right: 7px;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--red);
+            border: 1.5px solid white;
+        }
+
+        .btn-outline-navy {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            border: 1.5px solid rgba(13, 27, 42, 0.14);
+            color: var(--navy);
+            background: white;
+            padding: 9px 16px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: border-color 0.15s, background 0.15s;
+        }
+
+        .btn-outline-navy:hover {
+            border-color: var(--steel);
+            background: var(--fog);
+        }
+
+        .btn-outline-navy svg {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* ───────────────────────── CONTENT ───────────────────────── */
+        .content {
+            flex: 1;
+            padding: 28px 32px 60px;
+        }
+
+        .page-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 26px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .page-head h1 {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 6px;
+        }
+
+        .page-head p {
+            font-size: 0.86rem;
+            color: var(--steel);
+            max-width: 520px;
+        }
+
+        /* KPI cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .kpi-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px 22px;
+            border: 1px solid rgba(13, 27, 42, 0.06);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card.accent::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--accent-color, var(--green));
+        }
+
+        .kpi-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .kpi-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--fog);
+        }
+
+        .kpi-icon svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--navy);
+            fill: none;
+            stroke-width: 1.8;
+        }
+
+        .kpi-card.c-green .kpi-icon {
+            background: rgba(30, 123, 77, 0.1);
+        }
+
+        .kpi-card.c-green .kpi-icon svg {
+            stroke: var(--green);
+        }
+
+        .kpi-card.c-amber .kpi-icon {
+            background: rgba(199, 123, 18, 0.1);
+        }
+
+        .kpi-card.c-amber .kpi-icon svg {
+            stroke: var(--amber);
+        }
+
+        .kpi-card.c-navy .kpi-icon {
+            background: rgba(44, 74, 110, 0.1);
+        }
+
+        .kpi-card.c-navy .kpi-icon svg {
+            stroke: var(--mid);
+        }
+
+        .kpi-trend {
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+
+        .kpi-trend.up {
+            background: rgba(30, 123, 77, 0.1);
+            color: var(--green);
+        }
+
+        .kpi-trend.neutral {
+            background: rgba(107, 140, 174, 0.12);
+            color: var(--steel);
+        }
+
+        .kpi-value {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: var(--navy);
+            line-height: 1;
+        }
+
+        .kpi-label {
+            font-size: 0.74rem;
+            color: var(--steel);
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        /* Panel */
+        .panel {
+            background: white;
+            border-radius: 10px;
+            border: 1px solid rgba(13, 27, 42, 0.06);
+            margin-bottom: 20px;
+        }
+
+        .panel-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--fog);
+        }
+
+        .panel-head h2 {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .panel-head .panel-sub {
+            font-size: 0.74rem;
+            color: var(--steel);
+            margin-top: 2px;
+            font-weight: 400;
+            font-family: 'Calibri', Calibri, sans-serif;
+        }
+
+        /* Table */
+        table.iqc-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .iqc-table thead th {
+            text-align: left;
+            font-size: 0.66rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--steel);
+            padding: 12px 22px;
+            border-bottom: 1px solid var(--fog);
+            white-space: nowrap;
+        }
+
+        .iqc-table tbody td {
+            padding: 14px 22px;
+            font-size: 0.82rem;
+            color: var(--text);
+            border-bottom: 1px solid var(--fog);
+            white-space: nowrap;
+        }
+
+        .iqc-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .iqc-table tbody tr {
+            transition: background 0.15s;
+        }
+
+        .iqc-table tbody tr:hover {
+            background: #fafcfe;
+        }
+
+        .cell-part {
+            font-weight: 600;
+            color: var(--navy);
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 11px;
+            border-radius: 20px;
+        }
+
+        .status-pill::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .status-pill.accepted {
+            background: rgba(30, 123, 77, 0.1);
+            color: var(--green);
+        }
+
+        /* Empty state */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 64px 24px;
+            color: var(--steel);
+        }
+
+        .empty-state svg {
+            width: 44px;
+            height: 44px;
+            stroke: var(--steel);
+            fill: none;
+            stroke-width: 1.4;
+            margin-bottom: 16px;
+            opacity: 0.6;
+        }
+
+        .empty-state strong {
+            font-family: 'Calibri', Calibri, sans-serif;
+            color: var(--navy);
+            font-size: 1.02rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .empty-state p {
+            font-size: 0.82rem;
+            max-width: 280px;
+        }
+
+        /* Accepted banner accent */
+        .accepted-banner {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(30, 123, 77, 0.06);
+            border: 1px solid rgba(30, 123, 77, 0.18);
+            border-radius: 8px;
+            padding: 12px 18px;
+            margin-bottom: 22px;
+            font-size: 0.82rem;
+            color: var(--green);
+            font-weight: 500;
+        }
+
+        .accepted-banner svg {
+            width: 18px;
+            height: 18px;
+            min-width: 18px;
+            stroke: var(--green);
+            fill: none;
+            stroke-width: 2.2;
+        }
+
+        .accepted-banner strong {
+            font-weight: 700;
+        }
+
+        /* Sidebar scrim */
+        .sidebar-scrim {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(13, 27, 42, 0.5);
+            z-index: 150;
+        }
+
+        .sidebar-scrim.show {
+            display: block;
+        }
+
+        /* ───────────────────────── RESPONSIVE ───────────────────────── */
+        @media (max-width: 1100px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 860px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .search-box {
+                display: none;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .content {
+                padding: 20px 16px 40px;
+            }
+
+            .topbar {
+                padding: 0 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar-scrim" id="scrim"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-mark">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 12h4l2-7 3 14 3-10 2 3h4" stroke="white" stroke-width="2.2" stroke-linecap="round"
+                        stroke-linejoin="round" fill="none" />
+                </svg>
+            </div>
+            <div class="sidebar-brand">SCHILLER <span>India</span>
+                <small>Production Systems</small>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-group-label">Overview</div>
+            <a href="production.html" class="sidebar-link">
+                <svg viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="7" height="9" rx="1.5" />
+                    <rect x="14" y="3" width="7" height="5" rx="1.5" />
+                    <rect x="14" y="12" width="7" height="9" rx="1.5" />
+                    <rect x="3" y="16" width="7" height="5" rx="1.5" />
+                </svg>
+                Dashboard
+            </a>
+
+            <div class="nav-group-label">Material Flow</div>
+            <a href="inwardp.html" class="sidebar-link">
+                <svg viewBox="0 0 24 24">
+                    <path d="M21 12H9M14 6l7 6-7 6" />
+                    <path d="M3 6v12" />
+                </svg>
+                Inward from IQC
+                <span class="badge" id="productionInwardBadge">0</span>
+            </a>
+            <a href="acceptedpro.html" class="sidebar-link active">
+                <svg viewBox="0 0 24 24">
+                    <path d="M9 12l2 2 4-4" />
+                    <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Accepted
+            </a>
+            <a href="rejectedpro.html" class="sidebar-link">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="15" y1="9" x2="9" y2="15" />
+                    <line x1="9" y1="9" x2="15" y2="15" />
+                </svg>
+                Rejected
+                <span class="badge" id="productionRejectedBadge">0</span>
+            </a>
+            <a href="reinwardpro.html" class="sidebar-link">
+                <svg viewBox="0 0 24 24">
+                    <polyline points="23 4 23 10 17 10" />
+                    <polyline points="1 20 1 14 7 14" />
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                </svg>
+                Re-Inward
+                <span class="badge" id="productionReInwardBadge">0</span>
+            </a>
+            <a href="firstrep.html" class="sidebar-link">
+                <svg viewBox="0 0 24 24">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                    <polyline points="10 9 9 9 8 9" />
+                </svg>
+                Reinward from IQC
+            </a>
+
+            <div class="nav-group-label">System</div>
+            <a href="#" class="sidebar-link">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="3" />
+                    <path
+                        d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 005 15a1.65 1.65 0 00-.33-1.82L4.6 13.1a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 9a1.65 1.65 0 001-1.51V7a2 2 0 014 0v.09A1.65 1.65 0 0015 9a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019 13a1.65 1.65 0 00.33 1.82z" />
+                </svg>
+                Settings
+            </a>
+        </nav>
+
+        <div class="sidebar-foot">
+            <div class="sidebar-avatar">VK</div>
+            <div>
+                <div class="sidebar-user-name">V. Krishnan</div>
+                <div class="sidebar-user-role">Production Manager · Puducherry</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <div class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menuToggle">
+                    <svg viewBox="0 0 24 24">
+                        <line x1="3" y1="6" x2="21" y2="6" />
+                        <line x1="3" y1="12" x2="21" y2="12" />
+                        <line x1="3" y1="18" x2="21" y2="18" />
+                    </svg>
+                </button>
+                <div
+                    style="font-family: 'Calibri', Calibri, sans-serif; font-size:1.2rem; font-weight:700; color:var(--navy);">
+                    Accepted Production
+                </div>
+            </div>
+            <div class="topbar-right">
+                <div class="search-box">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="7" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Search model, part no..." />
+                </div>
+                <button class="icon-btn">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                        <path d="M13.73 21a2 2 0 01-3.46 0" />
+                    </svg>
+                    <span class="dot"></span>
+                </button>
+                <button class="icon-btn">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M9.09 9a3 3 0 015.83 1c0 2-3 2-3 4" />
+                        <path d="M12 17h.01" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="content">
+
+            <div class="page-head">
+                <div>
+                    <h1>Accepted Production</h1>
+                    <p>All inward entries that have been accepted onto the production line — Puducherry &amp; Bengaluru.</p>
+                </div>
+                <div class="head-actions">
+                    <button class="btn-outline-navy" id="exportBtn">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        Export
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            
+
+            <!-- Accepted banner -->
+            <div class="accepted-banner">
+                <svg viewBox="0 0 24 24">
+                    <path d="M9 12l2 2 4-4" />
+                    <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Showing <strong>accepted</strong> production entries only. These materials have cleared production
+                    inward inspection and are accepted onto the line.</span>
+            </div>
+
+            <!-- Table panel -->
+            <div class="panel">
+                <div class="panel-head">
+                    <div style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h2>Accepted Register</h2>
+                            <div class="panel-sub"><span id="entryCount">0</span> entries</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tableWrap">
+                    <table class="iqc-table">
+                        <thead>
+                            <tr>
+                                <th>Sl. No.</th>
+                                <th>Date</th>
+                                <th>Invoice No</th>
+                                <th>Model</th>
+                                <th>Total Parts</th>
+                                <th>Total Quantity</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="entryTableBody">
+                            <!-- rows injected here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="empty-state" id="emptyState" style="display:none;">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M9 12l2 2 4-4" />
+                        <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <strong>No accepted entries yet</strong>
+                    <p>Production inward entries that are accepted will appear here.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        /* ── Sidebar toggle ── */
+        const sidebar = document.getElementById('sidebar');
+        const scrim = document.getElementById('scrim');
+        const menuToggle = document.getElementById('menuToggle');
+
+        function openSidebar() { sidebar.classList.add('open'); scrim.classList.add('show'); }
+        function closeSidebar() { sidebar.classList.remove('open'); scrim.classList.remove('show'); }
+        menuToggle.addEventListener('click', () => sidebar.classList.contains('open') ? closeSidebar() : openSidebar());
+        scrim.addEventListener('click', closeSidebar);
+
+        /* ── Helpers ── */
+        function formatDateDisplay(isoDate) {
+            if (!isoDate) return '—';
+            const d = isoDate.split('T')[0];
+            const [y, m, day] = d.split('-');
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return `${day} ${months[parseInt(m, 10) - 1]} ${y}`;
+        }
+
+        /* ── State ── */
+        let entries = [];
+        const tableBody = document.getElementById('entryTableBody');
+        const tableWrap = document.getElementById('tableWrap');
+        const emptyState = document.getElementById('emptyState');
+        const entryCount = document.getElementById('entryCount');
+        const searchInput = document.getElementById('searchInput');
+
+        async function fetchEntries() {
+            try {
+                const res = await fetch('/api/acceptedpro');
+                if (res.ok) {
+                    entries = await res.json();
+                    renderTable();
+                    updateKPIs();
+                }
+            } catch (err) {
+                console.error('Error fetching entries:', err);
+                renderTable();
+                updateKPIs();
+            }
+        }
+
+        // Fetch dynamic count for sidebar badge "Inward from IQC"
+        async function fetchInwardpCount() {
+            try {
+                const res = await fetch('/api/inwardp');
+                if (res.ok) {
+                    const data = await res.json();
+                    const badge = document.getElementById('productionInwardBadge');
+                    if (badge) badge.textContent = data.length;
+                }
+            } catch (err) {
+                console.error('Error fetching production inward count:', err);
+            }
+        }
+
+        async function fetchReInwardCount() {
+            try {
+                const res = await fetch('/api/reinwardpro');
+                if (res.ok) {
+                    const data = await res.json();
+                    const badge = document.getElementById('productionReInwardBadge');
+                    if (badge) badge.textContent = data.length;
+                }
+            } catch (err) {
+                console.error('Error fetching reinward count:', err);
+            }
+        }
+
+        async function fetchRejectedproCount() {
+            try {
+                const res = await fetch('/api/rejectedpro');
+                if (res.ok) {
+                    const data = await res.json();
+                    const badge = document.getElementById('productionRejectedBadge');
+                    if (badge) badge.textContent = data.length;
+                }
+            } catch (err) {
+                console.error('Error fetching rejected pro count:', err);
+            }
+        }
+
+                function parseRemarksToItems(remarks, totalQty) {
+            const items = [];
+            if (remarks) {
+                const parts = remarks.split(', ');
+                parts.forEach(p => {
+                    let nature = p;
+                    let qty = 1;
+                    const splitIdx = p.lastIndexOf(': ');
+                    if (splitIdx !== -1 && !isNaN(p.substring(splitIdx + 2).trim())) {
+                        qty = parseInt(p.substring(splitIdx + 2).trim(), 10) || 1;
+                        nature = p.substring(0, splitIdx).trim();
+                    }
+                    items.push({ nature: nature, qty: qty });
+                });
+            } else if (totalQty > 0) {
+                items.push({ nature: '-', qty: totalQty });
+            }
+            return items;
+        }
+
+function groupEntries(data) {
+            const groups = {};
+            data.forEach(e => {
+                const d = e.date ? e.date.split('T')[0] : '';
+                const inv = e.invoiceNo || '-';
+                const key = inv + '|' + e.model;
+                if (!groups[key]) {
+                    groups[key] = { date: d, invoiceNo: inv, model: e.model, parts: [], totalQty: 0, ids: [], mergedParts: {} };
+                }
+                groups[key].parts.push(e);
+                groups[key].totalQty += Number(e.totalQuantity || e.quantity || e.qty || 0);
+                groups[key].ids.push(e._id);
+                
+                const pKey = e.partNo;
+                if (!groups[key].mergedParts[pKey]) {
+                    groups[key].mergedParts[pKey] = {
+                        partNo: e.partNo,
+                        partDescription: e.partDescription,
+                        totalQuantity: 0,
+                        qty: 0,
+                        yetToAcceptQty: 0,
+                        yetToAcceptUpdatedAt: null,
+                        ids: []
+                    };
+                }
+                
+                const m = groups[key].mergedParts[pKey];
+                
+                let origTotal = Number(e.totalQuantity || e.quantity || 0);
+                let origAccepted = Number(e.quantity || e.qty || 0);
+                
+                // Parse remarks if itemDetails is missing
+                if (!e.itemDetails || e.itemDetails.length === 0) {
+                    e.itemDetails = parseRemarksToItems(e.remarks, origTotal - origAccepted);
+                }
+                
+                let newlyAcceptedQty = 0;
+                let activeRejectedQty = 0;
+                
+                if (e.itemDetails && e.itemDetails.length > 0) {
+                    e.itemDetails.forEach(sub => {
+                        if (sub.isReplaced) {
+                            newlyAcceptedQty += Number(sub.qty || 1);
+                        } else if (!e.reInwarded && !e.sentToReInward) {
+                            activeRejectedQty += Number(sub.qty || 1);
+                        }
+                    });
+                } else {
+                    activeRejectedQty = Math.max(0, origTotal - origAccepted);
+                }
+                
+                m.totalQuantity += origTotal;
+                m.qty += origAccepted + newlyAcceptedQty;
+                m.yetToAcceptQty += activeRejectedQty;
+                
+                // Track latest update
+                if (newlyAcceptedQty > 0) {
+                    const thisDate = new Date(e.updatedAt || new Date());
+                    if (!m.yetToAcceptUpdatedAt || thisDate > new Date(m.yetToAcceptUpdatedAt)) {
+                        m.yetToAcceptUpdatedAt = (e.updatedAt || new Date().toISOString());
+                    }
+                } else if (e.yetToAcceptUpdatedAt) {
+                    const thisDate = new Date(e.yetToAcceptUpdatedAt);
+                    if (!m.yetToAcceptUpdatedAt || thisDate > new Date(m.yetToAcceptUpdatedAt)) {
+                        m.yetToAcceptUpdatedAt = e.yetToAcceptUpdatedAt;
+                    }
+                }
+                
+                m.ids.push(e._id);
+            });
+            
+            return Object.values(groups);
+        }
+
+        function renderTable() {
+            const query = searchInput.value.trim().toLowerCase();
+            const filtered = entries.filter(e =>
+                !query ||
+                (e.model && e.model.toLowerCase().includes(query)) ||
+                (e.partNo && e.partNo.toLowerCase().includes(query)) ||
+                (e.partDescription && e.partDescription.toLowerCase().includes(query))
+            );
+
+            const grouped = groupEntries(filtered, rejectedEntries);
+            entryCount.textContent = grouped.length;
+
+            if (grouped.length === 0) {
+                tableWrap.style.display = 'none';
+                emptyState.style.display = 'flex';
+                return;
+            }
+            tableWrap.style.display = 'block';
+            emptyState.style.display = 'none';
+
+            let html = '';
+            grouped.forEach((g, i) => {
+                html += `
+                <tr class="group-row" style="cursor:pointer; transition: background 0.15s;"
+                    onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'"
+                    onclick="toggleSubRow('subrow-${i}')">
+                    <td>${i + 1}</td>
+                    <td><span class="cell-part">${formatDateDisplay(g.date)}</span></td>
+                    <td><span class="cell-part" style="font-weight:500;">${g.invoiceNo || '-'}</span></td>
+                    <td><span class="cell-part">${g.model}</span></td>
+                    <td><strong>${g.parts.length}</strong> Parts</td>
+                    <td>${g.totalQty.toLocaleString('en-IN')}</td>
+                    <td><span class="status-pill accepted">Accepted</span></td>
+                    <td style="text-align: right;">
+                        <span style="font-size: 0.75rem; color: var(--steel); user-select:none;">&#9660; Details</span>
+                    </td>
+                </tr>
+                <tr id="subrow-${i}" style="display: none; background: #fafbfc;">
+                    <td colspan="8" style="padding: 0; border-bottom: 2px solid var(--fog);">
+                        <div style="padding: 15px 30px;">
+                            <table style="width:100%; border-collapse:collapse; font-size: 0.8rem;">
+                                <thead>
+                                    <tr>
+                                        <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:left; border-bottom:1px solid #e2e8f0;">Part No.</th>
+                                        <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:left; border-bottom:1px solid #e2e8f0;">Description</th>
+                                        <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:right; border-bottom:1px solid #e2e8f0;">Inward Qty</th>
+                                        <th style="padding:8px 12px; font-weight:600; color:var(--green); text-align:right; border-bottom:1px solid #e2e8f0;">Accepted Qty</th>
+                                        <th style="padding:8px 12px; font-weight:600; color:#d97706; text-align:right; border-bottom:1px solid #e2e8f0;">Yet to Accept Qty</th>
+                                        <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:center; border-bottom:1px solid #e2e8f0;">Last Updated</th>
+                                        <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:center; border-bottom:1px solid #e2e8f0;">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${Object.values(g.mergedParts).map((m, mIdx) => {
+                                        const yetQty = m.yetToAcceptQty;
+                                        const updatedAt = m.yetToAcceptUpdatedAt ? new Date(m.yetToAcceptUpdatedAt) : null;
+                                        const updatedStr = updatedAt ? updatedAt.toLocaleString('en-IN', {day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '-';
+                                        const history = m.yetToAcceptHistory || [];
+                                        const last3 = history.slice(0,3);
+                                        const historyRows = last3.length > 0
+                                            ? last3.map(h => '<div style="padding:4px 0; border-bottom:1px solid #f1f5f9; font-size:0.75rem;"><span style="color:var(--green);font-weight:600;">-' + h.reducedBy + '</span> accepted &nbsp;<span style="color:var(--steel);">' + new Date(h.updatedAt).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) + '</span></div>').join('')
+                                            : '<div style="color:var(--steel);font-size:0.75rem;">No updates yet</div>';
+                                        // use the first id for popup uniqueness
+                                        const popupId = 'yta-pop-' + i + '-' + mIdx;
+                                        return '<tr>' +
+                                            '<td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9;"><strong>' + m.partNo + '</strong></td>' +
+                                            '<td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; color: var(--text);">' + (m.partDescription || '-') + '</td>' +
+                                            '<td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right;">' + Number(m.totalQty).toLocaleString('en-IN') + '</td>' +
+                                            '<td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right;">' + Number(m.acceptedQty).toLocaleString('en-IN') + '</td>' +
+                                            '<td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right;"><span style="font-weight:700; color:' + (yetQty > 0 ? '#d97706' : '#16a34a') + '; background:' + (yetQty > 0 ? '#fef3c7' : '#dcfce7') + '; padding:2px 8px; border-radius:10px;">' + yetQty + '</span></td>' +
+                                            '<td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:center; position:relative;">' +
+                                                (updatedAt ? '<div class="yta-cell" style="cursor:pointer; position:relative; display:inline-block;" onclick="toggleYtaPopup(event, \'' + popupId + '\')">' +
+                                                    '<span style="font-size:0.78rem; color:var(--navy); text-decoration:underline dotted;">' + updatedStr + '</span>' +
+                                                    '<div id="' + popupId + '" style="display:none; position:absolute; z-index:200; right:0; top:110%; background:white; border:1px solid #e2e8f0; border-radius:8px; box-shadow:0 4px 16px rgba(0,0,0,0.13); padding:10px 14px; min-width:220px; text-align:left;">' +
+                                                        '<div style="font-weight:600; color:var(--navy); margin-bottom:6px; font-size:0.8rem;">Last 3 Accepted Updates</div>' +
+                                                        historyRows +
+                                                    '</div></div>'
+                                                : '<span style="color:var(--steel);font-size:0.78rem;">-</span>') +
+                                            '</td>' +
+                                            '<td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:center;"><span class="status-pill accepted">Accepted</span></td>' +
+                                        '</tr>';
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+                `;
+            });
+            tableBody.innerHTML = html;
+        }
+
+        window.toggleSubRow = function (id) {
+            const el = document.getElementById(id);
+            el.style.display = el.style.display === 'none' ? 'table-row' : 'none';
+        };
+
+        window.toggleSubItemRow = function (id) {
+            const el = document.getElementById(id);
+            el.style.display = el.style.display === 'none' ? 'table-row' : 'none';
+        };
+
+        window.toggleYtaPopup = function(event, popId) {
+            event.stopPropagation();
+            document.querySelectorAll('[id^="yta-pop-"]').forEach(el => {
+                if (el.id !== popId) el.style.display = 'none';
+            });
+            const pop = document.getElementById(popId);
+            if (pop) pop.style.display = pop.style.display === 'none' ? 'block' : 'none';
+        };
+        document.addEventListener('click', () => {
+            document.querySelectorAll('[id^="yta-pop-"]').forEach(el => el.style.display = 'none');
+        });
+
+        searchInput.addEventListener('input', renderTable);
+
+        /* ── Export ── */
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            const rows = [['Sl.No.', 'Date', 'Invoice No.', 'Model', 'Part No.', 'Description', 'Quantity', 'Yet to Accept', 'Status']];
+            let sl = 1;
+            groupEntries(entries).forEach(g => {
+                g.parts.forEach(p => {
+                    rows.push([sl++, g.date, g.invoiceNo, g.model, p.partNo, p.partDescription || '', Number(p.quantity || p.qty || 0), Number(p.yetToAcceptQty || 0), 'Accepted']);
+                });
+            });
+            const csv = rows.map(r => r.map(cell => '"' + String(cell).replace(/"/g, '""') + '"').join(',')).join('\n');
+            const a = document.createElement('a');
+            a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+            a.download = 'accepted_pro_' + new Date().toISOString().split('T')[0] + '.csv';
+            a.click();
+        });
+
+        /* ── Init ── */
+        fetchEntries();
+    

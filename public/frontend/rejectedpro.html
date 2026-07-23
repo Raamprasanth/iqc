@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rejected Production — SCHILLER Healthcare India</title>
+    
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --navy: #0D1B2A;
+            --red: #C8102E;
+            --white: #FFFFFF;
+            --fog: #F0F4F8;
+            --steel: #6B8CAE;
+            --mid: #2C4A6E;
+            --text: #1A2B3C;
+            --amber: #C77B12;
+            --green: #1E7B4D;
+            --sidebar-w: 248px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Calibri', Calibri, sans-serif;
+            color: var(--text);
+            background: var(--fog);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* ───────────────────────── SIDEBAR ───────────────────────── */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: var(--sidebar-w);
+            background: var(--navy);
+            display: flex;
+            flex-direction: column;
+            z-index: 200;
+            transition: transform 0.25s ease;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 22px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .sidebar-logo-mark {
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
+            background: var(--red);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-logo-mark svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+
+        .sidebar-brand {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.02rem;
+            font-weight: 700;
+            color: var(--white);
+            letter-spacing: 0.02em;
+            line-height: 1.2;
+        }
+
+        .sidebar-brand span {
+            color: var(--red);
+        }
+
+        .sidebar-brand small {
+            display: block;
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 0.62rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 2px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            overflow-y: auto;
+            padding: 18px 14px;
+        }
+
+        .nav-group-label {
+            font-size: 0.64rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.28);
+            padding: 14px 12px 8px;
+        }
+
+        .nav-group-label:first-child {
+            padding-top: 4px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.58);
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 2px;
+            position: relative;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .sidebar-link svg {
+            width: 18px;
+            height: 18px;
+            min-width: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.7;
+        }
+
+        .sidebar-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .sidebar-link.active {
+            background: rgba(200, 16, 46, 0.14);
+            color: var(--white);
+        }
+
+        .sidebar-link.active::before {
+            content: '';
+            position: absolute;
+            left: -14px;
+            top: 8px;
+            bottom: 8px;
+            width: 3px;
+            background: var(--red);
+            border-radius: 0 3px 3px 0;
+        }
+
+        .sidebar-link .badge {
+            margin-left: auto;
+            background: var(--red);
+            color: white;
+            font-size: 0.66rem;
+            font-weight: 700;
+            padding: 1px 7px;
+            border-radius: 20px;
+            line-height: 1.5;
+        }
+
+        .sidebar-foot {
+            padding: 16px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-avatar {
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
+            border-radius: 50%;
+            background: var(--mid);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.74rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .sidebar-user-name {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .sidebar-user-role {
+            font-size: 0.68rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* ───────────────────────── MAIN ───────────────────────── */
+        .main {
+            margin-left: var(--sidebar-w);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            background: var(--white);
+            border-bottom: 1px solid rgba(13, 27, 42, 0.08);
+            padding: 0 32px;
+            height: 68px;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            align-items: center;
+            justify-content: center;
+            color: var(--navy);
+            transition: background 0.15s;
+        }
+
+        .menu-toggle:hover {
+            background: var(--fog);
+        }
+
+        .menu-toggle svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--fog);
+            border: 1px solid rgba(13, 27, 42, 0.04);
+            padding: 6px 14px;
+            border-radius: 8px;
+            width: 260px;
+        }
+
+        .search-box svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--steel);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .search-box input {
+            background: none;
+            border: none;
+            outline: none;
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 0.8rem;
+            color: var(--text);
+            width: 100%;
+        }
+
+        .search-box input::placeholder {
+            color: var(--steel);
+            opacity: 0.7;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--mid);
+            position: relative;
+            transition: background 0.15s;
+        }
+
+        .icon-btn:hover {
+            background: var(--fog);
+        }
+
+        .icon-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+        }
+
+        .icon-btn .dot {
+            position: absolute;
+            top: 9px;
+            right: 9px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--red);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* ───────────────────────── CONTENT ───────────────────────── */
+        .content {
+            flex: 1;
+            padding: 32px 32px 60px;
+            max-width: 1280px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .page-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 28px;
+            gap: 20px;
+        }
+
+        .page-head h1 {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.68rem;
+            font-weight: 700;
+            color: var(--navy);
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+
+        .page-head p {
+            font-size: 0.85rem;
+            color: var(--steel);
+        }
+
+        .head-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-outline-navy {
+            background: white;
+            border: 1px solid var(--navy);
+            color: var(--navy);
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .btn-outline-navy:hover {
+            background: var(--navy);
+            color: white;
+        }
+
+        .btn-outline-navy svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* KPI cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .kpi-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px 22px;
+            border: 1px solid rgba(13, 27, 42, 0.06);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card.accent::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--accent-color, var(--red));
+        }
+
+        .kpi-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .kpi-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--fog);
+        }
+
+        .kpi-icon svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--navy);
+            fill: none;
+            stroke-width: 1.8;
+        }
+
+        .kpi-card.c-red .kpi-icon {
+            background: rgba(200, 16, 46, 0.1);
+        }
+
+        .kpi-card.c-red .kpi-icon svg {
+            stroke: var(--red);
+        }
+
+        .kpi-card.c-amber .kpi-icon {
+            background: rgba(199, 123, 18, 0.1);
+        }
+
+        .kpi-card.c-amber .kpi-icon svg {
+            stroke: var(--amber);
+        }
+
+        .kpi-card.c-navy .kpi-icon {
+            background: rgba(44, 74, 110, 0.1);
+        }
+
+        .kpi-card.c-navy .kpi-icon svg {
+            stroke: var(--mid);
+        }
+
+        .kpi-trend {
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+
+        .kpi-trend.down {
+            background: rgba(200, 16, 46, 0.1);
+            color: var(--red);
+        }
+
+        .kpi-trend.neutral {
+            background: rgba(107, 140, 174, 0.12);
+            color: var(--steel);
+        }
+
+        .kpi-value {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: var(--navy);
+            line-height: 1;
+        }
+
+        .kpi-label {
+            font-size: 0.74rem;
+            color: var(--steel);
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        /* Panel */
+        .panel {
+            background: white;
+            border-radius: 10px;
+            border: 1px solid rgba(13, 27, 42, 0.06);
+            margin-bottom: 20px;
+        }
+
+        .panel-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--fog);
+        }
+
+        .panel-head h2 {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .panel-head .panel-sub {
+            font-size: 0.74rem;
+            color: var(--steel);
+            margin-top: 2px;
+            font-weight: 400;
+            font-family: 'Calibri', Calibri, sans-serif;
+        }
+
+        /* Table */
+        table.iqc-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .iqc-table thead th {
+            text-align: left;
+            font-size: 0.66rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--steel);
+            padding: 12px 22px;
+            border-bottom: 1px solid var(--fog);
+            white-space: nowrap;
+        }
+
+        .iqc-table tbody td {
+            padding: 14px 22px;
+            font-size: 0.82rem;
+            color: var(--text);
+            border-bottom: 1px solid var(--fog);
+            white-space: nowrap;
+        }
+
+        .iqc-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .iqc-table tbody tr {
+            transition: background 0.15s;
+        }
+
+        .iqc-table tbody tr:hover {
+            background: #fafcfe;
+        }
+
+        .cell-part {
+            font-weight: 600;
+            color: var(--navy);
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 11px;
+            border-radius: 20px;
+        }
+
+        .status-pill::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .status-pill.rejected {
+            background: rgba(200, 16, 46, 0.1);
+            color: var(--red);
+        }
+
+        /* Rejected banner */
+        .rejected-banner {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(200, 16, 46, 0.05);
+            border: 1px solid rgba(200, 16, 46, 0.18);
+            border-radius: 8px;
+            padding: 12px 18px;
+            margin-bottom: 22px;
+            font-size: 0.82rem;
+            color: var(--red);
+            font-weight: 500;
+        }
+
+        .rejected-banner svg {
+            width: 18px;
+            height: 18px;
+            min-width: 18px;
+            stroke: var(--red);
+            fill: none;
+            stroke-width: 2.2;
+        }
+
+        .rejected-banner strong {
+            font-weight: 700;
+        }
+
+        /* Empty state */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 64px 24px;
+            color: var(--steel);
+        }
+
+        .empty-state svg {
+            width: 44px;
+            height: 44px;
+            stroke: var(--steel);
+            fill: none;
+            stroke-width: 1.4;
+            margin-bottom: 16px;
+            opacity: 0.6;
+        }
+
+        .empty-state strong {
+            font-family: 'Calibri', Calibri, sans-serif;
+            color: var(--navy);
+            font-size: 1.02rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .empty-state p {
+            font-size: 0.82rem;
+            max-width: 280px;
+        }
+
+        /* Sidebar scrim */
+        .sidebar-scrim {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(13, 27, 42, 0.5);
+            z-index: 150;
+        }
+
+        .sidebar-scrim.show {
+            display: block;
+        }
+
+        /* ───────────────────────── RESPONSIVE ───────────────────────── */
+        @media (max-width: 1100px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 860px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .search-box {
+                display: none;
+            }
+
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 560px) {
+            .content {
+                padding: 20px 16px 40px;
+            }
+
+            .topbar {
+                padding: 0 16px;
+            }
+        }
+        .save-toast.show {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+            pointer-events: auto !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar-scrim" id="scrim"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo" style="display: flex; justify-content: center; align-items: center; padding: 24px 16px;">
+            <img src="logo.png" alt="SCHILLER Logo" style="height: 48px; width: auto; object-fit: contain;">
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-group-label">Overview</div>
+            <a href="production.html" class="sidebar-link">
+                <svg viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="7" height="9" rx="1.5" />
+                    <rect x="14" y="3" width="7" height="5" rx="1.5" />
+                    <rect x="14" y="12" width="7" height="9" rx="1.5" />
+                    <rect x="3" y="16" width="7" height="5" rx="1.5" />
+                </svg>
+                Dashboard
+            </a>
+
+            <div class="nav-group-label">Material Flow</div>
+            <a href="inwardp.html" class="sidebar-link">
+                <svg viewBox="0 0 24 24">
+                    <path d="M21 12H9M14 6l7 6-7 6" />
+                    <path d="M3 6v12" />
+                </svg>
+                Inward from IQC
+                <span class="badge" id="productionInwardBadge">0</span>
+            </a>
+            <a href="acceptedpro.html" class="sidebar-link">
+                <svg viewBox="0 0 24 24">
+                    <path d="M9 12l2 2 4-4" />
+                    <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Accepted
+            </a>
+            <a href="rejectedpro.html" class="sidebar-link active">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="15" y1="9" x2="9" y2="15" />
+                    <line x1="9" y1="9" x2="15" y2="15" />
+                </svg>
+                Rejected
+                <span class="badge" id="productionRejectedBadge">0</span>
+            </a>
+            <a href="reinwardpro.html" class="sidebar-link">
+                <svg viewBox="0 0 24 24">
+                    <polyline points="23 4 23 10 17 10" />
+                    <polyline points="1 20 1 14 7 14" />
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                </svg>
+                Completed
+                <span class="badge" id="productionReInwardBadge">0</span>
+            </a>
+            <a href="firstrep.html" class="sidebar-link">
+                <svg viewBox="0 0 24 24">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                    <polyline points="10 9 9 9 8 9" />
+                </svg>
+                Reinward from IQC
+            </a>
+
+            <div class="nav-group-label">System</div>
+            <a href="#" class="sidebar-link">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="3" />
+                    <path
+                        d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 005 15a1.65 1.65 0 00-.33-1.82L4.6 13.1a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 9a1.65 1.65 0 001-1.51V7a2 2 0 014 0v.09A1.65 1.65 0 0015 9a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019 13a1.65 1.65 0 00.33 1.82z" />
+                </svg>
+                Settings
+            </a>
+        </nav>
+
+        <div class="sidebar-foot">
+            <div class="sidebar-avatar">VK</div>
+            <div>
+                <div class="sidebar-user-name">V. Krishnan</div>
+                <div class="sidebar-user-role">Production Manager · Puducherry</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <div class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menuToggle">
+                    <svg viewBox="0 0 24 24">
+                        <line x1="3" y1="6" x2="21" y2="6" />
+                        <line x1="3" y1="12" x2="21" y2="12" />
+                        <line x1="3" y1="18" x2="21" y2="18" />
+                    </svg>
+                </button>
+                <div
+                    style="font-family: 'Calibri', Calibri, sans-serif; font-size:1.2rem; font-weight:700; color:var(--navy);">
+                    NCR / Rejections (Production)
+                </div>
+            </div>
+            <div class="topbar-right">
+                <div class="search-box">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="7" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Search model, part no..." />
+                </div>
+                <button class="icon-btn">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                        <path d="M13.73 21a2 2 0 01-3.46 0" />
+                    </svg>
+                    <span class="dot"></span>
+                </button>
+                <button class="icon-btn">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M9.09 9a3 3 0 015.83 1c0 2-3 2-3 4" />
+                        <path d="M12 17h.01" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="content">
+
+            <!-- Toast notification -->
+            <div class="save-toast" id="saveToast" style="display: flex; align-items: center; gap: 10px; background: #1E7B4D; color: white; border-radius: 8px; padding: 14px 20px; font-size: 0.85rem; font-weight: 600; box-shadow: 0 4px 12px rgba(30, 123, 77, 0.25); z-index: 1000; opacity: 0; transform: translateY(-20px); transition: opacity 0.3s, transform 0.3s; pointer-events: none; position: fixed; top: 24px; right: 24px;">
+                <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.4; min-width: 16px;">
+                    <path d="M9 12l2 2 4-4" />
+                    <circle cx="12" cy="12" r="9" />
+                </svg>
+                <span>Sent to Re-Inward successfully.</span>
+            </div>
+
+            <div class="page-head">
+                <div>
+                    <h1>NCR / Rejections</h1>
+                    <p>All production inward entries that have failed production quality verification — Puducherry.</p>
+                </div>
+                <div class="head-actions">
+                    <button class="btn-outline-navy" id="exportBtn">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        Export
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            
+
+            <!-- Rejected banner -->
+            <div class="rejected-banner">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 9v4M12 17h.01" />
+                    <path d="M10.29 3.86l-8.49 14.7A1 1 0 002.6 20h18.8a1 1 0 00.86-1.44l-8.49-14.7a1 1 0 00-1.72 0z" />
+                </svg>
+                <span>Showing <strong>rejected</strong> production inward entries only. These materials have failed production inward inspection and must not be used in assembly.</span>
+            </div>
+
+            <!-- Table panel -->
+            <div class="panel">
+                <div class="panel-head">
+                    <div>
+                        <h2>Rejection Register</h2>
+                        <div class="panel-sub"><span id="entryCount">0</span> entries</div>
+                    </div>
+                </div>
+
+                <div id="tableWrap">
+                    <table class="iqc-table">
+                        <thead>
+                            <tr>
+                                <th>Sl. No.</th>
+                                <th>Date</th>
+                                <th>Invoice No</th>
+                                <th>Model</th>
+                                <th>Total Parts</th>
+                                <th>Total Quantity</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="entryTableBody"></tbody>
+                    </table>
+                </div>
+
+                <div class="empty-state" id="emptyState" style="display:none;">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="9" />
+                        <path d="M15 9l-6 6M9 9l6 6" />
+                    </svg>
+                    <strong>No rejected entries</strong>
+                    <p>Production inward entries that fail inspection will appear here once marked as rejected.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        /* ── Sidebar toggle ── */
+        const sidebar = document.getElementById('sidebar');
+        const scrim = document.getElementById('scrim');
+        const menuToggle = document.getElementById('menuToggle');
+
+        function openSidebar() { sidebar.classList.add('open'); scrim.classList.add('show'); }
+        function closeSidebar() { sidebar.classList.remove('open'); scrim.classList.remove('show'); }
+        menuToggle.addEventListener('click', () => sidebar.classList.contains('open') ? closeSidebar() : openSidebar());
+        scrim.addEventListener('click', closeSidebar);
+
+        /* ── Helpers ── */
+        function formatDateDisplay(isoDate) {
+            if (!isoDate) return '—';
+            const d = isoDate.split('T')[0];
+            const [y, m, day] = d.split('-');
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return `${day} ${months[parseInt(m, 10) - 1]} ${y}`;
+        }
+
+        /* ── State ── */
+        let entries = [];
+        const tableBody = document.getElementById('entryTableBody');
+        const tableWrap = document.getElementById('tableWrap');
+        const emptyState = document.getElementById('emptyState');
+        const entryCount = document.getElementById('entryCount');
+        const searchInput = document.getElementById('searchInput');
+
+        async function fetchEntries() {
+            try {
+                const res = await fetch('/api/rejectedpro');
+                if (res.ok) {
+                    const allData = await res.json();
+                    entries = allData.filter(e => e.source === 'inwardp');
+                    renderTable();
+                    updateKPIs();
+                    // Set the rejected badge on the active page itself
+                    const badge = document.getElementById('productionRejectedBadge');
+                    if (badge) {
+                        badge.textContent = groupEntries(entries).length;
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+        function parseRemarksToItems(remarks, totalQty) {
+            const items = [];
+            if (remarks) {
+                const parts = remarks.split(', ');
+                parts.forEach(p => {
+                    let nature = p;
+                    let qty = 1;
+                    const splitIdx = p.lastIndexOf(': ');
+                    if (splitIdx !== -1 && !isNaN(p.substring(splitIdx + 2).trim())) {
+                        qty = parseInt(p.substring(splitIdx + 2).trim(), 10) || 1;
+                        nature = p.substring(0, splitIdx).trim();
+                    }
+                    items.push({ nature: nature, qty: qty });
+                });
+            } else if (totalQty > 0) {
+                items.push({ nature: '-', qty: totalQty });
+            }
+            return items;
+        }
+
+        function groupEntries(data) {
+            const groups = {};
+            data.forEach(e => {
+                if (!e.itemDetails || e.itemDetails.length === 0) {
+                    e.itemDetails = parseRemarksToItems(e.remarks, Number(e.quantity || e.qty || 0));
+                }
+
+                // Check if the whole entry is already replaced or sent to re-inward
+                if (e.reInwarded || e.sentToReInward || e.isReplaced) return;
+
+                const d = e.date ? e.date.split('T')[0] : '';
+                const inv = e.invoiceNo || '-';
+                const key = inv + '|' + e.model;
+                if (!groups[key]) {
+                    groups[key] = { date: d, invoiceNo: inv, model: e.model, parts: [], totalQty: 0, rejections: [], mergedParts: {} };
+                }
+
+                let activeQty = 0;
+                const activeSubItems = [];
+                if (e.itemDetails) {
+                    e.itemDetails.forEach((sub, idx) => {
+                        if (!sub.isReplaced) {
+                            activeQty += Number(sub.qty || 1);
+                            activeSubItems.push({
+                                ...sub,
+                                _originalId: e._id,
+                                _originalIdx: idx
+                            });
+                        }
+                    });
+                }
+
+                // If no active rejected items left in this entry, skip it
+                if (activeQty === 0 && activeSubItems.length === 0) return;
+
+                groups[key].parts.push(e);
+                groups[key].totalQty += Number(e.totalQuantity || e.quantity || e.qty || 0);
+                groups[key].rejections.push(e);
+
+                // Aggregate by partNo
+                const pKey = e.partNo;
+                if (!groups[key].mergedParts[pKey]) {
+                    groups[key].mergedParts[pKey] = {
+                        partNo: e.partNo,
+                        partDescription: e.partDescription,
+                        totalQty: 0,
+                        qty: 0,
+                        items: []
+                    };
+                }
+                const m = groups[key].mergedParts[pKey];
+                m.totalQty += Number(e.totalQuantity || e.quantity || e.qty || 0);
+                m.qty += activeQty;
+                
+                m.items.push(...activeSubItems);
+            });
+            
+            // Filter out groups with 0 parts
+            const finalGroups = Object.values(groups).filter(g => g.parts.length > 0);
+            return finalGroups;
+        }
+
+function renderTable() {
+            const query = searchInput.value.trim().toLowerCase();
+            const filtered = entries.filter(e =>
+                !query ||
+                (e.model && e.model.toLowerCase().includes(query)) ||
+                (e.partNo && e.partNo.toLowerCase().includes(query)) ||
+                (e.partDescription && e.partDescription.toLowerCase().includes(query))
+            );
+
+            const grouped = groupEntries(filtered);
+            entryCount.textContent = grouped.length;
+
+            if (grouped.length === 0) {
+                tableWrap.style.display = 'none';
+                emptyState.style.display = 'flex';
+                return;
+            }
+            tableWrap.style.display = 'block';
+            emptyState.style.display = 'none';
+
+            let html = '';
+            grouped.forEach((g, i) => {
+                html += `
+                <tr class="group-row" style="cursor:pointer; transition: background 0.15s;"
+                    onmouseover="this.style.background='#fff8f8'" onmouseout="this.style.background='white'"
+                    onclick="toggleSubRow('subrow-${i}')">
+                    <td>${i + 1}</td>
+                    <td><span class="cell-part">${formatDateDisplay(g.date)}</span></td>
+                    <td><span class="cell-part" style="font-weight: 500;">${g.invoiceNo || '-'}</span></td>
+                    <td><span class="cell-part">${g.model}</span></td>
+                    <td><strong>${g.parts.length}</strong> Parts</td>
+                    <td>${g.totalQty.toLocaleString('en-IN')}</td>
+                    <td style="text-align: right;">
+                        <span style="font-size: 0.75rem; color: var(--steel); user-select:none;">&#9660; Details</span>
+                    </td>
+                </tr>
+                <tr id="subrow-${i}" style="display: none; background: #fff9f9;">
+                    <td colspan="9" style="padding: 0; border-bottom: 2px solid var(--fog);">
+                        <div style="padding: 15px 30px;">
+                            <table style="width:100%; border-collapse:collapse; font-size: 0.8rem;">
+                                <thead>
+                                    <tr>
+                                        <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:left; border-bottom:1px solid #e2e8f0;">Part No.</th>
+                                        <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:left; border-bottom:1px solid #e2e8f0;">Description</th>
+                                        <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:right; border-bottom:1px solid #e2e8f0;">Total Qty</th>
+                                        <th style="padding:8px 12px; font-weight:600; color:var(--red); text-align:right; border-bottom:1px solid #e2e8f0;">Rejected Qty</th>
+                                        <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:right; border-bottom:1px solid #e2e8f0;">Items</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${Object.values(g.mergedParts).map((m, mIdx) => `
+                                        <tr onclick="toggleSubItemRow('subrow-items-${i}-${mIdx}')" style="cursor:pointer; transition: background 0.15s;" onmouseover="this.style.background='#f0f4f8'" onmouseout="this.style.background='white'">
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9;"><strong>${m.partNo}</strong></td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; color: var(--text);">${m.partDescription || '-'}</td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right;">${Number(m.totalQty).toLocaleString('en-IN')}</td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right; color:var(--red);">${Number(m.qty).toLocaleString('en-IN')}</td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right;"><span style="font-size: 0.75rem; color: var(--steel);">&#9660; Items</span></td>
+                                        </tr>
+                                        <tr id="subrow-items-${i}-${mIdx}" style="display: none; background: #fafbfc;">
+                                            <td colspan="9" style="padding: 12px 24px;">
+                                                <table style="width: 100%; border-collapse: collapse; background: white; border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="padding:6px 12px; font-weight:600; color:var(--navy); background:#f1f5f9; text-align:left; font-size:0.75rem; text-transform:uppercase;">Remarks (Nature)</th>
+                                                            <th style="padding:6px 12px; font-weight:600; color:var(--navy); background:#f1f5f9; text-align:left; font-size:0.75rem; text-transform:uppercase;">SN / Batch</th>
+                                                            <th style="padding:6px 12px; font-weight:600; color:var(--navy); background:#f1f5f9; text-align:left; font-size:0.75rem; text-transform:uppercase;">Spare Replaced</th>
+                                                            <th style="padding:6px 12px; font-weight:600; color:var(--navy); background:#f1f5f9; text-align:center; font-size:0.75rem; text-transform:uppercase;">Qty</th>
+                                                            <th style="padding:6px 12px; font-weight:600; color:var(--navy); background:#f1f5f9; text-align:left; font-size:0.75rem; text-transform:uppercase;">Rep Serial No</th>
+                                                            <th style="padding:6px 12px; font-weight:600; color:var(--navy); background:#f1f5f9; text-align:left; font-size:0.75rem; text-transform:uppercase;">Addl Remarks</th>
+                                                            <th style="padding:6px 12px; font-weight:600; color:var(--navy); background:#f1f5f9; text-align:center; font-size:0.75rem; text-transform:uppercase;">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        ${m.items.length > 0 ? m.items.map((sub) => {
+                                                            let rowHtml = `<tr style="background: white; border-bottom: 1px solid #f1f5f9;">
+                                                                <td style="padding:6px 12px; font-size:0.75rem;">${sub.nature || '-'}</td>
+                                                                <td style="padding:6px 12px; font-size:0.75rem;">${sub.serial || '-'}</td>
+                                                                <td style="padding:6px 12px; font-size:0.75rem;">${sub.spare || '-'}</td>
+                                                                <td style="padding:6px 12px; text-align:center; font-size:0.75rem;">${sub.qty || 1}</td>
+                                                                <td style="padding: 6px 12px;">
+                                                                    <input type="text" value="${sub.repSerialNo || ''}" oninput="updateSubItemField('${sub._originalId}', ${sub._originalIdx}, 'repSerialNo', this.value)" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.8rem;" placeholder="Rep Serial No" />
+                                                                </td>
+                                                                <td style="padding: 6px 12px;">
+                                                                    <input type="text" value="${sub.additionalRemarks || ''}" oninput="updateSubItemField('${sub._originalId}', ${sub._originalIdx}, 'additionalRemarks', this.value)" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.8rem;" placeholder="Addl Remarks..." />
+                                                                </td>
+                                                                <td style="padding:6px 12px; text-align:center;">
+                                                                    <button onclick="acceptSubItem('${sub._originalId}', ${sub._originalIdx}, this)" style="background: var(--green); color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">&#10004;</button>
+                                                                </td>
+                                                            </tr>`;
+                                                            return rowHtml;
+                                                        }).join('') : `<tr><td colspan="7" style="padding:6px 12px; text-align:center; color:var(--steel); font-size:0.75rem;">No items pending replacement.</td></tr>`}
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+                `;
+            });
+            tableBody.innerHTML = html;
+        }
+
+        const updateTimers = {};
+        async function updateSubItemField(id, index, field, value) {
+            const entry = entries.find(e => e._id === id);
+            if (!entry || !entry.itemDetails || !entry.itemDetails[index]) return;
+            entry.itemDetails[index][field] = value;
+            
+            const timerKey = id + '-' + index;
+            clearTimeout(updateTimers[timerKey]);
+            
+            updateTimers[timerKey] = setTimeout(async () => {
+                try {
+                    await fetch('/api/rejectedpro/' + id, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ itemDetails: entry.itemDetails })
+                    });
+                } catch (err) {
+                    console.error('Failed to auto-save:', err);
+                }
+            }, 600);
+        }
+
+        async function acceptSubItem(id, index, btn) {
+            const entry = entries.find(e => e._id === id);
+            if (!entry) return;
+            const sub = entry.itemDetails[index];
+            sub.isReplaced = true;
+            btn.style.background = 'gray';
+            btn.textContent = 'Accepted';
+            btn.disabled = true;
+            
+            // Check if all items are replaced now
+            const allReplaced = entry.itemDetails.every(item => item.isReplaced);
+            
+            // Log history for acceptedpro pop-up
+            if (!entry.yetToAcceptHistory) {
+                entry.yetToAcceptHistory = [];
+            }
+            entry.yetToAcceptHistory.push({
+                reducedBy: sub.qty || 1,
+                updatedAt: new Date().toISOString()
+            });
+            entry.updatedAt = new Date().toISOString();
+            
+            try {
+                const body = { 
+                    itemDetails: entry.itemDetails,
+                    yetToAcceptHistory: entry.yetToAcceptHistory,
+                    updatedAt: entry.updatedAt
+                };
+                if (allReplaced) {
+                    body.isReplaced = true;
+                }
+                
+                await fetch('/api/rejectedpro/' + id, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                
+                if (allReplaced) {
+                    entry.isReplaced = true;
+                }
+                
+                // Immediately refresh table so the ticked item disappears
+                renderTable();
+            } catch (err) {
+                console.error(err);
+                alert('Error updating item. Please check network.');
+            }
+        }
+
+        window.toggleSubRow = function (id) {
+            const el = document.getElementById(id);
+            el.style.display = el.style.display === 'none' ? 'table-row' : 'none';
+        };
+        
+        window.toggleSubItemRow = function (id) {
+            const el = document.getElementById(id);
+            el.style.display = el.style.display === 'none' ? 'table-row' : 'none';
+        };
+
+        searchInput.addEventListener('input', renderTable);
+
+        /* ── Export ── */
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            const rows = [['Sl.No.', 'Date', 'Model', 'Part No.', 'Description', 'Quantity', 'Status']];
+            let sl = 1;
+            groupEntries(entries).forEach(g => {
+                g.parts.forEach(p => {
+                    rows.push([sl++, g.date, g.model, p.partNo, p.partDescription || '', Number(p.quantity || p.qty || 0), 'Rejected']);
+                });
+            });
+            const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+            const a = document.createElement('a');
+            a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+            a.download = 'rejected_production_' + new Date().toISOString().split('T')[0] + '.csv';
+            a.click();
+        });
+
+        function renderStatusCell(g) {
+            let html = `<span class="status-pill rejected">Rejected</span>`;
+            if (g.rejections && g.rejections.length > 0) {
+                const allReinspected = g.rejections.every(r => r.reInwarded);
+                const allSent = g.rejections.every(r => r.sentToReInward || r.reInwarded);
+                
+                if (allReinspected) {
+                    html += ` <span style="font-size:0.68rem;color:var(--green);font-weight:600;display:inline-block;margin-left:8px;padding:3px 8px;background:rgba(30,123,77,0.1);border-radius:4px;">[Re-inspected]</span>`;
+                } else if (allSent) {
+                    html += ` <span style="font-size:0.68rem;color:var(--amber);font-weight:600;display:inline-block;margin-left:8px;padding:3px 8px;background:rgba(199,123,18,0.1);border-radius:4px;">[In Re-Inward]</span>`;
+                }
+            }
+            return html;
+        }
+
+        async function fetchReInwardCount() {
+            try {
+                const res = await fetch('/api/reinwardpro');
+                if (res.ok) {
+                    const data = await res.json();
+                    const groups = {};
+                    data.forEach(e => {
+                        const d = e.date ? e.date.split('T')[0] : '';
+                        const key = d + '|' + e.model;
+                        groups[key] = true;
+                    });
+                    const badge = document.getElementById('productionReInwardBadge');
+                    if (badge) {
+                        badge.textContent = Object.keys(groups).length;
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        /* ── Init ── */
+        fetchEntries();
+        fetchInwardpCount();
+        fetchReInwardCount();
+    </script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userName = localStorage.getItem('userName');
+            const userRole = localStorage.getItem('userRole');
+            if (userName) {
+                const nameEls = document.querySelectorAll('.sidebar-user-name');
+                const avatarEls = document.querySelectorAll('.sidebar-avatar');
+                const roleEls = document.querySelectorAll('.sidebar-user-role');
+                
+                nameEls.forEach(el => el.textContent = userName);
+                
+                const initials = userName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                avatarEls.forEach(el => el.textContent = initials);
+                
+                if (userRole) {
+                    const roleText = userRole.charAt(0).toUpperCase() + userRole.slice(1);
+                    roleEls.forEach(el => el.textContent = roleText);
+                }
+            }
+        });
+    </script>
+
+</body>
+
+</html>
+

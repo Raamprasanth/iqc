@@ -1,0 +1,2605 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SCHILLER Healthcare India – Admin Dashboard</title>
+    
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --navy: #0D1B2A;
+            --navy2: #162233;
+            --red: #C8102E;
+            --red-dim: rgba(200, 16, 46, 0.10);
+            --white: #FFFFFF;
+            --fog: #F0F4F8;
+            --fog2: #E4ECF3;
+            --steel: #6B8CAE;
+            --mid: #2C4A6E;
+            --text: #1A2B3C;
+            --border: #D4DCE5;
+            --sidebar: 240px;
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: 'Calibri', Calibri, sans-serif;
+            color: var(--text);
+            background: var(--fog);
+        }
+
+        /* ══════════════════════════════════════
+       LAYOUT
+    ══════════════════════════════════════ */
+        .shell {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ══════════════════════════════════════
+       SIDEBAR
+    ══════════════════════════════════════ */
+        .sidebar {
+            width: var(--sidebar);
+            min-width: var(--sidebar);
+            background: var(--navy);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow-y: auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Sidebar brand */
+        .sb-brand {
+            padding: 28px 20px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            flex-shrink: 0;
+        }
+
+        .sb-logo-mark {
+            width: 34px;
+            height: 34px;
+            background: var(--red);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .sb-logo-mark svg {
+            width: 20px;
+            height: 20px;
+            stroke: white;
+            fill: none;
+            stroke-width: 2.2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .sb-brand-text {
+            line-height: 1.2;
+        }
+
+        .sb-brand-name {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: 0.03em;
+        }
+
+        .sb-brand-name span {
+            color: var(--red);
+        }
+
+        .sb-brand-sub {
+            font-size: 0.58rem;
+            color: rgba(255, 255, 255, 0.3);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-top: 1px;
+        }
+
+        /* Nav sections */
+        .sb-nav {
+            flex: 1;
+            padding: 20px 12px;
+        }
+
+        .sb-section-label {
+            font-size: 0.58rem;
+            font-weight: 600;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.25);
+            padding: 0 8px;
+            margin: 20px 0 8px;
+        }
+
+        .sb-section-label:first-child {
+            margin-top: 0;
+        }
+
+        .sb-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+            color: rgba(255, 255, 255, 0.52);
+            font-size: 0.82rem;
+            font-weight: 500;
+            user-select: none;
+            position: relative;
+        }
+
+        .sb-item svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+            flex-shrink: 0;
+        }
+
+        .sb-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .sb-item.active {
+            background: var(--red-dim);
+            color: white;
+        }
+
+        .sb-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 6px;
+            bottom: 6px;
+            width: 3px;
+            background: var(--red);
+            border-radius: 0 2px 2px 0;
+        }
+
+        .sb-item.active svg {
+            stroke: var(--red);
+        }
+
+        .sb-badge {
+            margin-left: auto;
+            background: var(--red);
+            color: white;
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 100px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        /* Sidebar footer */
+        .sb-footer {
+            padding: 16px 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            flex-shrink: 0;
+        }
+
+        .sb-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .sb-user:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .sb-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .sb-user-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .sb-user-name {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: white;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sb-user-role {
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.35);
+            margin-top: 1px;
+        }
+
+        .sb-user svg {
+            width: 14px;
+            height: 14px;
+            stroke: rgba(255, 255, 255, 0.3);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* ══════════════════════════════════════
+       MAIN CONTENT
+    ══════════════════════════════════════ */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Top bar */
+        .topbar {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 0 32px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .topbar-title {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .topbar-sub {
+            font-size: 0.72rem;
+            color: var(--steel);
+            margin-top: 1px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .topbar-chip {
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--red);
+            background: var(--red-dim);
+            padding: 5px 12px;
+            border-radius: 100px;
+            border: 1px solid rgba(200, 16, 46, 0.2);
+        }
+
+        /* Content scroll area */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 32px;
+        }
+
+        /* ══════════════════════════════════════
+       PAGES
+    ══════════════════════════════════════ */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* ── Page header ── */
+        .page-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 28px;
+            gap: 16px;
+        }
+
+        .page-eyebrow {
+            font-size: 0.64rem;
+            font-weight: 600;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--red);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .page-eyebrow::before {
+            content: '';
+            display: block;
+            width: 16px;
+            height: 2px;
+            background: var(--red);
+        }
+
+        .page-title {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.65rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .page-desc {
+            font-size: 0.82rem;
+            color: var(--steel);
+            margin-top: 4px;
+        }
+
+        /* Primary button */
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--red);
+            color: white;
+            padding: 11px 22px;
+            border-radius: 6px;
+            border: none;
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-primary svg {
+            width: 15px;
+            height: 15px;
+            stroke: white;
+            fill: none;
+            stroke-width: 2.2;
+        }
+
+        .btn-primary:hover {
+            background: #a50d23;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(200, 16, 46, 0.25);
+        }
+
+        .btn-ghost {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: white;
+            color: var(--text);
+            padding: 9px 18px;
+            border-radius: 6px;
+            border: 1.5px solid var(--border);
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 0.78rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .btn-ghost svg {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--steel);
+            color: var(--navy);
+        }
+
+        .btn-danger {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: transparent;
+            color: var(--red);
+            padding: 7px 14px;
+            border-radius: 5px;
+            border: 1px solid rgba(200, 16, 46, 0.25);
+            font-size: 0.74rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Calibri', Calibri, sans-serif;
+            transition: background 0.15s;
+        }
+
+        .btn-danger svg {
+            width: 13px;
+            height: 13px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .btn-danger:hover {
+            background: rgba(200, 16, 46, 0.07);
+        }
+
+        /* ── STAT CARDS ── */
+        .stat-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 22px 24px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            background: var(--red-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .stat-icon svg {
+            width: 22px;
+            height: 22px;
+            stroke: var(--red);
+            fill: none;
+            stroke-width: 1.8;
+        }
+
+        .stat-label {
+            font-size: 0.68rem;
+            color: var(--steel);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .stat-value {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: var(--navy);
+            line-height: 1;
+            margin-top: 4px;
+        }
+
+        /* ── CARD ── */
+        .card {
+            background: white;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--fog2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .card-title {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .card-sub {
+            font-size: 0.74rem;
+            color: var(--steel);
+            margin-top: 2px;
+        }
+
+        /* Search bar */
+        .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-wrap {
+            position: relative;
+        }
+
+        .search-wrap svg {
+            position: absolute;
+            left: 11px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 14px;
+            height: 14px;
+            stroke: var(--steel);
+            fill: none;
+            stroke-width: 1.8;
+            pointer-events: none;
+        }
+
+        .search-input {
+            padding: 8px 12px 8px 34px;
+            border: 1.5px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-family: 'Calibri', Calibri, sans-serif;
+            color: var(--text);
+            width: 220px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--red);
+        }
+
+        /* Filter select */
+        .filter-select {
+            padding: 8px 32px 8px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-family: 'Calibri', Calibri, sans-serif;
+            color: var(--text);
+            background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236B8CAE' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 10px center;
+            appearance: none;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .filter-select:focus {
+            border-color: var(--red);
+        }
+
+        /* ── USER TABLE ── */
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .user-table th {
+            text-align: left;
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--steel);
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--fog2);
+            background: var(--fog);
+            white-space: nowrap;
+        }
+
+        .user-table td {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--fog2);
+            font-size: 0.82rem;
+            vertical-align: middle;
+        }
+
+        .user-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .user-table tbody tr {
+            transition: background 0.12s;
+        }
+
+        .user-table tbody tr:hover {
+            background: var(--fog);
+        }
+
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .user-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .user-avatar.iqc {
+            background: #1565C0;
+        }
+
+        .user-avatar.prod {
+            background: #2E7D32;
+        }
+
+        .user-avatar.ipqc {
+            background: #6A1B9A;
+        }
+
+        .user-avatar.admin {
+            background: var(--red);
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--navy);
+            font-size: 0.84rem;
+        }
+
+        .user-id {
+            font-size: 0.7rem;
+            color: var(--steel);
+        }
+
+        .dept-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 4px 11px;
+            border-radius: 100px;
+        }
+
+        .dept-tag .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .dept-tag.iqc {
+            background: rgba(21, 101, 192, 0.1);
+            color: #1565C0;
+        }
+
+        .dept-tag.iqc .dot {
+            background: #1565C0;
+        }
+
+        .dept-tag.prod {
+            background: rgba(46, 125, 50, 0.1);
+            color: #2E7D32;
+        }
+
+        .dept-tag.prod .dot {
+            background: #2E7D32;
+        }
+
+        .dept-tag.ipqc {
+            background: rgba(106, 27, 154, 0.1);
+            color: #6A1B9A;
+        }
+
+        .dept-tag.ipqc .dot {
+            background: #6A1B9A;
+        }
+
+        .dept-tag.admin {
+            background: var(--red-dim);
+            color: var(--red);
+        }
+
+        .dept-tag.admin .dot {
+            background: var(--red);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.68rem;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 100px;
+        }
+
+        .status-badge.active {
+            background: rgba(46, 125, 50, 0.1);
+            color: #2E7D32;
+        }
+
+        .status-badge.active::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #2E7D32;
+        }
+
+        .status-badge.inactive {
+            background: rgba(107, 140, 174, 0.12);
+            color: var(--steel);
+        }
+
+        .status-badge.inactive::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--steel);
+        }
+
+        .action-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            border: 1px solid var(--border);
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s, border-color 0.15s;
+        }
+
+        .icon-btn svg {
+            width: 13px;
+            height: 13px;
+            stroke: var(--steel);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .icon-btn:hover {
+            background: var(--fog);
+            border-color: var(--steel);
+        }
+
+        .icon-btn:hover svg {
+            stroke: var(--navy);
+        }
+
+        .icon-btn.delete:hover {
+            background: rgba(200, 16, 46, 0.07);
+            border-color: rgba(200, 16, 46, 0.3);
+        }
+
+        .icon-btn.delete:hover svg {
+            stroke: var(--red);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 56px 24px;
+            color: var(--steel);
+        }
+
+        .empty-state svg {
+            width: 48px;
+            height: 48px;
+            stroke: var(--fog2);
+            fill: none;
+            stroke-width: 1.2;
+            margin: 0 auto 16px;
+            display: block;
+        }
+
+        .empty-state p {
+            font-size: 0.84rem;
+        }
+
+        /* ══════════════════════════════════════
+       MODAL
+    ══════════════════════════════════════ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(13, 27, 42, 0.55);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal {
+            background: white;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 480px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 32px 80px rgba(13, 27, 42, 0.2);
+            animation: slideUp 0.25s cubic-bezier(0.34, 1.2, 0.64, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 28px 32px 20px;
+            border-bottom: 1px solid var(--fog2);
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .modal-sub {
+            font-size: 0.76rem;
+            color: var(--steel);
+            margin-top: 3px;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+            transition: background 0.15s;
+        }
+
+        .modal-close svg {
+            width: 14px;
+            height: 14px;
+            stroke: var(--steel);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .modal-close:hover {
+            background: var(--fog);
+        }
+
+        .modal-body {
+            padding: 24px 32px;
+        }
+
+        .modal-footer {
+            padding: 16px 32px 28px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        /* Form fields in modal */
+        .field {
+            margin-bottom: 20px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--navy);
+            margin-bottom: 7px;
+        }
+
+        .field-wrap {
+            position: relative;
+        }
+
+        .field-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 15px;
+            height: 15px;
+            stroke: var(--steel);
+            fill: none;
+            stroke-width: 1.8;
+            pointer-events: none;
+        }
+
+        .field input,
+        .field select {
+            width: 100%;
+            padding: 11px 12px 11px 38px;
+            border: 1.5px solid var(--border);
+            border-radius: 6px;
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 0.84rem;
+            color: var(--text);
+            background: white;
+            outline: none;
+            appearance: none;
+            transition: border-color 0.2s;
+        }
+
+        .field select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236B8CAE' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 36px;
+            cursor: pointer;
+        }
+
+        .field input:focus,
+        .field select:focus {
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.09);
+        }
+
+        .field.error input,
+        .field.error select {
+            border-color: var(--red);
+            background: rgba(200, 16, 46, 0.02);
+        }
+
+        .field-error {
+            font-size: 0.7rem;
+            color: var(--red);
+            margin-top: 5px;
+            display: none;
+        }
+
+        .field.error .field-error {
+            display: block;
+        }
+
+        .pw-row {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .pw-row .field {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .pw-toggle-btn {
+            height: 40px;
+            min-width: 40px;
+            border: 1.5px solid var(--border);
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: border-color 0.2s;
+        }
+
+        .pw-toggle-btn svg {
+            width: 15px;
+            height: 15px;
+            stroke: var(--steel);
+            fill: none;
+            stroke-width: 1.8;
+        }
+
+        .pw-toggle-btn:hover {
+            border-color: var(--steel);
+        }
+
+        .hint {
+            font-size: 0.7rem;
+            color: var(--steel);
+            margin-top: 5px;
+        }
+
+        /* Strength meter */
+        .strength-meter {
+            margin-top: 8px;
+        }
+
+        .strength-bars {
+            display: flex;
+            gap: 4px;
+        }
+
+        .strength-bar {
+            flex: 1;
+            height: 3px;
+            border-radius: 2px;
+            background: var(--fog2);
+            transition: background 0.3s;
+        }
+
+        .strength-label {
+            font-size: 0.65rem;
+            color: var(--steel);
+            margin-top: 4px;
+        }
+
+        /* Delete confirm modal */
+        .del-icon-wrap {
+            width: 60px;
+            height: 60px;
+            background: rgba(200, 16, 46, 0.08);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .del-icon-wrap svg {
+            width: 28px;
+            height: 28px;
+            stroke: var(--red);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* ══════════════════════════════════════
+       SETTINGS PAGE
+    ══════════════════════════════════════ */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .settings-card {
+            background: white;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .settings-card-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--fog2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .settings-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 7px;
+            background: var(--red-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .settings-icon svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--red);
+            fill: none;
+            stroke-width: 1.8;
+        }
+
+        .settings-card-title {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .settings-card-sub {
+            font-size: 0.72rem;
+            color: var(--steel);
+            margin-top: 1px;
+        }
+
+        .settings-card-body {
+            padding: 20px 24px;
+        }
+
+        .settings-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--fog2);
+        }
+
+        .settings-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .settings-row:first-child {
+            padding-top: 0;
+        }
+
+        .settings-row-label {
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .settings-row-sub {
+            font-size: 0.72rem;
+            color: var(--steel);
+            margin-top: 2px;
+        }
+
+        /* Toggle switch */
+        .toggle {
+            position: relative;
+            width: 42px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-track {
+            position: absolute;
+            inset: 0;
+            background: var(--fog2);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .toggle-track::before {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: transform 0.2s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+        }
+
+        .toggle input:checked+.toggle-track {
+            background: var(--red);
+        }
+
+        .toggle input:checked+.toggle-track::before {
+            transform: translateX(18px);
+        }
+
+        .settings-input {
+            padding: 8px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-family: 'Calibri', Calibri, sans-serif;
+            color: var(--text);
+            width: 160px;
+            outline: none;
+        }
+
+        .settings-input:focus {
+            border-color: var(--red);
+        }
+
+        .dept-settings-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .dept-settings-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--fog);
+            border-radius: 6px;
+            padding: 10px 14px;
+        }
+
+        .dept-settings-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--navy);
+        }
+
+        .dept-count {
+            font-size: 0.7rem;
+            color: var(--steel);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            background: var(--navy);
+            color: white;
+            padding: 13px 20px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 28px rgba(13, 27, 42, 0.25);
+            z-index: 2000;
+            transform: translateY(80px);
+            opacity: 0;
+            transition: transform 0.3s cubic-bezier(0.34, 1.2, 0.64, 1), opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast svg {
+            width: 16px;
+            height: 16px;
+            stroke: #4CAF50;
+            fill: none;
+            stroke-width: 2.5;
+            flex-shrink: 0;
+        }
+
+        .toast.error svg {
+            stroke: var(--red);
+        }
+
+        .toast-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: var(--red);
+            border-radius: 0 0 8px 8px;
+            animation: none;
+        }
+
+        .toast.show .toast-bar {
+            animation: shrink 2.8s linear forwards;
+        }
+
+        @keyframes shrink {
+            from {
+                width: 100%;
+            }
+
+            to {
+                width: 0%;
+            }
+        }
+
+        @media (max-width: 1100px) {
+            .stat-row {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+            :root {
+                --sidebar: 60px;
+            }
+
+            .sb-brand-text,
+            .sb-section-label,
+            .sb-item span,
+            .sb-user-info,
+            .sb-badge {
+                display: none;
+            }
+
+            .sb-item {
+                justify-content: center;
+                padding: 12px;
+            }
+
+            .sb-item svg {
+                width: 20px;
+                height: 20px;
+            }
+
+            .topbar {
+                padding: 0 16px;
+            }
+
+            .content {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <svg viewBox="0 0 24 24">
+            <path d="M20 6L9 17l-5-5" />
+        </svg>
+        <span id="toastMsg">Done</span>
+        <div class="toast-bar"></div>
+    </div>
+
+    <!-- CREATE / EDIT USER MODAL -->
+    <div class="modal-overlay" id="userModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title" id="modalTitle">Create New User</div>
+                    <div class="modal-sub" id="modalSub">Fill in the details to add a staff member</div>
+                </div>
+                <button class="modal-close" onclick="closeModal('userModal')">
+                    <svg viewBox="0 0 24 24">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="field" id="f-fullname">
+                    <label>Full Name</label>
+                    <div class="field-wrap">
+                        <svg class="field-icon" viewBox="0 0 24 24">
+                            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg>
+                        <input type="text" id="inp-fullname" placeholder="e.g. Priya Sharma" autocomplete="off" />
+                    </div>
+                    <div class="field-error">Full name is required.</div>
+                </div>
+
+                <div class="field" id="f-username">
+                    <label>Username</label>
+                    <div class="field-wrap">
+                        <svg class="field-icon" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="4" />
+                            <path d="M16 8v1a4 4 0 01-8 0V8" />
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" />
+                        </svg>
+                        <input type="text" id="inp-username" placeholder="e.g. priya.sharma" autocomplete="off"
+                            spellcheck="false" />
+                    </div>
+                    <div class="hint">Letters, numbers and dots only. No spaces.</div>
+                    <div class="field-error">Username is required.</div>
+                </div>
+
+                <div class="field" id="f-dept">
+                    <label>Department</label>
+                    <div class="field-wrap">
+                        <svg class="field-icon" viewBox="0 0 24 24">
+                            <rect x="2" y="7" width="20" height="14" rx="2" />
+                            <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
+                        </svg>
+                        <select id="inp-dept">
+                            <option value="" disabled selected>Select department</option>
+                            <option value="IQC">IQC — Incoming Quality Control</option>
+                            <option value="Production">Production</option>
+                            <option value="IPQC">In Process QC</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="field-error">Please select a department.</div>
+                </div>
+
+                <div class="field" id="f-password">
+                    <label>Password</label>
+                    <div class="pw-row">
+                        <div class="field">
+                            <div class="field-wrap">
+                                <svg class="field-icon" viewBox="0 0 24 24">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" />
+                                    <path d="M7 11V7a5 5 0 0110 0v4" />
+                                </svg>
+                                <input type="password" id="inp-password" placeholder="Set a secure password"
+                                    autocomplete="new-password" />
+                            </div>
+                        </div>
+                        <button class="pw-toggle-btn" id="modalPwToggle" type="button">
+                            <svg id="modalEyeIcon" viewBox="0 0 24 24">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="strength-meter" id="strengthMeter" style="display:none;">
+                        <div class="strength-bars">
+                            <div class="strength-bar" id="sb1"></div>
+                            <div class="strength-bar" id="sb2"></div>
+                            <div class="strength-bar" id="sb3"></div>
+                            <div class="strength-bar" id="sb4"></div>
+                        </div>
+                        <div class="strength-label" id="strengthLabel"></div>
+                    </div>
+                    <div class="field-error" id="pw-error">Password must be at least 6 characters.</div>
+                </div>
+
+                <!-- Status toggle (edit mode only) -->
+                <div class="field" id="f-status" style="display:none;">
+                    <label>Account Status</label>
+                    <div style="display:flex; align-items:center; gap:12px; margin-top:4px;">
+                        <label class="toggle">
+                            <input type="checkbox" id="inp-status" checked>
+                            <span class="toggle-track"></span>
+                        </label>
+                        <span style="font-size:0.82rem; color:var(--text);" id="statusLabel">Active</span>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn-ghost" onclick="closeModal('userModal')">Cancel</button>
+                <button class="btn-primary" id="modalSaveBtn" onclick="saveUser()">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+                        <polyline points="17 21 17 13 7 13 7 21" />
+                        <polyline points="7 3 7 8 15 8" />
+                    </svg>
+                    Create User
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DELETE CONFIRM MODAL -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal" style="max-width:380px;">
+            <div class="modal-body" style="padding:36px 32px 24px; text-align:center;">
+                <div class="del-icon-wrap">
+                    <svg viewBox="0 0 24 24">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6l-1 14H6L5 6" />
+                        <path d="M10 11v6M14 11v6" />
+                        <path d="M9 6V4h6v2" />
+                    </svg>
+                </div>
+                <div class="modal-title" style="margin-bottom:8px;">Delete User?</div>
+                <p style="font-size:0.82rem; color:var(--steel); line-height:1.6;">
+                    You are about to delete <strong id="deleteUserName" style="color:var(--navy);"></strong>. This
+                    cannot be undone.
+                </p>
+            </div>
+            <div class="modal-footer" style="justify-content:center; gap:12px;">
+                <button class="btn-ghost" onclick="closeModal('deleteModal')">Cancel</button>
+                <button class="btn-primary" style="background:var(--red);" onclick="confirmDelete()">
+                    <svg viewBox="0 0 24 24">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6l-1 14H6L5 6" />
+                        <path d="M9 6V4h6v2" />
+                    </svg>
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+     SHELL
+══════════════════════════════════════ -->
+    <div class="shell">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sb-brand" style="display: flex; justify-content: center; align-items: center; padding: 24px 16px;">
+                <img src="logo.png" alt="SCHILLER Logo" style="height: 48px; width: auto; object-fit: contain;">
+            </div>
+
+            <nav class="sb-nav">
+                <div class="sb-section-label">Main</div>
+
+                <div class="sb-item active" onclick="navigate('user-management', this)">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 00-3-3.87" />
+                        <path d="M16 3.13a4 4 0 010 7.75" />
+                    </svg>
+                    <span>User Management</span>
+                    <span class="sb-badge" id="sbBadge">0</span>
+                </div>
+
+                <div class="sb-item" onclick="window.location.href='acceptedip.html'">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                    </svg>
+                    <span>Inward Admin</span>
+                </div>
+
+                <div class="sb-item" onclick="navigate('models', this)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                    </svg>
+                    <span>Models</span>
+                </div>
+
+<div class="sb-section-label">System</div>
+
+                <div class="sb-item" onclick="navigate('settings', this)">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="3" />
+                        <path
+                            d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+                    </svg>
+                    <span>Settings</span>
+                </div>
+            </nav>
+
+            <div class="sb-footer">
+                <div class="sb-user">
+                    <div class="sb-avatar">AD</div>
+                    <div class="sb-user-info">
+                        <div class="sb-user-name">Admin</div>
+                        <div class="sb-user-role">Administrator</div>
+                    </div>
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="1" />
+                        <circle cx="19" cy="12" r="1" />
+                        <circle cx="5" cy="12" r="1" />
+                    </svg>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN -->
+        <div class="main">
+
+            <!-- TOP BAR -->
+            <div class="topbar">
+                <div>
+                    <div class="topbar-title" id="topbarTitle">User Management</div>
+                    <div class="topbar-sub" id="topbarSub">Create and manage staff accounts</div>
+                </div>
+                <div class="topbar-right">
+                    <span class="topbar-chip">Admin</span>
+                </div>
+            </div>
+
+            <!-- CONTENT -->
+            <div class="content">
+
+                <!-- ══ USER MANAGEMENT PAGE ══ -->
+                <div class="page active" id="page-user-management">
+
+                    <!-- Stats row -->
+                    <div class="stat-row">
+                        <div class="stat-card">
+                            <div class="stat-icon"><svg viewBox="0 0 24 24">
+                                    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                                    <circle cx="9" cy="7" r="4" />
+                                    <path d="M23 21v-2a4 4 0 00-3-3.87" />
+                                    <path d="M16 3.13a4 4 0 010 7.75" />
+                                </svg></div>
+                            <div>
+                                <div class="stat-label">Total Users</div>
+                                <div class="stat-value" id="statTotal">0</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><svg viewBox="0 0 24 24">
+                                    <path d="M9 12l2 2 4-4" />
+                                    <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg></div>
+                            <div>
+                                <div class="stat-label">Active</div>
+                                <div class="stat-value" id="statActive">0</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><svg viewBox="0 0 24 24">
+                                    <rect x="2" y="7" width="20" height="14" rx="2" />
+                                    <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
+                                </svg></div>
+                            <div>
+                                <div class="stat-label">Departments</div>
+                                <div class="stat-value" id="statDepts">4</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><svg viewBox="0 0 24 24">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                                </svg></div>
+                            <div>
+                                <div class="stat-label">Admins</div>
+                                <div class="stat-value" id="statAdmins">0</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- User table card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">Staff Accounts</div>
+                                <div class="card-sub">All registered users across departments</div>
+                            </div>
+                            <div class="search-bar">
+                                <div class="search-wrap">
+                                    <svg viewBox="0 0 24 24">
+                                        <circle cx="11" cy="11" r="8" />
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                                    </svg>
+                                    <input class="search-input" id="searchInput" type="text" placeholder="Search users…"
+                                        oninput="renderTable()" />
+                                </div>
+                                <select class="filter-select" id="deptFilter" onchange="renderTable()">
+                                    <option value="">All Departments</option>
+                                    <option value="IQC">IQC</option>
+                                    <option value="Production">Production</option>
+                                    <option value="IPQC">In Process QC</option>
+                                    <option value="Admin">Admin</option>
+                                </select>
+                                <button class="btn-primary" onclick="openCreateModal()">
+                                    <svg viewBox="0 0 24 24">
+                                        <line x1="12" y1="5" x2="12" y2="19" />
+                                        <line x1="5" y1="12" x2="19" y2="12" />
+                                    </svg>
+                                    Add User
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="tableContainer">
+                            <table class="user-table">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Username</th>
+                                        <th>Department</th>
+                                        <th>Status</th>
+                                        <th>Created</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="userTableBody"></tbody>
+                            </table>
+                            <div class="empty-state" id="emptyState" style="display:none;">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                                    <circle cx="9" cy="7" r="4" />
+                                    <path d="M23 21v-2a4 4 0 00-3-3.87" />
+                                    <path d="M16 3.13a4 4 0 010 7.75" />
+                                </svg>
+                                <p>No users found. Click <strong>Add User</strong> to get started.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══ SETTINGS PAGE ══ -->
+                <div class="page" id="page-settings">
+                    <div class="page-header">
+                        <div class="page-header-left">
+                            <div class="page-eyebrow">System</div>
+                            <div class="page-title">Settings</div>
+                            <div class="page-desc">Configure portal preferences and security policies</div>
+                        </div>
+                        <button class="btn-primary" onclick="showToast('Settings saved successfully')">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+                                <polyline points="17 21 17 13 7 13 7 21" />
+                                <polyline points="7 3 7 8 15 8" />
+                            </svg>
+                            Save Changes
+                        </button>
+                    </div>
+
+                    <div class="settings-grid">
+
+                        <!-- Security -->
+                        <div class="settings-card">
+                            <div class="settings-card-header">
+                                <div class="settings-icon"><svg viewBox="0 0 24 24">
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                                    </svg></div>
+                                <div>
+                                    <div class="settings-card-title">Security Policy</div>
+                                    <div class="settings-card-sub">Password and session rules</div>
+                                </div>
+                            </div>
+                            <div class="settings-card-body">
+                                <div class="settings-row">
+                                    <div>
+                                        <div class="settings-row-label">Minimum Password Length</div>
+                                        <div class="settings-row-sub">Characters required</div>
+                                    </div>
+                                    <input class="settings-input" type="number" value="8" min="6" max="20"
+                                        style="width:80px; text-align:center;" />
+                                </div>
+                                <div class="settings-row">
+                                    <div>
+                                        <div class="settings-row-label">Force Password Change</div>
+                                        <div class="settings-row-sub">Prompt on first login</div>
+                                    </div>
+                                    <label class="toggle"><input type="checkbox" checked><span
+                                            class="toggle-track"></span></label>
+                                </div>
+                                <div class="settings-row">
+                                    <div>
+                                        <div class="settings-row-label">Session Timeout (mins)</div>
+                                        <div class="settings-row-sub">Auto logout on inactivity</div>
+                                    </div>
+                                    <input class="settings-input" type="number" value="30" min="5"
+                                        style="width:80px; text-align:center;" />
+                                </div>
+                                <div class="settings-row">
+                                    <div>
+                                        <div class="settings-row-label">Two-Factor Authentication</div>
+                                        <div class="settings-row-sub">Require OTP on login</div>
+                                    </div>
+                                    <label class="toggle"><input type="checkbox"><span
+                                            class="toggle-track"></span></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Departments -->
+                        <div class="settings-card">
+                            <div class="settings-card-header">
+                                <div class="settings-icon"><svg viewBox="0 0 24 24">
+                                        <rect x="2" y="7" width="20" height="14" rx="2" />
+                                        <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
+                                    </svg></div>
+                                <div>
+                                    <div class="settings-card-title">Departments</div>
+                                    <div class="settings-card-sub">Active departments and user counts</div>
+                                </div>
+                            </div>
+                            <div class="settings-card-body">
+                                <div class="dept-settings-list">
+                                    <div class="dept-settings-item">
+                                        <div>
+                                            <div class="dept-settings-name">IQC</div>
+                                            <div class="dept-count">Incoming Quality Control</div>
+                                        </div>
+                                        <span class="dept-tag iqc" id="deptCount-IQC"><span class="dot"></span>0
+                                            users</span>
+                                    </div>
+                                    <div class="dept-settings-item">
+                                        <div>
+                                            <div class="dept-settings-name">Production</div>
+                                            <div class="dept-count">Manufacturing floor</div>
+                                        </div>
+                                        <span class="dept-tag prod" id="deptCount-Production"><span class="dot"></span>0
+                                            users</span>
+                                    </div>
+                                    <div class="dept-settings-item">
+                                        <div>
+                                            <div class="dept-settings-name">In Process QC</div>
+                                            <div class="dept-count">Mid-process quality checks</div>
+                                        </div>
+                                        <span class="dept-tag ipqc" id="deptCount-IPQC"><span class="dot"></span>0
+                                            users</span>
+                                    </div>
+                                    <div class="dept-settings-item">
+                                        <div>
+                                            <div class="dept-settings-name">Admin</div>
+                                            <div class="dept-count">System administration</div>
+                                        </div>
+                                        <span class="dept-tag admin" id="deptCount-Admin"><span class="dot"></span>0
+                                            users</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notifications -->
+                        <div class="settings-card">
+                            <div class="settings-card-header">
+                                <div class="settings-icon"><svg viewBox="0 0 24 24">
+                                        <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                                        <path d="M13.73 21a2 2 0 01-3.46 0" />
+                                    </svg></div>
+                                <div>
+                                    <div class="settings-card-title">Notifications</div>
+                                    <div class="settings-card-sub">System alert preferences</div>
+                                </div>
+                            </div>
+                            <div class="settings-card-body">
+                                <div class="settings-row">
+                                    <div>
+                                        <div class="settings-row-label">New User Created</div>
+                                        <div class="settings-row-sub">Notify admin on account creation</div>
+                                    </div>
+                                    <label class="toggle"><input type="checkbox" checked><span
+                                            class="toggle-track"></span></label>
+                                </div>
+                                <div class="settings-row">
+                                    <div>
+                                        <div class="settings-row-label">Failed Login Attempts</div>
+                                        <div class="settings-row-sub">Alert after 3 failed attempts</div>
+                                    </div>
+                                    <label class="toggle"><input type="checkbox" checked><span
+                                            class="toggle-track"></span></label>
+                                </div>
+                                <div class="settings-row">
+                                    <div>
+                                        <div class="settings-row-label">Account Deactivated</div>
+                                        <div class="settings-row-sub">Log and notify on deactivation</div>
+                                    </div>
+                                    <label class="toggle"><input type="checkbox"><span
+                                            class="toggle-track"></span></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Portal info -->
+                        <div class="settings-card">
+                            <div class="settings-card-header">
+                                <div class="settings-icon"><svg viewBox="0 0 24 24">
+                                        <circle cx="12" cy="12" r="10" />
+                                        <line x1="12" y1="8" x2="12" y2="12" />
+                                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                                    </svg></div>
+                                <div>
+                                    <div class="settings-card-title">Portal Info</div>
+                                    <div class="settings-card-sub">System identity settings</div>
+                                </div>
+                            </div>
+                            <div class="settings-card-body">
+                                <div class="settings-row">
+                                    <div>
+                                        <div class="settings-row-label">Organisation</div>
+                                    </div>
+                                    <input class="settings-input" type="text" value="Schiller Healthcare India" />
+                                </div>
+                                <div class="settings-row">
+                                    <div>
+                                        <div class="settings-row-label">Location</div>
+                                    </div>
+                                    <input class="settings-input" type="text" value="Puducherry" />
+                                </div>
+                                <div class="settings-row">
+                                    <div>
+                                        <div class="settings-row-label">Portal Version</div>
+                                        <div class="settings-row-sub">Current build</div>
+                                    </div>
+                                    <span style="font-size:0.78rem; color:var(--steel); font-weight:600;">v1.0.0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div><!-- /content -->
+        </div><!-- /main -->
+    </div><!-- /shell -->
+
+    <!-- ══ MODELS PAGE (injected) ══ -->
+    <style>
+        #page-models .mcat-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:22px; }
+        #page-models .mcat-header h2 { font-size:1.25rem; font-weight:700; color:var(--navy); margin:0; }
+        #page-models .mcat-header p { font-size:0.8rem; color:var(--steel); margin:4px 0 0; }
+        #page-models .models-card { background:white; border-radius:12px; border:1px solid rgba(13,27,42,0.07); overflow:hidden; margin-bottom:24px; }
+        #page-models .models-card-head { padding:18px 24px; border-bottom:1px solid var(--fog); display:flex; justify-content:space-between; align-items:center; }
+        #page-models .models-card-head span { font-size:0.82rem; color:var(--steel); }
+        #page-models .models-body { padding:24px; }
+        #page-models .add-form-card { background:#f8fafc; border:1px solid var(--fog); border-radius:10px; padding:22px 24px; margin-bottom:22px; display:none; }
+        #page-models .add-form-card.open { display:block; }
+        #page-models .prow-table { width:100%; border-collapse:collapse; font-size:0.85rem; margin-top:12px; }
+        #page-models .prow-table th { padding:9px 12px; background:#f1f5f9; font-weight:600; color:var(--navy); text-align:left; font-size:0.72rem; text-transform:uppercase; letter-spacing:.5px; border-bottom:1px solid var(--fog); }
+        #page-models .prow-table td { padding:5px 8px; border-bottom:1px solid #f1f5f9; }
+        #page-models .prow-table input { width:100%; border:1.5px solid rgba(13,27,42,0.11); border-radius:6px; padding:6px 10px; font-size:0.84rem; font-family:inherit; outline:none; background:white; }
+        #page-models .prow-table input:focus { border-color:var(--indigo); }
+        #page-models .add-row-btn { width:100%; margin-top:10px; background:white; border:1.5px dashed #94a3b8; color:#64748b; border-radius:7px; padding:8px; font-size:0.82rem; font-weight:600; cursor:pointer; transition:all .15s; }
+        #page-models .add-row-btn:hover { border-color:var(--navy); color:var(--navy); }
+        #page-models .form-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:16px; }
+        #page-models .models-table { width:100%; border-collapse:collapse; font-size:0.85rem; }
+        #page-models .models-table th { padding:10px 16px; background:#f8fafc; font-weight:600; color:var(--navy); text-align:left; border-bottom:1px solid var(--fog); font-size:0.75rem; text-transform:uppercase; letter-spacing:.5px; }
+        #page-models .models-table td { padding:0; }
+        #page-models .mgroup-row { cursor:pointer; transition:background .15s; }
+        #page-models .mgroup-row td { padding:12px 16px; border-bottom:1px solid #f1f5f9; }
+        #page-models .mgroup-row:hover td { background:#f8fafc; }
+        #page-models .msub-row { background:#fafbfc; }
+        #page-models .msub-row td { padding:0; }
+        #page-models .msub-inner { padding:10px 30px 16px; }
+        #page-models .msub-table { width:100%; border-collapse:collapse; font-size:0.8rem; }
+        #page-models .msub-table th { padding:7px 12px; background:#f1f5f9; font-size:0.72rem; font-weight:600; color:var(--navy); text-align:left; border-bottom:1px solid var(--fog); }
+        #page-models .msub-table td { padding:7px 12px; border-bottom:1px solid #f8fafc; color:var(--text); }
+        #page-models .part-no-cell { color:#4f46e5; font-family:monospace; font-weight:600; font-size:0.88rem; }
+        #page-models .model-badge { font-weight:700; color:var(--navy); font-size:0.9rem; }
+        #page-models .del-btn { background:transparent; color:var(--red); border:1px solid var(--red); padding:2px 7px; border-radius:4px; font-size:0.7rem; cursor:pointer; }
+        #page-models .save-toast-m { display:flex; align-items:center; gap:10px; background:rgba(30,123,77,0.09); color:#1e7b4d; border:1px solid rgba(30,123,77,0.22); border-radius:8px; padding:11px 15px; font-size:0.82rem; font-weight:600; margin-bottom:14px; opacity:0; transition:opacity .3s; pointer-events:none; }
+    </style>
+    <!-- page-models is positioned outside .shell so it can be shown/hidden by navigate() -->
+    <!-- We inject it as a sibling and handle visibility manually -->
+    <script>
+    // ── MODELS PAGE BOOTSTRAP ──
+    (function() {
+        // Inject page div into .content after page-settings
+        const contentEl = document.querySelector('.content');
+        if (!contentEl) return;
+        const pageDiv = document.createElement('div');
+        pageDiv.className = 'page';
+        pageDiv.id = 'page-models';
+        pageDiv.innerHTML = `
+            <div class="mcat-header">
+                <div>
+                    <h2>Models Catalog</h2>
+                    <p>Manage models and their associated part numbers</p>
+                </div>
+                <button class="btn-primary" id="mCatAddBtn" onclick="toggleModelsForm()">
+                    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Add Parts
+                </button>
+            </div>
+
+            <!-- Add form -->
+            <div class="add-form-card" id="mAddFormCard">
+                <div class="save-toast-m" id="mSaveToast">
+                    <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.5;"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+                    <span id="mSaveToastText">Parts saved.</span>
+                </div>
+                <label style="display:block;font-size:0.75rem;font-weight:600;color:var(--navy);margin-bottom:7px;">Model Name <span style="color:var(--red);">*</span></label>
+                <input type="text" id="mNewModel" placeholder="e.g. TS-III Basic"
+                    style="width:100%;border:1.5px solid rgba(13,27,42,0.12);border-radius:7px;padding:10px 13px;font-size:0.86rem;font-family:inherit;outline:none;background:white;margin-bottom:14px;" />
+                <div style="border:1px solid var(--fog);border-radius:8px;overflow:hidden;">
+                    <table class="prow-table">
+                        <thead><tr><th style="width:220px;">Part No. *</th><th>Description</th><th style="width:44px;"></th></tr></thead>
+                        <tbody id="mPartsRowsBody"></tbody>
+                    </table>
+                </div>
+                <button type="button" class="add-row-btn" onclick="mAddPartRow()">+ Add Row</button>
+                <div class="form-actions">
+                    <button type="button" onclick="toggleModelsForm()" style="padding:9px 18px;border:1.5px solid rgba(13,27,42,0.15);background:white;border-radius:7px;font-size:0.84rem;font-weight:600;color:var(--text);cursor:pointer;">Cancel</button>
+                    <button type="button" class="btn-primary" onclick="mSaveParts()">
+                        <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                        Save All Parts
+                    </button>
+                </div>
+            </div>
+
+            <!-- Catalog table -->
+            <div class="models-card">
+                <div class="models-card-head">
+                    <strong>All Models</strong>
+                    <span><span id="mEntryCount">0</span> models</span>
+                </div>
+                <div style="padding:0;">
+                    <table class="models-table">
+                        <thead><tr><th style="width:50px;">No.</th><th>Model Name</th><th>Total Parts</th><th style="width:50px;"></th></tr></thead>
+                        <tbody id="mTableBody"></tbody>
+                    </table>
+                    <div id="mEmptyState" style="display:none;padding:48px;text-align:center;color:var(--steel);font-size:0.9rem;">No models found. Add one above.</div>
+                </div>
+            </div>
+        `;
+        contentEl.appendChild(pageDiv);
+    })();
+    </script>
+
+    <script>
+        /* ══════════════════════
+           DATA STORE
+        ══════════════════════ */
+        let users = [];
+        let editingId = null;
+        let deleteId = null;
+        let idCounter = 1;
+
+        const DEPT_CLASS = { IQC: 'iqc', Production: 'prod', IPQC: 'ipqc', Admin: 'admin' };
+        const DEPT_LABEL = { IQC: 'IQC', Production: 'Production', IPQC: 'In Process QC', Admin: 'Admin' };
+
+        function initials(name) {
+            return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+        }
+
+        function today() {
+            return new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+        }
+
+        /* ══════════════════════
+           NAVIGATION
+        ══════════════════════ */
+        const titles = {
+            'user-management': ['User Management', 'Create and manage staff accounts'],
+            'settings': ['Settings', 'Configure portal preferences'],
+            'models': ['Models Catalog', 'Manage models and part numbers'],
+        };
+
+        function navigate(page, el) {
+            document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + page).classList.add('active');
+            document.getElementById('topbarTitle').textContent = titles[page][0];
+            document.getElementById('topbarSub').textContent = titles[page][1];
+            if (page === 'models') fetchPartsData();
+        }
+
+        /* ══════════════════════
+           RENDER TABLE
+        ══════════════════════ */
+        function renderTable() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            const dept = document.getElementById('deptFilter').value;
+
+            const filtered = users.filter(u => {
+                const matchQ = !q || u.name.toLowerCase().includes(q) || u.username.toLowerCase().includes(q);
+                const matchD = !dept || u.dept === dept;
+                return matchQ && matchD;
+            });
+
+            const tbody = document.getElementById('userTableBody');
+            const empty = document.getElementById('emptyState');
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '';
+                empty.style.display = 'block';
+            } else {
+                empty.style.display = 'none';
+                tbody.innerHTML = filtered.map(u => `
+        <tr>
+          <td>
+            <div class="user-cell">
+              <div class="user-avatar ${DEPT_CLASS[u.dept]}">${initials(u.name)}</div>
+              <div>
+                <div class="user-name">${u.name}</div>
+                <div class="user-id">UID-${String(u.id).padStart(4, '0')}</div>
+              </div>
+            </div>
+          </td>
+          <td style="font-size:0.82rem; color:var(--text); font-family:'Calibri', Calibri, sans-serif; letter-spacing:0.03em;">${u.username}</td>
+          <td>
+            <span class="dept-tag ${DEPT_CLASS[u.dept]}">
+              <span class="dot"></span>${DEPT_LABEL[u.dept]}
+            </span>
+          </td>
+          <td><span class="status-badge ${u.active ? 'active' : 'inactive'}">${u.active ? 'Active' : 'Inactive'}</span></td>
+          <td style="font-size:0.78rem; color:var(--steel);">${u.created}</td>
+          <td>
+            <div class="action-row">
+              <button class="icon-btn" title="Edit" onclick="openEditModal('${u.id}')">
+                <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+              <button class="icon-btn delete" title="Delete" onclick="openDeleteModal('${u.id}')">
+                <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+            }
+
+            updateStats();
+        }
+
+        /* ══════════════════════
+           STATS
+        ══════════════════════ */
+        function updateStats() {
+            document.getElementById('statTotal').textContent = users.length;
+            document.getElementById('statActive').textContent = users.filter(u => u.active).length;
+            document.getElementById('statAdmins').textContent = users.filter(u => u.dept === 'Admin').length;
+            document.getElementById('sbBadge').textContent = users.length;
+
+            // Dept counts in settings
+            ['IQC', 'Production', 'IPQC', 'Admin'].forEach(d => {
+                const el = document.getElementById('deptCount-' + d);
+                if (el) {
+                    const n = users.filter(u => u.dept === d).length;
+                    el.innerHTML = `<span class="dot"></span>${n} user${n !== 1 ? 's' : ''}`;
+                }
+            });
+        }
+
+        /* ══════════════════════
+           MODAL – CREATE
+        ══════════════════════ */
+        function openCreateModal() {
+            editingId = null;
+            document.getElementById('modalTitle').textContent = 'Create New User';
+            document.getElementById('modalSub').textContent = 'Fill in the details to add a staff member';
+            document.getElementById('modalSaveBtn').innerHTML = `
+      <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:white;fill:none;stroke-width:2.2;"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Create User`;
+
+            clearModal();
+            document.getElementById('f-status').style.display = 'none';
+            document.getElementById('userModal').classList.add('open');
+            setTimeout(() => document.getElementById('inp-fullname').focus(), 100);
+        }
+
+        function openEditModal(id) {
+            const u = users.find(x => x.id === id);
+            if (!u) return;
+            editingId = id;
+
+            document.getElementById('modalTitle').textContent = 'Edit User';
+            document.getElementById('modalSub').textContent = 'Update account details for ' + u.name;
+            document.getElementById('modalSaveBtn').innerHTML = `
+      <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:white;fill:none;stroke-width:2.2;"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Save Changes`;
+
+            clearModal();
+            document.getElementById('inp-fullname').value = u.name;
+            document.getElementById('inp-username').value = u.username;
+            document.getElementById('inp-dept').value = u.dept;
+            document.getElementById('inp-password').value = '';
+            document.getElementById('f-status').style.display = '';
+            document.getElementById('inp-status').checked = u.active;
+            document.getElementById('statusLabel').textContent = u.active ? 'Active' : 'Inactive';
+
+            document.getElementById('userModal').classList.add('open');
+        }
+
+        function clearModal() {
+            ['inp-fullname', 'inp-username', 'inp-password'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            document.getElementById('inp-dept').value = '';
+            ['f-fullname', 'f-username', 'f-dept', 'f-password'].forEach(f => {
+                document.getElementById(f).classList.remove('error');
+            });
+            document.getElementById('strengthMeter').style.display = 'none';
+            document.getElementById('pw-error').style.display = 'none';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('open');
+        }
+
+        /* ══════════════════════
+           SAVE USER
+        ══════════════════════ */
+        /* ══════════════════════
+           SAVE USER
+        ══════════════════════ */
+        async function saveUser() {
+            const name = document.getElementById('inp-fullname').value.trim();
+            const uname = document.getElementById('inp-username').value.trim();
+            const dept = document.getElementById('inp-dept').value;
+            const pass = document.getElementById('inp-password').value;
+            const active = document.getElementById('inp-status').checked;
+
+            let valid = true;
+
+            ['f-fullname', 'f-username', 'f-dept', 'f-password'].forEach(f =>
+                document.getElementById(f).classList.remove('error')
+            );
+
+            if (!name) { document.getElementById('f-fullname').classList.add('error'); valid = false; }
+            if (!uname) { document.getElementById('f-username').classList.add('error'); valid = false; }
+            if (!dept) { document.getElementById('f-dept').classList.add('error'); valid = false; }
+
+            if (!editingId) {
+                // Password required for new users
+                if (!pass || pass.length < 6) {
+                    document.getElementById('f-password').classList.add('error');
+                    document.getElementById('pw-error').style.display = 'block';
+                    valid = false;
+                }
+            }
+
+            if (!valid) return;
+
+            const payload = { name, username: uname, dept, active };
+            if (pass && pass.length >= 6) payload.password = pass;
+
+            try {
+                let res;
+                if (editingId) {
+                    res = await fetch(`http://localhost:5000/api/users/${editingId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                } else {
+                    res = await fetch('http://localhost:5000/api/users', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                }
+
+                const data = await res.json();
+                if (data.success) {
+                    showToast(editingId ? 'User updated successfully' : 'User created successfully');
+                    closeModal('userModal');
+                    fetchUsers();
+                } else {
+                    showToast(data.error || 'Operation failed', true);
+                    if (data.error && data.error.includes('duplicate')) {
+                        document.getElementById('f-username').classList.add('error');
+                        document.getElementById('f-username').querySelector('.field-error').textContent = 'Username already exists.';
+                        document.getElementById('f-username').querySelector('.field-error').style.display = 'block';
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Network error', true);
+            }
+        }
+
+        /* ══════════════════════
+           DELETE
+        ══════════════════════ */
+        function openDeleteModal(id) {
+            const u = users.find(x => x.id === id);
+            if (!u) return;
+            deleteId = id;
+            document.getElementById('deleteUserName').textContent = u.name + ' (@' + u.username + ')';
+            document.getElementById('deleteModal').classList.add('open');
+        }
+
+        async function confirmDelete() {
+            try {
+                const res = await fetch(`http://localhost:5000/api/users/${deleteId}`, {
+                    method: 'DELETE'
+                });
+                const data = await res.json();
+                if (data.success) {
+                    closeModal('deleteModal');
+                    showToast('User deleted');
+                    fetchUsers();
+                } else {
+                    showToast(data.error || 'Failed to delete', true);
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Network error', true);
+            }
+        }
+
+        /* ══════════════════════
+           FETCH USERS
+        ══════════════════════ */
+        async function fetchUsers() {
+            try {
+                const res = await fetch('http://localhost:5000/api/users');
+                const data = await res.json();
+                if (data.success) {
+                    users = data.data.map(u => ({
+                        id: u._id,
+                        name: u.name,
+                        username: u.email,
+                        dept: u.dept || 'Admin',
+                        active: u.active !== false,
+                        created: new Date(u.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+                    }));
+                    renderTable();
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        /* ══════════════════════
+           PASSWORD STRENGTH
+        ══════════════════════ */
+        document.getElementById('inp-password').addEventListener('input', function () {
+            const v = this.value;
+            const meter = document.getElementById('strengthMeter');
+            if (!v) { meter.style.display = 'none'; return; }
+            meter.style.display = 'block';
+
+            let score = 0;
+            if (v.length >= 6) score++;
+            if (v.length >= 10) score++;
+            if (/[A-Z]/.test(v) && /[a-z]/.test(v)) score++;
+            if (/[0-9]/.test(v) && /[^a-zA-Z0-9]/.test(v)) score++;
+
+            const colors = ['#C8102E', '#E65100', '#F9A825', '#2E7D32'];
+            const labels = ['Weak', 'Fair', 'Good', 'Strong'];
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById('sb' + i).style.background = i <= score ? colors[score - 1] : 'var(--fog2)';
+            }
+            document.getElementById('strengthLabel').textContent = labels[score - 1] || '';
+            document.getElementById('strengthLabel').style.color = colors[score - 1] || 'var(--steel)';
+        });
+
+        /* ══════════════════════
+           PW TOGGLE
+        ══════════════════════ */
+        document.getElementById('modalPwToggle').addEventListener('click', function () {
+            const inp = document.getElementById('inp-password');
+            const show = inp.type === 'password';
+            inp.type = show ? 'text' : 'password';
+            document.getElementById('modalEyeIcon').innerHTML = show
+                ? `<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>`
+                : `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+        });
+
+        /* ══════════════════════
+           STATUS LABEL SYNC
+        ══════════════════════ */
+        document.getElementById('inp-status').addEventListener('change', function () {
+            document.getElementById('statusLabel').textContent = this.checked ? 'Active' : 'Inactive';
+        });
+
+        /* ══════════════════════
+           TOAST
+        ══════════════════════ */
+        let toastTimer;
+        function showToast(msg, isError = false) {
+            const t = document.getElementById('toast');
+            document.getElementById('toastMsg').textContent = msg;
+            t.classList.toggle('error', isError);
+            t.classList.remove('show');
+            void t.offsetWidth; // reflow to restart animation
+            t.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        /* ══════════════════════
+           CLOSE ON OVERLAY CLICK
+        ══════════════════════ */
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function (e) {
+                if (e.target === this) this.classList.remove('open');
+            });
+        });
+
+        /* ══════════════════════
+           ENTER KEY IN MODAL
+        ══════════════════════ */
+        document.getElementById('userModal').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') saveUser();
+        });
+
+        /* ══════════════════════
+           INIT
+        ══════════════════════ */
+        fetchUsers();
+    </script>
+
+    <!-- ══ MODELS JS ══ -->
+    <script>
+        let partsData = [];
+
+        async function fetchPartsData() {
+            try {
+                const res = await fetch('/api/parts');
+                if (res.ok) {
+                    partsData = await res.json();
+                    renderPartsTable();
+                }
+            } catch (err) { console.error('Error fetching parts:', err); }
+        }
+
+        function renderPartsTable() {
+            const tbody = document.getElementById('mTableBody');
+            const emptyState = document.getElementById('mEmptyState');
+            const countEl = document.getElementById('mEntryCount');
+            if (!tbody) return;
+
+            // Group by model
+            const groups = {};
+            partsData.forEach(e => {
+                const k = e.model || 'UNKNOWN';
+                if (!groups[k]) groups[k] = { model: k, parts: [] };
+                groups[k].parts.push(e);
+            });
+            const arr = Object.values(groups).sort((a, b) => a.model.localeCompare(b.model));
+            if (countEl) countEl.textContent = arr.length;
+
+            if (!arr.length) {
+                tbody.innerHTML = '';
+                if (emptyState) emptyState.style.display = 'block';
+                return;
+            }
+            if (emptyState) emptyState.style.display = 'none';
+
+            let html = '';
+            arr.forEach((g, i) => {
+                html += `
+                <tr class="mgroup-row" onclick="mToggleSub('msub-${i}')">
+                    <td>${i + 1}</td>
+                    <td><span class="model-badge">${g.model}</span></td>
+                    <td><strong>${g.parts.length}</strong> parts</td>
+                    <td style="text-align:right;"><span style="font-size:0.75rem;color:#94a3b8;">&#9660;</span></td>
+                </tr>
+                <tr id="msub-${i}" class="msub-row" style="display:none;">
+                    <td colspan="4">
+                        <div class="msub-inner">
+                            <table class="msub-table">
+                                <thead><tr><th>Part No.</th><th>Description</th><th style="text-align:center;width:70px;">Action</th></tr></thead>
+                                <tbody>
+                                    ${g.parts.map(p => `
+                                    <tr>
+                                        <td class="part-no-cell">${p.partNo}</td>
+                                        <td>${p.description || '-'}</td>
+                                        <td style="text-align:center;"><button class="del-btn" onclick="event.stopPropagation(); mDeletePart('${p._id}')">Delete</button></td>
+                                    </tr>`).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function mToggleSub(id) {
+            const el = document.getElementById(id);
+            if (el) el.style.display = el.style.display === 'none' ? 'table-row' : 'none';
+        }
+
+        function toggleModelsForm() {
+            const card = document.getElementById('mAddFormCard');
+            if (!card) return;
+            const isOpen = card.classList.contains('open');
+            if (isOpen) {
+                card.classList.remove('open');
+            } else {
+                card.classList.add('open');
+                if (document.getElementById('mPartsRowsBody').rows.length === 0) mAddPartRow();
+            }
+        }
+
+        function mAddPartRow() {
+            const tbody = document.getElementById('mPartsRowsBody');
+            if (!tbody) return;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="text" placeholder="Part No." class="mpart-no" /></td>
+                <td><input type="text" placeholder="Description (optional)" class="mpart-desc" /></td>
+                <td style="text-align:center;">
+                    <button type="button" onclick="this.closest('tr').remove()" style="background:transparent;color:var(--red);border:none;font-size:1.1rem;cursor:pointer;line-height:1;" title="Remove">&times;</button>
+                </td>`;
+            tbody.appendChild(tr);
+        }
+
+        async function mSaveParts() {
+            const model = (document.getElementById('mNewModel').value || '').trim();
+            if (!model) { alert('Please enter a Model Name.'); return; }
+            const rows = document.querySelectorAll('#mPartsRowsBody tr');
+            const parts = [];
+            let hasEmpty = false;
+            rows.forEach(row => {
+                const partNo = (row.querySelector('.mpart-no').value || '').trim();
+                const description = (row.querySelector('.mpart-desc').value || '').trim();
+                if (!partNo) { hasEmpty = true; return; }
+                parts.push({ partNo, description });
+            });
+            if (!parts.length) { alert('Please add at least one Part No.'); return; }
+            if (hasEmpty) { alert('Some rows have an empty Part No. — fill or remove them.'); return; }
+            try {
+                const res = await fetch('/api/parts/batch', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ model, parts })
+                });
+                if (res.ok) {
+                    const toast = document.getElementById('mSaveToast');
+                    document.getElementById('mSaveToastText').textContent = `${parts.length} part(s) saved for "${model}".`;
+                    toast.style.opacity = '1';
+                    setTimeout(() => { toast.style.opacity = '0'; }, 2800);
+                    document.getElementById('mNewModel').value = '';
+                    document.getElementById('mPartsRowsBody').innerHTML = '';
+                    mAddPartRow();
+                    fetchPartsData();
+                } else {
+                    const d = await res.json();
+                    alert(d.error || 'Error saving parts.');
+                }
+            } catch (err) { alert('Network error. Please try again.'); }
+        }
+
+        async function mDeletePart(id) {
+            if (!confirm('Delete this part from the catalog?')) return;
+            try {
+                const res = await fetch('/api/parts/' + id, { method: 'DELETE' });
+                if (res.ok) fetchPartsData();
+                else alert('Error deleting part.');
+            } catch (err) { alert('Network error.'); }
+        }
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userName = localStorage.getItem('userName');
+            const userRole = localStorage.getItem('userRole');
+            if (userName) {
+                const nameEls = document.querySelectorAll('.sidebar-user-name');
+                const avatarEls = document.querySelectorAll('.sidebar-avatar');
+                const roleEls = document.querySelectorAll('.sidebar-user-role');
+                
+                nameEls.forEach(el => el.textContent = userName);
+                
+                const initials = userName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                avatarEls.forEach(el => el.textContent = initials);
+                
+                if (userRole) {
+                    const roleText = userRole.charAt(0).toUpperCase() + userRole.slice(1);
+                    roleEls.forEach(el => el.textContent = roleText);
+                }
+            }
+        });
+    </script>
+
+</body>
+
+</html>

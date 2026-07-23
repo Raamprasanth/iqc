@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SCHILLER Healthcare India – Diagnostics & Life-Saving Devices</title>
+    
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --navy: #0D1B2A;
+            --red: #C8102E;
+            --white: #FFFFFF;
+            --fog: #F0F4F8;
+            --steel: #6B8CAE;
+            --mid: #2C4A6E;
+            --text: #1A2B3C;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Calibri', Calibri, sans-serif;
+            color: var(--text);
+            background: var(--white);
+            line-height: 1.6;
+        }
+
+        /* ── NAV ── */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5vw;
+            height: 68px;
+            background: rgba(13, 27, 42, 0.96);
+            backdrop-filter: blur(8px);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-logo-mark {
+            width: 36px;
+            height: 36px;
+            background: var(--red);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-logo-mark svg {
+            width: 22px;
+            height: 22px;
+            fill: white;
+        }
+
+        .nav-brand {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--white);
+            letter-spacing: 0.04em;
+        }
+
+        .nav-brand span {
+            color: var(--red);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.72);
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--white);
+        }
+
+        .nav-cta {
+            background: var(--red);
+            color: var(--white) !important;
+            padding: 8px 20px;
+            border-radius: 3px;
+        }
+
+        .nav-cta:hover {
+            background: #a50d23 !important;
+            color: white !important;
+        }
+
+        /* ── HERO ── */
+        .hero {
+            min-height: 100vh;
+            background: var(--navy);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            padding: 100px 5vw 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 70% 50%, rgba(44, 74, 110, 0.45) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-text {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-eyebrow {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--red);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hero-eyebrow::before {
+            content: '';
+            display: block;
+            width: 32px;
+            height: 2px;
+            background: var(--red);
+        }
+
+        .hero-headline {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: clamp(2.4rem, 4.5vw, 3.8rem);
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1.15;
+            margin-bottom: 24px;
+        }
+
+        .hero-headline em {
+            font-style: normal;
+            color: var(--red);
+        }
+
+        .hero-sub {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.65);
+            max-width: 460px;
+            margin-bottom: 44px;
+            line-height: 1.75;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background: var(--red);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 3px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            transition: background 0.2s, transform 0.15s;
+        }
+
+        .btn-primary:hover {
+            background: #a50d23;
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            display: inline-block;
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.85);
+            padding: 14px 32px;
+            border-radius: 3px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .btn-outline:hover {
+            border-color: white;
+            color: white;
+        }
+
+        /* ECG Visual */
+        .hero-visual {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ecg-container {
+            width: 100%;
+            max-width: 520px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 40px 32px;
+        }
+
+        .ecg-label {
+            font-size: 0.68rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.35);
+            margin-bottom: 20px;
+        }
+
+        .ecg-svg-wrap {
+            width: 100%;
+            overflow: hidden;
+        }
+
+        svg.ecg-line {
+            width: 100%;
+            height: 90px;
+            overflow: visible;
+        }
+
+        .ecg-path {
+            fill: none;
+            stroke: var(--red);
+            stroke-width: 2.2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawEcg 2.4s ease forwards;
+        }
+
+        @keyframes drawEcg {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        .ecg-glow {
+            fill: none;
+            stroke: var(--red);
+            stroke-width: 6;
+            stroke-linecap: round;
+            opacity: 0.15;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawEcg 2.4s ease forwards;
+        }
+
+        .ecg-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 28px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .ecg-stat-label {
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.35);
+            margin-bottom: 4px;
+        }
+
+        .ecg-stat-value {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .ecg-stat-value sup {
+            font-size: 0.75rem;
+            color: var(--red);
+            vertical-align: super;
+        }
+
+        /* Certification badges */
+        .cert-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+
+        .cert-badge {
+            font-size: 0.64rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 5px 12px;
+            border-radius: 2px;
+        }
+
+        /* ── STATS BAR ── */
+        .stats-bar {
+            background: var(--red);
+            padding: 36px 5vw;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: white;
+            line-height: 1;
+        }
+
+        .stat-number sup {
+            font-size: 1rem;
+            vertical-align: super;
+        }
+
+        .stat-desc {
+            font-size: 0.72rem;
+            color: rgba(255, 255, 255, 0.78);
+            margin-top: 6px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        /* ── PRODUCTS ── */
+        .products {
+            background: var(--fog);
+            padding: 100px 5vw;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .section-eyebrow {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--red);
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: clamp(1.8rem, 3.2vw, 2.8rem);
+            font-weight: 700;
+            color: var(--navy);
+            line-height: 1.2;
+        }
+
+        .section-sub {
+            font-size: 0.95rem;
+            color: var(--steel);
+            max-width: 560px;
+            margin: 16px auto 0;
+            line-height: 1.7;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 8px;
+            padding: 36px 28px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            border: 1px solid rgba(13, 27, 42, 0.06);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 3px;
+            height: 0;
+            background: var(--red);
+            transition: height 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px rgba(13, 27, 42, 0.10);
+        }
+
+        .product-card:hover::after {
+            height: 100%;
+        }
+
+        .product-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--fog);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .product-icon svg {
+            width: 26px;
+            height: 26px;
+            stroke: var(--navy);
+            stroke-width: 1.6;
+            fill: none;
+        }
+
+        .product-name {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 10px;
+        }
+
+        .product-desc {
+            font-size: 0.84rem;
+            color: #5a7080;
+            line-height: 1.65;
+        }
+
+        .product-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 20px;
+            font-size: 0.76rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--red);
+            text-decoration: none;
+        }
+
+        .product-link svg {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+            fill: none;
+            transition: transform 0.2s;
+        }
+
+        .product-card:hover .product-link svg {
+            transform: translateX(4px);
+        }
+
+        /* ── ABOUT ── */
+        .about {
+            background: var(--navy);
+            padding: 100px 5vw;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .about-text .section-eyebrow {
+            color: var(--red);
+        }
+
+        .about-text .section-title {
+            color: white;
+            text-align: left;
+        }
+
+        .about-body {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.62);
+            line-height: 1.8;
+            margin-top: 24px;
+        }
+
+        .about-body+.about-body {
+            margin-top: 16px;
+        }
+
+        .about-features {
+            margin-top: 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .about-feature {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .about-feature-icon {
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
+            background: rgba(200, 16, 46, 0.12);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .about-feature-icon svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--red);
+            fill: none;
+            stroke-width: 1.8;
+        }
+
+        .about-feature-text strong {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: white;
+            display: block;
+        }
+
+        .about-feature-text span {
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.45);
+        }
+
+        .about-visual {
+            position: relative;
+        }
+
+        .about-card-stack {
+            position: relative;
+        }
+
+        .about-main-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 44px;
+        }
+
+        .about-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .timeline-year {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--red);
+            min-width: 52px;
+        }
+
+        .timeline-dot {
+            width: 10px;
+            height: 10px;
+            min-width: 10px;
+            border-radius: 50%;
+            background: var(--red);
+            margin-top: 6px;
+            position: relative;
+        }
+
+        .timeline-dot::after {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 10px;
+            width: 2px;
+            height: 44px;
+            background: rgba(200, 16, 46, 0.2);
+        }
+
+        .timeline-item:last-child .timeline-dot::after {
+            display: none;
+        }
+
+        .timeline-text strong {
+            font-size: 0.84rem;
+            font-weight: 600;
+            color: white;
+            display: block;
+        }
+
+        .timeline-text span {
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.45);
+        }
+
+        /* ── TESTIMONIALS ── */
+        .testimonials {
+            background: var(--fog);
+            padding: 100px 5vw;
+        }
+
+        .testimonials .section-title {
+            color: var(--navy);
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .testimonial-card {
+            background: white;
+            border-radius: 8px;
+            padding: 36px 32px;
+            border: 1px solid rgba(13, 27, 42, 0.06);
+            position: relative;
+        }
+
+        .quote-mark {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 5rem;
+            line-height: 1;
+            color: var(--red);
+            opacity: 0.2;
+            position: absolute;
+            top: 16px;
+            left: 28px;
+        }
+
+        .testimonial-text {
+            font-size: 0.88rem;
+            color: #4a6070;
+            line-height: 1.8;
+            position: relative;
+            z-index: 1;
+            margin-top: 24px;
+        }
+
+        .testimonial-author {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--fog);
+        }
+
+        .author-name {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--navy);
+        }
+
+        .author-role {
+            font-size: 0.75rem;
+            color: var(--steel);
+            margin-top: 2px;
+        }
+
+        /* ── COVERAGE ── */
+        .coverage {
+            background: white;
+            padding: 100px 5vw;
+        }
+
+        .coverage-inner {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .coverage-map {
+            background: var(--fog);
+            border-radius: 12px;
+            padding: 48px 36px;
+            text-align: center;
+        }
+
+        .india-map-svg {
+            width: 100%;
+            max-width: 280px;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .coverage-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .coverage-item {
+            background: white;
+            border-radius: 8px;
+            padding: 24px 20px;
+            text-align: center;
+            border: 1px solid rgba(13, 27, 42, 0.06);
+        }
+
+        .coverage-num {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .coverage-num sup {
+            font-size: 0.9rem;
+            color: var(--red);
+        }
+
+        .coverage-label {
+            font-size: 0.72rem;
+            color: var(--steel);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-top: 4px;
+        }
+
+        /* ── CTA ── */
+        .cta-section {
+            background: var(--red);
+            padding: 100px 5vw;
+            text-align: center;
+        }
+
+        .cta-headline {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: clamp(2rem, 3.5vw, 3rem);
+            font-weight: 700;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .cta-sub {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.78);
+            max-width: 520px;
+            margin: 0 auto 44px;
+            line-height: 1.7;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-white {
+            display: inline-block;
+            background: white;
+            color: var(--red);
+            padding: 14px 32px;
+            border-radius: 3px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            transition: transform 0.15s, background 0.2s;
+        }
+
+        .btn-white:hover {
+            transform: translateY(-1px);
+            background: #f8f8f8;
+        }
+
+        .btn-outline-white {
+            display: inline-block;
+            border: 1.5px solid rgba(255, 255, 255, 0.5);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 3px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            transition: border-color 0.2s;
+        }
+
+        .btn-outline-white:hover {
+            border-color: white;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            background: var(--navy);
+            padding: 64px 5vw 32px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .footer-top {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 48px;
+            padding-bottom: 48px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .footer-brand p {
+            font-size: 0.82rem;
+            line-height: 1.75;
+            margin-top: 16px;
+            max-width: 300px;
+        }
+
+        .footer-col h4 {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-col a {
+            font-size: 0.82rem;
+            color: rgba(255, 255, 255, 0.45);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-col a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 24px;
+            font-size: 0.76rem;
+        }
+
+        .footer-bottom a {
+            color: rgba(255, 255, 255, 0.4);
+            text-decoration: none;
+        }
+
+        .footer-bottom a:hover {
+            color: white;
+        }
+
+        .footer-divider {
+            margin: 0 12px;
+            opacity: 0.3;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 900px) {
+            .hero {
+                grid-template-columns: 1fr;
+                padding-top: 110px;
+            }
+
+            .hero-visual {
+                margin-top: 48px;
+            }
+
+            .about {
+                grid-template-columns: 1fr;
+            }
+
+            .about-visual {
+                display: none;
+            }
+
+            .coverage-inner {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-top {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .stats-bar {
+                grid-template-columns: 2fr 2fr;
+                gap: 32px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            nav .nav-links {
+                display: none;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+            }
+
+            .about-features {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-top {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-bar {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 8px;
+                text-align: center;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .ecg-path,
+            .ecg-glow {
+                animation: none;
+                stroke-dashoffset: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAV -->
+    <nav>
+        <div class="nav-logo">
+            <div style="display: flex; align-items: center; justify-content: center;">
+                <img src="logo.png" alt="SCHILLER Logo" style="height: 40px; width: auto; object-fit: contain;">
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#products">Products</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#coverage">Network</a></li>
+            <li><a href="login.html" class="nav-cta">Login</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-text">
+            <div class="hero-eyebrow">Swiss Precision · Indian Reach</div>
+            <h1 class="hero-headline">
+                Advanced Diagnostics<br />That <em>Save Lives</em><br />Across India
+            </h1>
+            <p class="hero-sub">
+                From ICUs in metro hospitals to rural clinics — SCHILLER Healthcare India delivers world-class
+                cardiopulmonary diagnostics, critical care, and emergency equipment trusted by physicians for over 25
+                years.
+            </p>
+            <div class="hero-actions">
+                <a href="#products" class="btn-primary">Explore Products</a>
+                <a href="#contact" class="btn-outline">Find a Dealer</a>
+            </div>
+            <div class="cert-row">
+                <span class="cert-badge">ISO 13485</span>
+                <span class="cert-badge">CE Certified</span>
+                <span class="cert-badge">CDSCO Approved</span>
+                <span class="cert-badge">Make in India</span>
+            </div>
+        </div>
+
+        <div class="hero-visual">
+            <div class="ecg-container">
+                <div class="ecg-label">Live ECG Signal — CARDIOVIT® Series</div>
+                <div class="ecg-svg-wrap">
+                    <svg class="ecg-line" viewBox="0 0 500 90" preserveAspectRatio="none">
+                        <path class="ecg-glow" d="M0,45 L30,45 L45,45 L55,20 L65,70 L75,10 L85,80 L95,45 L115,45
+               L145,45 L160,45 L170,20 L180,70 L190,10 L200,80 L210,45 L230,45
+               L260,45 L275,45 L285,20 L295,70 L305,10 L315,80 L325,45 L345,45
+               L375,45 L390,45 L400,20 L410,70 L420,10 L430,80 L440,45 L500,45" />
+                        <path class="ecg-path" d="M0,45 L30,45 L45,45 L55,20 L65,70 L75,10 L85,80 L95,45 L115,45
+               L145,45 L160,45 L170,20 L180,70 L190,10 L200,80 L210,45 L230,45
+               L260,45 L275,45 L285,20 L295,70 L305,10 L315,80 L325,45 L345,45
+               L375,45 L390,45 L400,20 L410,70 L420,10 L430,80 L440,45 L500,45" />
+                    </svg>
+                </div>
+                <div class="ecg-stats">
+                    <div>
+                        <div class="ecg-stat-label">Founded</div>
+                        <div class="ecg-stat-value">1974</div>
+                    </div>
+                    <div>
+                        <div class="ecg-stat-label">India Since</div>
+                        <div class="ecg-stat-value">1997</div>
+                    </div>
+                    <div>
+                        <div class="ecg-stat-label">Countries</div>
+                        <div class="ecg-stat-value">100<sup>+</sup></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS BAR -->
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="stat-number">450<sup>+</sup></div>
+            <div class="stat-desc">Employees in India</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">45<sup>+</sup></div>
+            <div class="stat-desc">Locations Nationwide</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">100<sup>+</sup></div>
+            <div class="stat-desc">Sales & Service Dealers</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">7</div>
+            <div class="stat-desc">Product Categories</div>
+        </div>
+    </div>
+
+    <!-- PRODUCTS -->
+    <section class="products" id="products">
+        <div class="section-header">
+            <div class="section-eyebrow">Product Portfolio</div>
+            <h2 class="section-title">Equipment for Every<br />Stage of Care</h2>
+            <p class="section-sub">From emergency rooms to cardiac wards — SCHILLER's portfolio covers the full spectrum
+                of critical and diagnostic healthcare.</p>
+        </div>
+
+        <div class="product-grid">
+
+            <!-- Cardiology -->
+            <div class="product-card">
+                <div class="product-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 12h4l2-7 3 14 3-10 2 3h4" />
+                    </svg>
+                </div>
+                <div class="product-name">Cardiology</div>
+                <p class="product-desc">ECG machines, Holter monitors, stress test systems, and the acclaimed CARDIOVIT®
+                    series for accurate, fast cardiac diagnostics.</p>
+                <a href="#" class="product-link">
+                    View Range
+                    <svg viewBox="0 0 16 16">
+                        <line x1="3" y1="8" x2="13" y2="8" />
+                        <polyline points="9,4 13,8 9,12" />
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Critical Care -->
+            <div class="product-card">
+                <div class="product-icon">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="2" y="3" width="20" height="14" rx="2" />
+                        <path d="M8 21h8M12 17v4" />
+                        <path d="M6 10l2 2 4-5 2 3 2-2" />
+                    </svg>
+                </div>
+                <div class="product-name">Critical Care</div>
+                <p class="product-desc">Multi-parameter patient monitors, advanced ventilators, and ICU solutions
+                    engineered for reliability around the clock.</p>
+                <a href="#" class="product-link">
+                    View Range
+                    <svg viewBox="0 0 16 16">
+                        <line x1="3" y1="8" x2="13" y2="8" />
+                        <polyline points="9,4 13,8 9,12" />
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Emergency Care -->
+            <div class="product-card">
+                <div class="product-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+                    </svg>
+                </div>
+                <div class="product-name">Emergency Care</div>
+                <p class="product-desc">Defibrillators and AEDs built for split-second decisions — from hospital crash
+                    carts to pre-hospital first response.</p>
+                <a href="#" class="product-link">
+                    View Range
+                    <svg viewBox="0 0 16 16">
+                        <line x1="3" y1="8" x2="13" y2="8" />
+                        <polyline points="9,4 13,8 9,12" />
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Anaesthesia -->
+            <div class="product-card">
+                <div class="product-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M9 12h6M12 9v6" />
+                        <circle cx="12" cy="12" r="9" />
+                    </svg>
+                </div>
+                <div class="product-name">Anaesthesia</div>
+                <p class="product-desc">Precision anaesthesia workstations and ventilators combining safety, accuracy,
+                    and ease of use for every OR environment.</p>
+                <a href="#" class="product-link">
+                    View Range
+                    <svg viewBox="0 0 16 16">
+                        <line x1="3" y1="8" x2="13" y2="8" />
+                        <polyline points="9,4 13,8 9,12" />
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Respiratory Diagnostics -->
+            <div class="product-card">
+                <div class="product-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 3c0 0-6 4-6 9a6 6 0 0012 0c0-5-6-9-6-9z" />
+                        <path d="M12 12v5" />
+                    </svg>
+                </div>
+                <div class="product-name">Respiratory Diagnostics</div>
+                <p class="product-desc">Spirometers, NIOX VERO® FeNO devices, and the tremoflo C-100 for comprehensive
+                    pulmonary function assessment.</p>
+                <a href="#" class="product-link">
+                    View Range
+                    <svg viewBox="0 0 16 16">
+                        <line x1="3" y1="8" x2="13" y2="8" />
+                        <polyline points="9,4 13,8 9,12" />
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Radiology -->
+            <div class="product-card">
+                <div class="product-icon">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="3" />
+                        <path
+                            d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83" />
+                    </svg>
+                </div>
+                <div class="product-name">Radiology</div>
+                <p class="product-desc">CT scanners and imaging systems providing the clarity clinicians need for
+                    confident, rapid diagnosis.</p>
+                <a href="#" class="product-link">
+                    View Range
+                    <svg viewBox="0 0 16 16">
+                        <line x1="3" y1="8" x2="13" y2="8" />
+                        <polyline points="9,4 13,8 9,12" />
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Robotics -->
+            <div class="product-card">
+                <div class="product-icon">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="3" y="11" width="18" height="10" rx="2" />
+                        <path d="M7 11V7a5 5 0 0110 0v4" />
+                        <circle cx="12" cy="16" r="1" />
+                    </svg>
+                </div>
+                <div class="product-name">Robotics & Surgery</div>
+                <p class="product-desc">Surgical robotics systems bringing enhanced precision and control to operating
+                    theatre teams across India.</p>
+                <a href="#" class="product-link">
+                    View Range
+                    <svg viewBox="0 0 16 16">
+                        <line x1="3" y1="8" x2="13" y2="8" />
+                        <polyline points="9,4 13,8 9,12" />
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Software -->
+            <div class="product-card">
+                <div class="product-icon">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="2" y="3" width="20" height="14" rx="2" />
+                        <path d="M8 21h8M12 17v4" />
+                        <path d="M7 8h.01M10 8h4" />
+                    </svg>
+                </div>
+                <div class="product-name">Clinical Software</div>
+                <p class="product-desc">SEMA4® and SRMS platforms — connecting devices, managing cardiac rehab, and
+                    integrating seamlessly with hospital information systems.</p>
+                <a href="#" class="product-link">
+                    View Range
+                    <svg viewBox="0 0 16 16">
+                        <line x1="3" y1="8" x2="13" y2="8" />
+                        <polyline points="9,4 13,8 9,12" />
+                    </svg>
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="about" id="about">
+        <div class="about-text">
+            <div class="section-eyebrow">Our Story</div>
+            <h2 class="section-title">Swiss Engineering,<br />Built for India</h2>
+            <p class="about-body">Founded in 1974 by Alfred E. Schiller, SCHILLER grew from a one-room operation into a
+                global group with 31 subsidiaries. In 1997, Schiller Healthcare India was established with a singular
+                mission: bringing world-class medical technology within reach of every Indian healthcare provider.</p>
+            <p class="about-body">Today, our ISO 13485-certified production centre in Puducherry manufactures a range of
+                devices complementing the Swiss parent portfolio. Our R&D hub in Bengaluru develops 2–3 new products
+                annually, keeping the range current with clinical needs.</p>
+
+            <div class="about-features">
+                <div class="about-feature">
+                    <div class="about-feature-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M9 12l2 2 4-4" />
+                            <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div class="about-feature-text">
+                        <strong>ISO 13485 Certified</strong>
+                        <span>Puducherry facility</span>
+                    </div>
+                </div>
+                <div class="about-feature">
+                    <div class="about-feature-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                            <polyline points="9 22 9 12 15 12 15 22" />
+                        </svg>
+                    </div>
+                    <div class="about-feature-text">
+                        <strong>Made in India</strong>
+                        <span>Puducherry production</span>
+                    </div>
+                </div>
+                <div class="about-feature">
+                    <div class="about-feature-icon">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20" />
+                        </svg>
+                    </div>
+                    <div class="about-feature-text">
+                        <strong>Global Presence</strong>
+                        <span>100+ countries served</span>
+                    </div>
+                </div>
+                <div class="about-feature">
+                    <div class="about-feature-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                        </svg>
+                    </div>
+                    <div class="about-feature-text">
+                        <strong>CDSCO Approved</strong>
+                        <span>All India regulatory</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="about-visual">
+            <div class="about-card-stack">
+                <div class="about-main-card">
+                    <div class="about-timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-year">1974</div>
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-text">
+                                <strong>SCHILLER AG Founded</strong>
+                                <span>Alfred E. Schiller, Switzerland</span>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">1997</div>
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-text">
+                                <strong>India Operations Begin</strong>
+                                <span>Schiller Healthcare India Pvt. Ltd.</span>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">2005</div>
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-text">
+                                <strong>Puducherry Plant Opens</strong>
+                                <span>ISO 13485-certified manufacturing</span>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">2012</div>
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-text">
+                                <strong>Bengaluru R&D Centre</strong>
+                                <span>India-specific innovation hub</span>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">Today</div>
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-text">
+                                <strong>450+ Employees, 45+ Locations</strong>
+                                <span>Leader in Indian medtech</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="testimonials" id="testimonials">
+        <div class="section-header">
+            <div class="section-eyebrow">From the Clinic</div>
+            <h2 class="section-title">Trusted by Physicians<br />Across India</h2>
+            <p class="section-sub">What clinicians say after years — sometimes decades — of daily use.</p>
+        </div>
+
+        <div class="testimonial-grid">
+            <div class="testimonial-card">
+                <div class="quote-mark">"</div>
+                <p class="testimonial-text">The CARDIOVIT® CS10 provides reliable and precise diagnostics that enable me
+                    to diagnose and treat my patients effectively. These tools have significantly enhanced the quality
+                    of care I provide.</p>
+                <div class="testimonial-author">
+                    <div class="author-name">MD, FCCP · Cardiologist</div>
+                    <div class="author-role">Professor & Head, Cardiology Department</div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="quote-mark">"</div>
+                <p class="testimonial-text">I have been using SCHILLER devices — multipara monitors, ventilators,
+                    defibrillators, ECG — for 14 years without replacements. The continuous performance attests to their
+                    quality and durability.</p>
+                <div class="testimonial-author">
+                    <div class="author-name">MD, FCCP · Intensivist</div>
+                    <div class="author-role">Professor & Head, Pulmonary Medicine</div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="quote-mark">"</div>
+                <p class="testimonial-text">For over three decades I have relied on SCHILLER's TMT and ECG devices.
+                    Remarkably, the TMT machine functioned flawlessly for 19 years. I continue to vouch for SCHILLER —
+                    they remain the best available.</p>
+                <div class="testimonial-author">
+                    <div class="author-name">Senior Cardiologist</div>
+                    <div class="author-role">M.O.S.C.M.C. Hospital, Kolenchery</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COVERAGE -->
+    <section class="coverage" id="coverage">
+        <div class="coverage-inner">
+            <div>
+                <div class="section-eyebrow">National Network</div>
+                <h2 class="section-title" style="color:var(--navy)">Wherever You<br />Practice, We're There</h2>
+                <p class="section-sub" style="text-align:left; margin-left:0;">A network of 100+ trained sales and
+                    service dealers across 45+ locations ensures rapid support — from metros to Tier-3 cities and Nepal.
+                </p>
+
+                <div class="coverage-grid">
+                    <div class="coverage-item">
+                        <div class="coverage-num">45<sup>+</sup></div>
+                        <div class="coverage-label">Locations</div>
+                    </div>
+                    <div class="coverage-item">
+                        <div class="coverage-num">100<sup>+</sup></div>
+                        <div class="coverage-label">Dealer Partners</div>
+                    </div>
+                    <div class="coverage-item">
+                        <div class="coverage-num">24/7</div>
+                        <div class="coverage-label">Service Support</div>
+                    </div>
+                    <div class="coverage-item">
+                        <div class="coverage-num">2</div>
+                        <div class="coverage-label">Production Facilities</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="coverage-map">
+                <svg class="india-map-svg" viewBox="0 0 200 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Simplified India silhouette -->
+                    <path d="M80,10 L100,8 L120,12 L140,20 L155,35 L160,50 L155,65 L165,80 L168,100 
+                 L160,115 L155,130 L145,145 L135,160 L120,175 L110,190 L100,210 L90,225 
+                 L85,215 L75,200 L65,185 L60,170 L50,155 L42,140 L38,125 L35,110 
+                 L38,95 L35,80 L40,65 L45,50 L50,38 L60,25 L70,15 Z" fill="#E8EEF4" stroke="#C8D5E0"
+                        stroke-width="1.5" />
+                    <!-- Location dots -->
+                    <circle cx="110" cy="55" r="4" fill="#C8102E" opacity="0.85" /><!-- Delhi -->
+                    <circle cx="85" cy="120" r="4" fill="#C8102E" opacity="0.85" /><!-- Mumbai -->
+                    <circle cx="130" cy="100" r="3.5" fill="#C8102E" opacity="0.75" /><!-- Kolkata -->
+                    <circle cx="115" cy="140" r="3.5" fill="#C8102E" opacity="0.75" /><!-- Hyderabad -->
+                    <circle cx="100" cy="160" r="4" fill="#C8102E" opacity="0.85" /><!-- Chennai/Pondy -->
+                    <circle cx="90" cy="95" r="3" fill="#C8102E" opacity="0.6" /><!-- Ahmedabad -->
+                    <circle cx="105" cy="110" r="3" fill="#C8102E" opacity="0.6" /><!-- Pune -->
+                    <circle cx="118" cy="128" r="3" fill="#C8102E" opacity="0.6" /><!-- Bengaluru -->
+                    <circle cx="125" cy="75" r="3" fill="#C8102E" opacity="0.6" /><!-- Bhopal -->
+                    <circle cx="140" cy="55" r="3" fill="#C8102E" opacity="0.6" /><!-- Lucknow -->
+                    <!-- Subtle pulse animation on major dots -->
+                    <circle cx="85" cy="120" r="8" fill="#C8102E" opacity="0.12">
+                        <animate attributeName="r" values="4;12;4" dur="2.5s" repeatCount="indefinite" />
+                        <animate attributeName="opacity" values="0.3;0;0.3" dur="2.5s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="100" cy="160" r="8" fill="#C8102E" opacity="0.12">
+                        <animate attributeName="r" values="4;12;4" dur="2.5s" begin="0.8s" repeatCount="indefinite" />
+                        <animate attributeName="opacity" values="0.3;0;0.3" dur="2.5s" begin="0.8s"
+                            repeatCount="indefinite" />
+                    </circle>
+                </svg>
+                <p
+                    style="font-size:0.72rem; color:var(--steel); margin-top:20px; text-transform:uppercase; letter-spacing:0.08em;">
+                    Service locations across India & Nepal</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section" id="contact">
+        <h2 class="cta-headline">Ready to Upgrade<br />Your Diagnostic Capability?</h2>
+        <p class="cta-sub">Talk to a SCHILLER specialist in your city — get a demo, request a quote, or find your
+            nearest authorised dealer.</p>
+        <div class="cta-buttons">
+            <a href="tel:+912267486100" class="btn-white">Call Us Now</a>
+            <a href="mailto:info@schillerindia.com" class="btn-outline-white">Email a Specialist</a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-top">
+            <div class="footer-brand">
+                <div class="nav-logo" style="margin-bottom:0;">
+                    <div style="display: flex; align-items: center; justify-content: center;">
+                <img src="logo.png" alt="SCHILLER Logo" style="height: 32px; width: auto; object-fit: contain;">
+            </div>
+                </div>
+                <p>Advance House, 2nd Floor, Makwana Road, Marol Naka, Andheri East, Mumbai – 400 059. Maharashtra,
+                    India.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Products</h4>
+                <ul>
+                    <li><a href="#">Cardiology</a></li>
+                    <li><a href="#">Critical Care</a></li>
+                    <li><a href="#">Emergency Care</a></li>
+                    <li><a href="#">Anaesthesia</a></li>
+                    <li><a href="#">Respiratory</a></li>
+                    <li><a href="#">Radiology</a></li>
+                    <li><a href="#">Robotics</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Manufacturing</a></li>
+                    <li><a href="#">R&D Centres</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">News</a></li>
+                    <li><a href="#">CSR</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#">Find a Dealer</a></li>
+                    <li><a href="#">Service Request</a></li>
+                    <li><a href="#">Downloads</a></li>
+                    <li><a href="#">Training</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2025 Schiller Healthcare India Pvt. Ltd. All rights reserved.</span>
+            <span>
+                <a href="#">Privacy Policy</a>
+                <span class="footer-divider">·</span>
+                <a href="#">Terms of Use</a>
+                <span class="footer-divider">·</span>
+                <a href="https://www.schillerindia.com" target="_blank">schillerindia.com</a>
+            </span>
+        </div>
+    </footer>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userName = localStorage.getItem('userName');
+            const userRole = localStorage.getItem('userRole');
+            if (userName) {
+                const nameEls = document.querySelectorAll('.sidebar-user-name');
+                const avatarEls = document.querySelectorAll('.sidebar-avatar');
+                const roleEls = document.querySelectorAll('.sidebar-user-role');
+                
+                nameEls.forEach(el => el.textContent = userName);
+                
+                const initials = userName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                avatarEls.forEach(el => el.textContent = initials);
+                
+                if (userRole) {
+                    const roleText = userRole.charAt(0).toUpperCase() + userRole.slice(1);
+                    roleEls.forEach(el => el.textContent = roleText);
+                }
+            }
+        });
+    </script>
+
+</body>
+
+</html>

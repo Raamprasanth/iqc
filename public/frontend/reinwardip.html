@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>In-Process QC Completed — SCHILLER Healthcare India</title>
+    
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --navy: #0D1B2A;
+            --red: #C8102E;
+            --white: #FFFFFF;
+            --fog: #F0F4F8;
+            --steel: #6B8CAE;
+            --mid: #2C4A6E;
+            --text: #1A2B3C;
+            --amber: #C77B12;
+            --green: #1E7B4D;
+            --sidebar-w: 248px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Calibri', Calibri, sans-serif;
+            color: var(--text);
+            background: var(--fog);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* ───────────────────────── SIDEBAR ───────────────────────── */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: var(--sidebar-w);
+            background: var(--navy);
+            display: flex;
+            flex-direction: column;
+            z-index: 200;
+            transition: transform 0.25s ease;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 22px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .sidebar-logo-mark {
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
+            background: var(--red);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-logo-mark svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+
+        .sidebar-brand {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.02rem;
+            font-weight: 700;
+            color: var(--white);
+            letter-spacing: 0.02em;
+            line-height: 1.2;
+        }
+
+        .sidebar-brand span {
+            color: var(--red);
+        }
+
+        .sidebar-brand small {
+            display: block;
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 0.62rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 2px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            overflow-y: auto;
+            padding: 18px 14px;
+        }
+
+        .nav-group-label {
+            font-size: 0.64rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.28);
+            padding: 14px 12px 8px;
+        }
+
+        .nav-group-label:first-child {
+            padding-top: 4px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.58);
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 2px;
+            position: relative;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .sidebar-link svg {
+            width: 18px;
+            height: 18px;
+            min-width: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.7;
+        }
+
+        .sidebar-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .sidebar-link.active {
+            background: rgba(200, 16, 46, 0.14);
+            color: var(--white);
+        }
+
+        .sidebar-link.active::before {
+            content: '';
+            position: absolute;
+            left: -14px;
+            top: 8px;
+            bottom: 8px;
+            width: 3px;
+            background: var(--red);
+            border-radius: 0 3px 3px 0;
+        }
+
+        .sidebar-link .badge {
+            margin-left: auto;
+            background: var(--red);
+            color: white;
+            font-size: 0.66rem;
+            font-weight: 700;
+            padding: 1px 7px;
+            border-radius: 20px;
+            line-height: 1.5;
+        }
+
+        .sidebar-link .badge.muted {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.55);
+        }
+
+        .sidebar-foot {
+            padding: 16px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-avatar {
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
+            border-radius: 50%;
+            background: var(--mid);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.74rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .sidebar-user-name {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .sidebar-user-role {
+            font-size: 0.68rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* ───────────────────────── MAIN ───────────────────────── */
+        .main {
+            margin-left: var(--sidebar-w);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            background: var(--white);
+            border-bottom: 1px solid rgba(13, 27, 42, 0.08);
+            padding: 0 32px;
+            height: 68px;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            color: var(--navy);
+        }
+
+        .menu-toggle svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+        }
+
+        .breadcrumb {
+            font-size: 0.72rem;
+            color: var(--steel);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+        }
+
+        .breadcrumb span {
+            color: var(--navy);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--fog);
+            border-radius: 6px;
+            padding: 8px 14px;
+            min-width: 240px;
+        }
+
+        .search-box svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--steel);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .search-box input {
+            border: none;
+            background: none;
+            outline: none;
+            font-size: 0.82rem;
+            color: var(--text);
+            width: 100%;
+            font-family: 'Calibri', Calibri, sans-serif;
+        }
+
+        .search-box input::placeholder {
+            color: #9ab0c2;
+        }
+
+        .icon-btn {
+            position: relative;
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            border: 1px solid rgba(13, 27, 42, 0.08);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--mid);
+            transition: background 0.15s;
+        }
+
+        .icon-btn:hover {
+            background: var(--fog);
+        }
+
+        .icon-btn svg {
+            width: 17px;
+            height: 17px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+        }
+
+        /* ───────────────────────── CONTENT ───────────────────────── */
+        .content {
+            flex: 1;
+            padding: 28px 32px 60px;
+        }
+
+        .page-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 26px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .page-head h1 {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 6px;
+        }
+
+        .page-head p {
+            font-size: 0.86rem;
+            color: var(--steel);
+            max-width: 520px;
+        }
+
+        /* KPI cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .kpi-card {
+            background: white;
+            border-radius: 10px;
+            padding: 18px 20px;
+            border: 1px solid rgba(13, 27, 42, 0.06);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--navy);
+        }
+
+        .kpi-card.c-navy::before { background: var(--mid); }
+        .kpi-card.c-amber::before { background: var(--amber); }
+
+        .kpi-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .kpi-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--fog);
+        }
+
+        .kpi-icon svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--navy);
+            fill: none;
+            stroke-width: 1.8;
+        }
+
+        .kpi-value {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--navy);
+            line-height: 1.1;
+        }
+
+        .kpi-label {
+            font-size: 0.72rem;
+            color: var(--steel);
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        /* Panel */
+        .panel {
+            background: white;
+            border-radius: 10px;
+            border: 1px solid rgba(13, 27, 42, 0.06);
+            margin-bottom: 20px;
+        }
+
+        .panel-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--fog);
+        }
+
+        .panel-head h2 {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .panel-head .panel-sub {
+            font-size: 0.74rem;
+            color: var(--steel);
+            margin-top: 2px;
+            font-weight: 400;
+            font-family: 'Calibri', Calibri, sans-serif;
+        }
+
+        /* Table */
+        table.iqc-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .iqc-table thead th {
+            text-align: left;
+            font-size: 0.66rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--steel);
+            padding: 12px 22px;
+            border-bottom: 1px solid var(--fog);
+            white-space: nowrap;
+        }
+
+        .iqc-table tbody td {
+            padding: 14px 22px;
+            font-size: 0.82rem;
+            color: var(--text);
+            border-bottom: 1px solid var(--fog);
+            white-space: nowrap;
+        }
+
+        .iqc-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .iqc-table tbody tr {
+            transition: background 0.15s;
+        }
+
+        .iqc-table tbody tr.group-row:hover {
+            background: #fafcfe;
+        }
+
+        .cell-part {
+            font-weight: 600;
+            color: var(--navy);
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 11px;
+            border-radius: 20px;
+        }
+
+        .status-pill::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .status-pill.pending {
+            background: rgba(199, 123, 18, 0.1);
+            color: var(--amber);
+        }
+
+        /* Toast notifications */
+        .save-toast {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(30, 123, 77, 0.1);
+            color: var(--green);
+            border: 1px solid rgba(30, 123, 77, 0.25);
+            border-radius: 8px;
+            padding: 12px 18px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            margin-bottom: 22px;
+            opacity: 0;
+            transform: translateY(-6px);
+            transition: opacity 0.25s, transform 0.25s;
+            pointer-events: none;
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 1000;
+            background: white;
+            box-shadow: 0 4px 12px rgba(13, 27, 42, 0.08);
+        }
+
+        .save-toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .save-toast svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2.4;
+            min-width: 16px;
+        }
+
+        /* Empty state */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 64px 24px;
+            color: var(--steel);
+        }
+
+        .empty-state svg {
+            width: 44px;
+            height: 44px;
+            stroke: var(--steel);
+            fill: none;
+            stroke-width: 1.4;
+            margin-bottom: 16px;
+            opacity: 0.6;
+        }
+
+        .empty-state strong {
+            font-family: 'Calibri', Calibri, sans-serif;
+            color: var(--navy);
+            font-size: 1.02rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .empty-state p {
+            font-size: 0.82rem;
+            max-width: 280px;
+        }
+
+        .sidebar-scrim {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(13, 27, 42, 0.5);
+            z-index: 150;
+        }
+
+        .sidebar-scrim.show {
+            display: block;
+        }
+
+        /* ───────────────────────── RESPONSIVE ───────────────────────── */
+        @media (max-width: 860px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .search-box {
+                display: none;
+            }
+
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 560px) {
+            .content {
+                padding: 20px 16px 40px;
+            }
+
+            .topbar {
+                padding: 0 16px;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar-scrim" id="scrim"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo" style="display: flex; justify-content: center; align-items: center; padding: 24px 16px;">
+            <img src="logo.png" alt="SCHILLER Logo" style="height: 48px; width: auto; object-fit: contain;">
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-group-label">Overview</div>
+            <a href="inwardip.html" class="sidebar-link">
+                <svg viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="7" height="9" rx="1.5" />
+                    <rect x="14" y="3" width="7" height="5" rx="1.5" />
+                    <rect x="14" y="12" width="7" height="9" rx="1.5" />
+                    <rect x="3" y="16" width="7" height="5" rx="1.5" />
+                </svg>
+                Dashboard
+            </a>
+
+            <div class="nav-group-label">Material Flow</div>
+            <a href="inwardip.html" class="sidebar-link">
+                <svg viewBox="0 0 24 24">
+                    <path d="M21 12H9M14 6l7 6-7 6" />
+                    <path d="M3 6v12" />
+                </svg>
+                In-Process Register
+                <span class="badge" id="ipqcInwardBadge">0</span>
+            </a>
+            <a href="acceptedip.html" class="sidebar-link">
+                <svg viewBox="0 0 24 24">
+                    <path d="M9 12l2 2 4-4" />
+                    <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Accepted
+            </a>
+            <a href="rejectedip.html" class="sidebar-link">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="15" y1="9" x2="9" y2="15" />
+                    <line x1="9" y1="9" x2="15" y2="15" />
+                </svg>
+                Rejected
+                <span class="badge" id="ipqcRejectedBadge">0</span>
+            </a>
+            <a href="reinwardip.html" class="sidebar-link active">
+                <svg viewBox="0 0 24 24">
+                    <polyline points="23 4 23 10 17 10" />
+                    <polyline points="1 20 1 14 7 14" />
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                </svg>
+                Completed
+                <span class="badge" id="ipqcReInwardBadge">0</span>
+            </a>
+
+            <div class="nav-group-label">System</div>
+            <a href="#" class="sidebar-link">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="3" />
+                    <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 005 15a1.65 1.65 0 00-.33-1.82L4.6 13.1a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 9a1.65 1.65 0 001-1.51V7a2 2 0 014 0v.09A1.65 1.65 0 0015 9a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019 13a1.65 1.65 0 00.33 1.82z" />
+                </svg>
+                Settings
+            </a>
+</nav>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <div class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menuToggle">
+                    <svg viewBox="0 0 24 24">
+                        <line x1="3" y1="6" x2="21" y2="6" />
+                        <line x1="3" y1="12" x2="21" y2="12" />
+                        <line x1="3" y1="18" x2="21" y2="18" />
+                    </svg>
+                </button>
+                <div class="breadcrumb">In-Process QC &gt; <span>Completed</span></div>
+            </div>
+            <div class="topbar-right">
+                <div class="search-box">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="7" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Search model, part no..." />
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+
+            <!-- Toast notification -->
+            <div class="save-toast" id="saveToast">
+                <svg viewBox="0 0 24 24">
+                    <path d="M9 12l2 2 4-4" />
+                    <circle cx="12" cy="12" r="9" />
+                </svg>
+                <span>Completed inspection saved successfully.</span>
+            </div>
+
+            <div class="page-head">
+                <div>
+                    <h1>In-Process QC Completed</h1>
+                    <p>Re-inspect rejected parts from In-Process QC to re-integrate or re-reject them.</p>
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            
+
+            <!-- Table panel -->
+            <div class="panel">
+                <div class="panel-head">
+                    <div>
+                        <h2>Completed Pending List</h2>
+                        <div class="panel-sub"><span id="entryCount">0</span> lots shown</div>
+                    </div>
+                </div>
+
+                <div id="tableWrap">
+                    <table class="iqc-table">
+                        <thead>
+                            <tr>
+                                <th>Sl. No.</th>
+                                <th>Log Date</th>
+                                <th>Model</th>
+                                <th>Total Parts</th>
+                                <th>Total Quantity</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="entryTableBody"></tbody>
+                    </table>
+                </div>
+
+                <div class="empty-state" id="emptyState" style="display:none;">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="16" x2="12" y2="12" />
+                        <line x1="12" y1="8" x2="12.01" y2="8" />
+                    </svg>
+                    <strong>No re-inward items pending</strong>
+                    <p>There are no outstanding rejected items awaiting re-inspection from In-Process QC.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const scrim = document.getElementById('scrim');
+        const menuToggle = document.getElementById('menuToggle');
+
+        function openSidebar() { sidebar.classList.add('open'); scrim.classList.add('show'); }
+        function closeSidebar() { sidebar.classList.remove('open'); scrim.classList.remove('show'); }
+        menuToggle.addEventListener('click', () => sidebar.classList.contains('open') ? closeSidebar() : openSidebar());
+        scrim.addEventListener('click', closeSidebar);
+
+        function formatDateDisplay(isoDate) {
+            if (!isoDate) return '—';
+            const d = isoDate.split('T')[0];
+            const [y, m, day] = d.split('-');
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return `${day} ${months[parseInt(m, 10) - 1]} ${y}`;
+        }
+
+        let entries = [];
+        const tableBody = document.getElementById('entryTableBody');
+        const tableWrap = document.getElementById('tableWrap');
+        const emptyState = document.getElementById('emptyState');
+        const searchInput = document.getElementById('searchInput');
+
+        async function fetchEntries() {
+            try {
+                const res = await fetch('/api/reinwardip');
+                if (res.ok) {
+                    entries = await res.json();
+                    renderTable();
+                    
+                    // Update badges
+                    const badge = document.getElementById('ipqcReInwardBadge');
+                    if (badge) {
+                        badge.textContent = groupEntries(entries).length;
+                    }
+                }
+            } catch (err) {
+                console.error('Error fetching re-inward entries:', err);
+            }
+        }
+
+        function groupEntries(data) {
+            const groups = {};
+            data.forEach(e => {
+                const d = e.date ? e.date.split('T')[0] : '';
+                const key = d + '|' + e.model;
+                if (!groups[key]) {
+                    groups[key] = { date: d, model: e.model, parts: [], totalQty: 0 };
+                }
+                groups[key].parts.push(e);
+                groups[key].totalQty += Number(e.quantity || 0);
+            });
+            return Object.values(groups);
+        }
+
+        function renderTable() {
+            const query = searchInput.value.trim().toLowerCase();
+            const filtered = entries.filter(e =>
+                !query ||
+                (e.model && e.model.toLowerCase().includes(query)) ||
+                (e.partNo && e.partNo.toLowerCase().includes(query)) ||
+                (e.partDescription && e.partDescription.toLowerCase().includes(query))
+            );
+
+            const groupedArray = groupEntries(filtered);
+            document.getElementById('entryCount').textContent = groupedArray.length;
+
+            const totalLots = groupedArray.length;
+            let totalParts = 0;
+            let totalQty = 0;
+            groupedArray.forEach(g => {
+                totalParts += g.parts.length;
+                totalQty += g.totalQty;
+            });
+
+            document.getElementById('kpiLots').textContent = totalLots;
+            document.getElementById('kpiParts').textContent = totalParts;
+            document.getElementById('kpiQty').textContent = totalQty.toLocaleString('en-IN');
+
+            if (groupedArray.length === 0) {
+                tableWrap.style.display = 'none';
+                emptyState.style.display = 'flex';
+                return;
+            }
+
+            tableWrap.style.display = 'block';
+            emptyState.style.display = 'none';
+
+            let html = '';
+            groupedArray.forEach((g, i) => {
+                html += `
+                <tr class="group-row" style="cursor:pointer; transition: background 0.15s;"
+                    onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'"
+                    onclick="toggleSubRow('subrow-${i}')">
+                    <td>${i + 1}</td>
+                    <td><span class="cell-part">${formatDateDisplay(g.date)}</span></td>
+                    <td><span class="cell-part">${g.model}</span></td>
+                    <td><strong>${g.parts.length}</strong> Parts</td>
+                    <td><strong>${g.totalQty.toLocaleString('en-IN')}</strong></td>
+                    <td style="text-align: right;">
+                        <span style="font-size: 0.75rem; color: var(--steel); user-select:none;">&#9660; Details</span>
+                    </td>
+                </tr>
+                <tr id="subrow-${i}" style="display: none; background: #fafbfc;">
+                    <td colspan="6" style="padding: 0; border-bottom: 2px solid var(--fog);">
+                        <div style="padding: 18px 30px;">
+                            <table style="width:100%; border-collapse:collapse; font-size: 0.8rem;">
+                                <thead>
+                                    <tr>
+                                        <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:left; border-bottom:1px solid #e2e8f0;">Part No.</th>
+                                        <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:left; border-bottom:1px solid #e2e8f0;">Description</th>
+                                        <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:right; border-bottom:1px solid #e2e8f0;">Total Inward</th>
+                                        <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:right; border-bottom:1px solid #e2e8f0;">IQC Rejected</th>
+                                        <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:right; border-bottom:1px solid #e2e8f0;">Production Rejected</th>
+                                        <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:right; border-bottom:1px solid #e2e8f0;">In-Process Rejected</th>
+                                        <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:right; border-bottom:1px solid #e2e8f0;">Completed Qty</th>
+                                        <th style="padding:8px 12px; font-weight:600; color:var(--green); text-align:center; border-bottom:1px solid #e2e8f0;">Accept Qty</th>
+                                        <th style="padding:8px 12px; font-weight:600; color:var(--red); text-align:center; border-bottom:1px solid #e2e8f0;">Reject Qty</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="subrow-body-${i}">
+                                    ${g.parts.map(p => {
+                                        const qty = Number(p.quantity || 0);
+                                        const totalInwardQty = Number(p.totalQuantity || p.quantity || 0);
+                                        return `
+                                        <tr>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9;"><strong>${p.partNo}</strong></td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; color: var(--text);">
+                                                ${p.partDescription || '-'}
+                                            </td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right; font-weight: 500;">
+                                                ${totalInwardQty > 0 ? totalInwardQty.toLocaleString('en-IN') + '' : '—'}
+                                            </td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right; font-weight: 500;">—</td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right; font-weight: 500;">—</td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right; font-weight: 500;">
+                                                <strong>${qty.toLocaleString('en-IN')}</strong>
+                                            </td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right; font-weight: 600;">
+                                                ${qty.toLocaleString('en-IN')}
+                                            </td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:center;">
+                                                <input type="number" min="0" max="${qty}" 
+                                                    class="accept-input" 
+                                                    data-id="${p._id}" 
+                                                    data-total="${qty}" 
+                                                    data-model="${g.model}"
+                                                    data-date="${p.date}"
+                                                    data-partno="${p.partNo}"
+                                                    data-partdesc="${p.partDescription || ''}"
+                                                    data-reason="${p.reason || ''}"
+                                                    oninput="calcReject(this, 'rej-${p._id}')" 
+                                                    style="width: 70px; padding: 4px; text-align: center; border: 1px solid var(--fog); border-radius: 4px;" />
+                                            </td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:center;">
+                                                <input type="number" id="rej-${p._id}" class="reject-input" data-id="${p._id}" readonly 
+                                                    style="width: 70px; padding: 4px; text-align: center; border: 1px solid transparent; background: transparent; color: var(--red); font-weight: bold;" value="0" />
+                                            </td>
+                                        </tr>
+                                        `;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                            <div style="text-align: right; padding-top: 15px;">
+                                <button onclick="processInspection(${i})" style="background: var(--navy); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.8rem;">Save Inspection</button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                `;
+            });
+            tableBody.innerHTML = html;
+        }
+
+        window.toggleSubRow = function(id) {
+            const el = document.getElementById(id);
+            el.style.display = el.style.display === 'none' ? 'table-row' : 'none';
+        };
+
+        window.calcReject = function(acceptInput, rejectId) {
+            const total = Number(acceptInput.getAttribute('data-total'));
+            let accept = Number(acceptInput.value);
+            if (accept < 0) { accept = 0; acceptInput.value = 0; }
+            if (accept > total) { accept = total; acceptInput.value = total; }
+            const rejectInput = document.getElementById(rejectId);
+            if (acceptInput.value === "") {
+                rejectInput.value = 0;
+            } else {
+                rejectInput.value = total - accept;
+            }
+        };
+
+        window.processInspection = async function(groupIndex) {
+            const tbody = document.getElementById('subrow-body-' + groupIndex);
+            if (!tbody) return;
+
+            const acceptInputs = tbody.querySelectorAll('.accept-input');
+            const inspections = [];
+
+            for (const input of acceptInputs) {
+                if (input.value === "") {
+                    alert("Please enter the Accepted Quantity for all parts before saving.");
+                    return;
+                }
+
+                const acceptQty = Number(input.value);
+                const rejectQty = Number(document.getElementById('rej-' + input.getAttribute('data-id')).value);
+                
+                inspections.push({
+                    id: input.getAttribute('data-id'),
+                    acceptedQty: acceptQty,
+                    rejectedQty: rejectQty,
+                    reason: input.getAttribute('data-reason')
+                });
+            }
+
+            try {
+                const res = await fetch('/api/reinwardip/inspect', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ inspections })
+                });
+
+                if (res.ok) {
+                    const toast = document.getElementById('saveToast');
+                    toast.classList.add('show');
+                    setTimeout(() => toast.classList.remove('show'), 3000);
+                    fetchEntries();
+                } else {
+                    alert('Failed to save inspection.');
+                }
+            } catch (err) {
+                console.error('Failed to process inspection', err);
+                alert('An error occurred while saving the inspection.');
+            }
+        };
+
+        searchInput.addEventListener('input', renderTable);
+
+        // Sidebar counts
+        async function fetchSidebarCounts() {
+            try {
+                const [inward, rejected] = await Promise.all([
+                    fetch('/api/inwardip').then(r => r.ok ? r.json() : []),
+                    fetch('/api/rejectedip').then(r => r.ok ? r.json() : [])
+                ]);
+
+                // Group rejected for badge
+                const groupedRej = {};
+                rejected.forEach(e => {
+                    const d = e.date ? e.date.split('T')[0] : '';
+                    const key = e.workOrder ? e.workOrder : (d + '|' + e.model);
+                    groupedRej[key] = true;
+                });
+                
+                document.getElementById('ipqcInwardBadge').textContent = inward.length;
+                document.getElementById('ipqcRejectedBadge').textContent = Object.keys(groupedRej).length;
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        fetchEntries();
+        fetchSidebarCounts();
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userName = localStorage.getItem('userName');
+            const userRole = localStorage.getItem('userRole');
+            if (userName) {
+                const nameEls = document.querySelectorAll('.sidebar-user-name');
+                const avatarEls = document.querySelectorAll('.sidebar-avatar');
+                const roleEls = document.querySelectorAll('.sidebar-user-role');
+                nameEls.forEach(el => el.textContent = userName);
+                const initials = userName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                avatarEls.forEach(el => el.textContent = initials);
+                if (userRole) {
+                    const roleText = userRole.charAt(0).toUpperCase() + userRole.slice(1);
+                    roleEls.forEach(el => el.textContent = roleText);
+                }
+            }
+        });
+    </script>
+<script>function highlightActiveSidebarLink() {    const links = document.querySelectorAll('.sidebar-link');    const currentPath = window.location.pathname.split('/').pop();    links.forEach(l => {        l.classList.remove('active');        if (l.getAttribute('href') === currentPath) {            l.classList.add('active');        }    });}document.addEventListener('DOMContentLoaded', highlightActiveSidebarLink);</script>\n</body>
+
+</html>

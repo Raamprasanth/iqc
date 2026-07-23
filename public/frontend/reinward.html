@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Completed — SCHILLER Healthcare India</title>
+    
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --navy: #0D1B2A;
+            --red: #C8102E;
+            --white: #FFFFFF;
+            --fog: #F0F4F8;
+            --steel: #6B8CAE;
+            --mid: #2C4A6E;
+            --text: #1A2B3C;
+            --amber: #C77B12;
+            --green: #1E7B4D;
+            --sidebar-w: 248px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Calibri', Calibri, sans-serif;
+            color: var(--text);
+            background: var(--fog);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* ───────────────────────── SIDEBAR ───────────────────────── */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: var(--sidebar-w);
+            background: var(--navy);
+            display: flex;
+            flex-direction: column;
+            z-index: 200;
+            transition: transform 0.25s ease;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 22px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .sidebar-logo-mark {
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
+            background: var(--red);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-logo-mark svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+
+        .sidebar-brand {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.02rem;
+            font-weight: 700;
+            color: var(--white);
+            letter-spacing: 0.02em;
+            line-height: 1.2;
+        }
+
+        .sidebar-brand span {
+            color: var(--red);
+        }
+
+        .sidebar-brand small {
+            display: block;
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 0.62rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 2px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            overflow-y: auto;
+            padding: 18px 14px;
+        }
+
+        .nav-group-label {
+            font-size: 0.64rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.28);
+            padding: 14px 12px 8px;
+        }
+
+        .nav-group-label:first-child {
+            padding-top: 4px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.58);
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 2px;
+            position: relative;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .sidebar-link svg {
+            width: 18px;
+            height: 18px;
+            min-width: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.7;
+        }
+
+        .sidebar-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .sidebar-link.active {
+            background: rgba(200, 16, 46, 0.14);
+            color: var(--white);
+        }
+
+        .sidebar-link.active::before {
+            content: '';
+            position: absolute;
+            left: -14px;
+            top: 8px;
+            bottom: 8px;
+            width: 3px;
+            background: var(--red);
+            border-radius: 0 3px 3px 0;
+        }
+
+        .sidebar-foot {
+            padding: 16px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-avatar {
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
+            border-radius: 50%;
+            background: var(--mid);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.74rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .sidebar-user-name {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .sidebar-user-role {
+            font-size: 0.68rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* ───────────────────────── MAIN ───────────────────────── */
+        .main {
+            margin-left: var(--sidebar-w);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            background: var(--white);
+            border-bottom: 1px solid rgba(13, 27, 42, 0.08);
+            padding: 0 32px;
+            height: 68px;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            color: var(--navy);
+        }
+
+        .menu-toggle svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+        }
+
+        .breadcrumb {
+            font-size: 0.72rem;
+            color: var(--steel);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+        }
+
+        .breadcrumb span {
+            color: var(--navy);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--fog);
+            border-radius: 6px;
+            padding: 8px 14px;
+            min-width: 240px;
+        }
+
+        .search-box svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--steel);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .search-box input {
+            border: none;
+            background: none;
+            outline: none;
+            font-size: 0.82rem;
+            color: var(--text);
+            width: 100%;
+            font-family: 'Calibri', Calibri, sans-serif;
+        }
+
+        .search-box input::placeholder {
+            color: #9ab0c2;
+        }
+
+        .icon-btn {
+            position: relative;
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            border: 1px solid rgba(13, 27, 42, 0.08);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--mid);
+            transition: background 0.15s;
+        }
+
+        .icon-btn:hover {
+            background: var(--fog);
+        }
+
+        .icon-btn svg {
+            width: 17px;
+            height: 17px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+        }
+
+        /* ───────────────────────── CONTENT ───────────────────────── */
+        .content {
+            flex: 1;
+            padding: 28px 32px 60px;
+        }
+
+        .page-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 26px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .page-head h1 {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 6px;
+        }
+
+        .page-head p {
+            font-size: 0.86rem;
+            color: var(--steel);
+            max-width: 520px;
+        }
+
+        /* KPI cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .kpi-card {
+            background: white;
+            border-radius: 10px;
+            padding: 18px 20px;
+            border: 1px solid rgba(13, 27, 42, 0.06);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--navy);
+        }
+
+        .kpi-card.c-navy::before { background: var(--mid); }
+        .kpi-card.c-amber::before { background: var(--amber); }
+
+        .kpi-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .kpi-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--fog);
+        }
+
+        .kpi-icon svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--navy);
+            fill: none;
+            stroke-width: 1.8;
+        }
+
+        .kpi-value {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--navy);
+            line-height: 1.1;
+        }
+
+        .kpi-label {
+            font-size: 0.72rem;
+            color: var(--steel);
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        /* Panel */
+        .panel {
+            background: white;
+            border-radius: 10px;
+            border: 1px solid rgba(13, 27, 42, 0.06);
+            margin-bottom: 20px;
+        }
+
+        .panel-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--fog);
+        }
+
+        .panel-head h2 {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .panel-head .panel-sub {
+            font-size: 0.74rem;
+            color: var(--steel);
+            margin-top: 2px;
+            font-weight: 400;
+            font-family: 'Calibri', Calibri, sans-serif;
+        }
+
+        /* Table */
+        table.iqc-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .iqc-table thead th {
+            text-align: left;
+            font-size: 0.66rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--steel);
+            padding: 12px 22px;
+            border-bottom: 1px solid var(--fog);
+            white-space: nowrap;
+        }
+
+        .iqc-table tbody td {
+            padding: 14px 22px;
+            font-size: 0.82rem;
+            color: var(--text);
+            border-bottom: 1px solid var(--fog);
+            white-space: nowrap;
+        }
+
+        .iqc-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .iqc-table tbody tr {
+            transition: background 0.15s;
+        }
+
+        .iqc-table tbody tr.group-row:hover {
+            background: #fafcfe;
+        }
+
+        .cell-part {
+            font-weight: 600;
+            color: var(--navy);
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 11px;
+            border-radius: 20px;
+        }
+
+        .status-pill::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .status-pill.pending {
+            background: rgba(199, 123, 18, 0.1);
+            color: var(--amber);
+        }
+
+        /* Toast notifications */
+        .save-toast {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(30, 123, 77, 0.1);
+            color: var(--green);
+            border: 1px solid rgba(30, 123, 77, 0.25);
+            border-radius: 8px;
+            padding: 12px 18px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            margin-bottom: 22px;
+            opacity: 0;
+            transform: translateY(-6px);
+            transition: opacity 0.25s, transform 0.25s;
+            pointer-events: none;
+        }
+
+        .save-toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .save-toast svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2.4;
+            min-width: 16px;
+        }
+
+        /* Empty state */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 64px 24px;
+            color: var(--steel);
+        }
+
+        .empty-state svg {
+            width: 44px;
+            height: 44px;
+            stroke: var(--steel);
+            fill: none;
+            stroke-width: 1.4;
+            margin-bottom: 16px;
+            opacity: 0.6;
+        }
+
+        .empty-state strong {
+            font-family: 'Calibri', Calibri, sans-serif;
+            color: var(--navy);
+            font-size: 1.02rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .empty-state p {
+            font-size: 0.82rem;
+            max-width: 280px;
+        }
+
+        .sidebar-scrim {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(13, 27, 42, 0.5);
+            z-index: 150;
+        }
+
+        .sidebar-scrim.show {
+            display: block;
+        }
+
+        /* ───────────────────────── RESPONSIVE ───────────────────────── */
+        @media (max-width: 860px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .search-box {
+                display: none;
+            }
+
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 560px) {
+            .content {
+                padding: 20px 16px 40px;
+            }
+
+            .topbar {
+                padding: 0 16px;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar-scrim" id="scrim"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo" style="display: flex; justify-content: center; align-items: center; padding: 24px 16px;">
+            <img src="logo.png" alt="SCHILLER Logo" style="height: 48px; width: auto; object-fit: contain;">
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-group-label">Overview</div>
+            <a href="iqc.html" class="sidebar-link">
+                <svg viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="7" height="9" rx="1.5" />
+                    <rect x="14" y="3" width="7" height="5" rx="1.5" />
+                    <rect x="14" y="12" width="7" height="9" rx="1.5" />
+                    <rect x="3" y="16" width="7" height="5" rx="1.5" />
+                </svg>
+                Dashboard
+            </a>
+
+            <div class="nav-group-label">Material Flow</div>
+            <a href="inward.html" class="sidebar-link">
+                <svg viewBox="0 0 24 24">
+                    <path d="M21 12H9M14 6l7 6-7 6" />
+                    <path d="M3 6v12" />
+                </svg>
+                Inward Register
+                <span class="badge" id="iqcInwardBadge">0</span>
+            </a>
+            <a href="acceptediqc.html" class="sidebar-link">
+                <svg viewBox="0 0 24 24">
+                    <path d="M9 12l2 2 4-4" />
+                    <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Accepted
+            </a>
+            <a href="rejectediqc.html" class="sidebar-link">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="15" y1="9" x2="9" y2="15" />
+                    <line x1="9" y1="9" x2="15" y2="15" />
+                </svg>
+                Rejected
+                <span class="badge" id="iqcRejectedBadge">0</span>
+            </a>
+            <a href="reinward.html" class="sidebar-link active">
+                <svg viewBox="0 0 24 24">
+                    <polyline points="23 4 23 10 17 10" />
+                    <polyline points="1 20 1 14 7 14" />
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                </svg>
+                Completed
+                <span class="badge" id="iqcReInwardBadge">0</span>
+            </a>
+
+            <div class="nav-group-label">System</div>
+            <a href="#" class="sidebar-link">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="3" />
+                    <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 005 15a1.65 1.65 0 00-.33-1.82L4.6 13.1a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 9a1.65 1.65 0 001-1.51V7a2 2 0 014 0v.09A1.65 1.65 0 0015 9a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019 13a1.65 1.65 0 00.33 1.82z" />
+                </svg>
+                Settings
+            </a>
+</nav>
+
+        <div class="sidebar-foot">
+            <div class="sidebar-avatar">RM</div>
+            <div>
+                <div class="sidebar-user-name">R. Menon</div>
+                <div class="sidebar-user-role">QC Manager · Puducherry</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <div class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menuToggle">
+                    <svg viewBox="0 0 24 24">
+                        <line x1="3" y1="6" x2="21" y2="6" />
+                        <line x1="3" y1="12" x2="21" y2="12" />
+                        <line x1="3" y1="18" x2="21" y2="18" />
+                    </svg>
+                </button>
+                <div class="breadcrumb">Incoming QC &gt; <span>Completed</span></div>
+            </div>
+            <div class="topbar-right">
+                <div class="search-box">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="7" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Search model, part no, stage..." />
+                </div>
+                <button class="icon-btn">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                        <path d="M13.73 21a2 2 0 01-3.46 0" />
+                    </svg>
+                    <span class="dot"></span>
+                </button>
+            </div>
+        </div>
+
+        <div class="content">
+
+            <div class="page-head">
+                <div>
+                    <h1>Completed</h1>
+                    <p>Re-inspect rejected parts from Incoming QC, Production, and In-Process QC to re-integrate or re-reject them.</p>
+                </div>
+            </div>
+
+            <!-- Toast notification -->
+            <div class="save-toast" id="saveToast">
+                <svg viewBox="0 0 24 24">
+                    <path d="M9 12l2 2 4-4" />
+                    <circle cx="12" cy="12" r="9" />
+                </svg>
+                <span>Completed inspection saved successfully.</span>
+            </div>
+
+            <!-- KPI Cards -->
+            
+
+            <!-- Table panel -->
+            <div class="panel">
+                <div class="panel-head">
+                    <div>
+                        <h2>Completed Pending List</h2>
+                        <div class="panel-sub"><span id="entryCount">0</span> lots shown</div>
+                    </div>
+                </div>
+
+                <div id="tableWrap">
+                    <table class="iqc-table">
+                        <thead>
+                            <tr>
+                                <th>Sl. No.</th>
+                                <th>Log Date</th>
+                                <th>Model</th>
+                                <th>Total Parts</th>
+                                <th>Total Quantity</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="entryTableBody"></tbody>
+                    </table>
+                </div>
+
+                <div class="empty-state" id="emptyState" style="display:none;">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="16" x2="12" y2="12" />
+                        <line x1="12" y1="8" x2="12.01" y2="8" />
+                    </svg>
+                    <strong>No re-inward items pending</strong>
+                    <p>There are no outstanding rejected items awaiting re-inspection from IQC, Production, or IPQC.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        /* ── Sidebar toggle ── */
+        const sidebar = document.getElementById('sidebar');
+        const scrim = document.getElementById('scrim');
+        const menuToggle = document.getElementById('menuToggle');
+
+        function openSidebar() { sidebar.classList.add('open'); scrim.classList.add('show'); }
+        function closeSidebar() { sidebar.classList.remove('open'); scrim.classList.remove('show'); }
+        menuToggle.addEventListener('click', () => sidebar.classList.contains('open') ? closeSidebar() : openSidebar());
+        scrim.addEventListener('click', closeSidebar);
+
+        /* ── Helpers ── */
+        function formatDateDisplay(isoDate) {
+            if (!isoDate) return '—';
+            const d = isoDate.split('T')[0];
+            const [y, m, day] = d.split('-');
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return `${day} ${months[parseInt(m, 10) - 1]} ${y}`;
+        }
+
+        let entries = [];
+        const tableBody = document.getElementById('entryTableBody');
+        const tableWrap = document.getElementById('tableWrap');
+        const emptyState = document.getElementById('emptyState');
+        const searchInput = document.getElementById('searchInput');
+
+        async function fetchEntries() {
+            try {
+                const res = await fetch('/api/reinward');
+                if (res.ok) {
+                    entries = await res.json();
+                    renderTable();
+                    
+                    // Update badges
+                    const badge = document.getElementById('iqcReInwardBadge');
+                    if (badge) {
+                        badge.textContent = groupEntries(entries).length;
+                    }
+                }
+            } catch (err) {
+                console.error('Error fetching re-inward entries:', err);
+            }
+        }
+
+        function groupEntries(data) {
+            const groups = {};
+            data.forEach(e => {
+                const d = e.date ? e.date.split('T')[0] : '';
+                const key = d + '|' + e.model;
+                if (!groups[key]) {
+                    groups[key] = { date: d, model: e.model, parts: [], totalQty: 0 };
+                }
+                groups[key].parts.push(e);
+                groups[key].totalQty += Number(e.quantity || 0);
+            });
+            return Object.values(groups);
+        }
+
+        function renderTable() {
+            const query = searchInput.value.trim().toLowerCase();
+            const filtered = entries.filter(e =>
+                !query ||
+                (e.model && e.model.toLowerCase().includes(query)) ||
+                (e.partNo && e.partNo.toLowerCase().includes(query)) ||
+                (e.partDescription && e.partDescription.toLowerCase().includes(query))
+            );
+
+            const groupedArray = groupEntries(filtered);
+            if (document.getElementById('entryCount')) document.getElementById('entryCount').textContent = groupedArray.length;
+
+            const totalLots = groupedArray.length;
+            let totalParts = 0;
+            let totalQty = 0;
+            groupedArray.forEach(g => {
+                totalParts += g.parts.length;
+                totalQty += g.totalQty;
+            });
+
+            const kpiLots = document.getElementById('kpiLots');
+            if(kpiLots) kpiLots.textContent = totalLots;
+            
+            const kpiParts = document.getElementById('kpiParts');
+            if(kpiParts) kpiParts.textContent = totalParts;
+            
+            const kpiQty = document.getElementById('kpiQty');
+            if(kpiQty) kpiQty.textContent = totalQty.toLocaleString('en-IN');
+
+            if (groupedArray.length === 0) {
+                tableWrap.style.display = 'none';
+                emptyState.style.display = 'flex';
+                return;
+            }
+
+            tableWrap.style.display = 'block';
+            emptyState.style.display = 'none';
+
+            let html = '';
+            groupedArray.forEach((g, i) => {
+                html += `
+                <tr class="group-row" style="cursor:pointer; transition: background 0.15s;"
+                    onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'"
+                    onclick="toggleSubRow('subrow-${i}')">
+                    <td>${i + 1}</td>
+                    <td><span class="cell-part">${formatDateDisplay(g.date)}</span></td>
+                    <td><strong>${g.model}</strong></td>
+                    <td>${g.parts.length}</td>
+                    <td><strong>${g.totalQty.toLocaleString('en-IN')}</strong></td>
+                    <td style="text-align: right; color: var(--navy);">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </td>
+                </tr>
+                <tr class="sub-row" id="subrow-${i}" style="display:none;">
+                    <td colspan="6" style="padding: 0;">
+                        <div class="sub-table-container">
+                            <table class="sub-table">
+                                <thead>
+                                    <tr>
+                                        <th>Part No</th>
+                                        <th>Description</th>
+                                        <th>IQC Qty</th>
+                                        <th>IQC Rej</th>
+                                        <th>Pro Rej</th>
+                                        <th>Tot Qty</th>
+                                        <th>Problem Desc</th>
+                                        <th>Problem Serial</th>
+                                        <th>Recv Serial No</th>
+                                        <th>Recv Qty</th>
+                                        <th>Accept</th>
+                                        <th>Reject</th>
+                                        <th>Remarks</th>
+                                        <th style="text-align:center;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${g.parts.map((p, pIdx) => {
+                                        const qty = Number(p.quantity) || 0;
+                                        const totalInwardQty = Number(p.totalInwardQty) || 0;
+                                        const iqcRej = Number(p.iqcRej) || 0;
+                                        const proRej = Number(p.proRej) || 0;
+                                        const itemsJson = JSON.stringify(p.items || []).replace(/"/g, '&quot;');
+                                        return `
+                                        <tr>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9;"><strong>${p.partNo}</strong></td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; color: var(--text);">
+                                                ${p.partDescription || '-'}
+                                            </td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right; font-weight: 500;">
+                                                ${totalInwardQty > 0 ? totalInwardQty.toLocaleString('en-IN') + '' : '—'}
+                                            </td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right; font-weight: 500;">
+                                                ${iqcRej}
+                                            </td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right; font-weight: 500;">
+                                                ${proRej}
+                                            </td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right; font-weight: 600;">
+                                                ${qty.toLocaleString('en-IN')}
+                                            </td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; color: var(--text);">
+                                                ${p.items[0]?.problemDescription || '-'}
+                                            </td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; color: var(--text);">
+                                                ${p.items[0]?.problemSerialNo || '-'}
+                                            </td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9;">
+                                                <input type="text" id="recvserial-${i}-${pIdx}" class="input-field" placeholder="Recv Serial No" style="width: 100px; font-size: 0.75rem;" />
+                                            </td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9;">
+                                                <input type="number" id="recvqty-${i}-${pIdx}" class="input-field" placeholder="Recv Qty" style="width: 70px; font-size: 0.75rem;" />
+                                            </td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:center;">
+                                                <input type="number" min="0" max="${qty}" 
+                                                    class="accept-input" 
+                                                    id="accept-${i}-${pIdx}"
+                                                    data-items="${itemsJson}"
+                                                    data-total="${qty}" 
+                                                    oninput="calcReject(this, 'rej-${i}-${pIdx}')" 
+                                                    style="width: 70px; padding: 4px; text-align: center; border: 1px solid var(--fog); border-radius: 4px;" />
+                                            </td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:center;">
+                                                <input type="number" id="rej-${i}-${pIdx}" class="reject-input" readonly 
+                                                    style="width: 70px; padding: 4px; text-align: center; border: 1px solid transparent; background: transparent; color: var(--red); font-weight: bold;" value="0" />
+                                            </td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9;">
+                                                <input type="text" id="remarks-${i}-${pIdx}" class="input-field" placeholder="Remarks" style="width: 120px; font-size: 0.75rem;" />
+                                            </td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align: center;">
+                                                <button class="btn-outline-navy" style="padding:4px 8px; font-size:0.75rem;" onclick="viewHistory('${p.partNo}')">View History</button>
+                                            </td>
+                                        </tr>
+                                        `;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                            <div style="text-align: right; padding-top: 15px;">
+                                <button onclick="processInspection(${i})" style="background: var(--navy); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.8rem;">Save Inspection</button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                `;
+            });
+            tableBody.innerHTML = html;
+        }
+
+        window.toggleSubRow = function(id) {
+            const el = document.getElementById(id);
+            el.style.display = el.style.display === 'none' ? 'table-row' : 'none';
+        };
+
+        window.calcReject = function(acceptInput, rejectId) {
+            const total = Number(acceptInput.getAttribute('data-total'));
+            let accept = Number(acceptInput.value);
+            if (accept < 0) { accept = 0; acceptInput.value = 0; }
+            if (accept > total) { accept = total; acceptInput.value = total; }
+            const rejectInput = document.getElementById(rejectId);
+            if (acceptInput.value === "") {
+                rejectInput.value = 0;
+            } else {
+                rejectInput.value = total - accept;
+            }
+        };
+
+        window.processInspection = async function(groupIndex) {
+            const tbody = document.getElementById('subrow-body-' + groupIndex);
+            if (!tbody) return;
+
+            const acceptInputs = tbody.querySelectorAll('.accept-input');
+            const inspections = [];
+
+            for (const input of acceptInputs) {
+                if (input.value === "") {
+                    alert("Please enter the Accepted Quantity for all parts before saving.");
+                    return;
+                }
+
+                const totalAccepted = Number(input.value);
+                const items = JSON.parse(input.getAttribute('data-items'));
+                
+                let remainingAccepted = totalAccepted;
+
+                const pIdx = input.id.split('-')[2];
+                const iVal = input.id.split('-')[1];
+                const recvSerialInput = document.getElementById('recvserial-' + iVal + '-' + pIdx);
+                const recvQtyInput = document.getElementById('recvqty-' + iVal + '-' + pIdx);
+                const remarksInput = document.getElementById('remarks-' + iVal + '-' + pIdx);
+
+                items.forEach(item => {
+                    const itemQty = Number(item.quantity || 0);
+                    let itemAccepted = 0;
+                    if (remainingAccepted >= itemQty) {
+                        itemAccepted = itemQty;
+                        remainingAccepted -= itemQty;
+                    } else {
+                        itemAccepted = remainingAccepted;
+                        remainingAccepted = 0;
+                    }
+                    const itemRejected = itemQty - itemAccepted;
+
+                    inspections.push({
+                        id: item._id,
+                        stage: item.stage,
+                        acceptedQty: itemAccepted,
+                        rejectedQty: itemRejected,
+                        date: item.date,
+                        model: item.model,
+                        partNo: item.partNo,
+                        partDescription: item.partDescription || item.description || '',
+                        grnNo: item.grnNo || '',
+                        batchId: item.batchId || '',
+                        workOrder: item.workOrder || '',
+                        reason: item.reason || '',
+                        recvSerialNo: recvSerialInput ? recvSerialInput.value : '',
+                        recvQty: recvQtyInput ? Number(recvQtyInput.value) : 0,
+                        remarks: remarksInput ? remarksInput.value : ''
+                    });
+                });
+            }
+
+            try {
+                const res = await fetch('/api/reinward/inspect', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ inspections })
+                });
+
+                if (res.ok) {
+                    const toast = document.getElementById('saveToast');
+                    toast.classList.add('show');
+                    setTimeout(() => toast.classList.remove('show'), 3000);
+                    fetchEntries();
+                } else {
+                    alert('Failed to save inspection.');
+                }
+            } catch (err) {
+                console.error('Failed to process inspection', err);
+                alert('An error occurred while saving the inspection.');
+            }
+        };
+
+        searchInput.addEventListener('input', renderTable);
+
+        /* ── Init ── */
+        fetchEntries();
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userName = localStorage.getItem('userName');
+            const userRole = localStorage.getItem('userRole');
+            if (userName) {
+                const nameEls = document.querySelectorAll('.sidebar-user-name');
+                const avatarEls = document.querySelectorAll('.sidebar-avatar');
+                const roleEls = document.querySelectorAll('.sidebar-user-role');
+                
+                nameEls.forEach(el => el.textContent = userName);
+                
+                const initials = userName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                avatarEls.forEach(el => el.textContent = initials);
+                
+                if (userRole) {
+                    const roleText = userRole.charAt(0).toUpperCase() + userRole.slice(1);
+                    roleEls.forEach(el => el.textContent = roleText);
+                }
+            }
+        });
+    </script>
+
+    <!-- History Modal -->
+    <div class="modal-overlay" id="historyModal">
+        <div class="modal">
+            <div class="modal-head">
+                <h2>Component History</h2>
+                <button class="close-modal" onclick="closeHistoryModal()">
+                    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
+                <div id="historyLoading" style="text-align: center; padding: 20px; color: var(--steel);">Loading history...</div>
+                <div id="historyTimeline" style="display: none; position: relative; padding-left: 20px; margin-top: 10px;">
+                    <!-- Timeline items injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(13, 27, 42, 0.55);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.show {
+            display: flex;
+        }
+        .modal {
+            background: white;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 480px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 32px 80px rgba(13, 27, 42, 0.2);
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid var(--fog);
+        }
+        .modal-head h2 {
+            margin: 0;
+            font-size: 1.1rem;
+            color: var(--navy);
+        }
+        .close-modal {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--steel);
+        }
+        .close-modal svg {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        .timeline-item {
+            position: relative;
+            padding-bottom: 20px;
+        }
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+        .timeline-dot {
+            position: absolute;
+            left: -20px;
+            top: 5px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--sapphire);
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px var(--sapphire);
+        }
+        .timeline-line {
+            position: absolute;
+            left: -16px;
+            top: 20px;
+            bottom: -5px;
+            width: 2px;
+            background: var(--fog);
+        }
+        .timeline-item:last-child .timeline-line {
+            display: none;
+        }
+        .timeline-content {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--fog);
+        }
+        .timeline-date {
+            font-size: 0.75rem;
+            color: var(--steel);
+            margin-bottom: 4px;
+        }
+        .timeline-stage {
+            font-weight: 600;
+            color: var(--navy);
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+        .timeline-desc {
+            font-size: 0.85rem;
+            color: var(--text);
+            margin: 0;
+        }
+    </style>
+
+    <script>
+        window.viewHistory = function(partNo) {
+            if (!partNo) {
+                alert('No Part No found for this component.');
+                return;
+            }
+            document.getElementById('historyModal').classList.add('show');
+            document.getElementById('historyLoading').style.display = 'block';
+            document.getElementById('historyTimeline').style.display = 'none';
+
+            fetch('/api/history/' + encodeURIComponent(partNo))
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('historyLoading').style.display = 'none';
+                    const timeline = document.getElementById('historyTimeline');
+                    timeline.style.display = 'block';
+                    
+                    if (data.error || data.length === 0) {
+                        timeline.innerHTML = '<p style="color:var(--steel); font-size:0.85rem;">No history available.</p>';
+                        return;
+                    }
+
+                    let html = '';
+                    data.forEach(item => {
+                        let badgeColor = 'var(--steel)';
+                        if (item.status.includes('Accepted') || item.status.includes('Moved') || item.status.includes('Inspected')) badgeColor = 'var(--green)';
+                        if (item.status.includes('Rejected')) badgeColor = 'var(--red)';
+
+                        html += `
+                            <div class="timeline-item">
+                                <div class="timeline-dot" style="background:${badgeColor}; box-shadow: 0 0 0 2px ${badgeColor};"></div>
+                                <div class="timeline-line"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-date">${new Date(item.date).toLocaleString()}</div>
+                                    <div class="timeline-stage">${item.stage} <span style="font-size:0.75rem; padding:2px 6px; border-radius:12px; background:rgba(0,0,0,0.05); color:${badgeColor}; border:1px solid ${badgeColor};">${item.status}</span></div>
+                                    <p class="timeline-desc">${item.desc}</p>
+                                    ${item.remarks ? `<p style="margin:4px 0 0 0; font-size:0.8rem; color:var(--amber);"><strong>Remarks:</strong> ${item.remarks}</p>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    timeline.innerHTML = html;
+                })
+                .catch(err => {
+                    console.error('Error fetching history:', err);
+                    document.getElementById('historyLoading').innerHTML = 'Error loading history.';
+                });
+        };
+
+        window.closeHistoryModal = function() {
+            document.getElementById('historyModal').classList.remove('show');
+        };
+    </script>
+<script>function highlightActiveSidebarLink() {    const links = document.querySelectorAll('.sidebar-link');    const currentPath = window.location.pathname.split('/').pop();    links.forEach(l => {        l.classList.remove('active');        if (l.getAttribute('href') === currentPath) {            l.classList.add('active');        }    });}document.addEventListener('DOMContentLoaded', highlightActiveSidebarLink);</script>\n</body>
+
+</html>
+

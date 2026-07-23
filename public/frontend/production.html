@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Production Dashboard — SCHILLER Healthcare India</title>
+    
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --navy: #0D1B2A;
+            --red: #C8102E;
+            --white: #FFFFFF;
+            --fog: #F0F4F8;
+            --steel: #6B8CAE;
+            --mid: #2C4A6E;
+            --text: #1A2B3C;
+            --amber: #C77B12;
+            --green: #1E7B4D;
+            --sidebar-w: 248px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Calibri', Calibri, sans-serif;
+            color: var(--text);
+            background: var(--fog);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* ───────────────────────── SIDEBAR ───────────────────────── */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: var(--sidebar-w);
+            background: var(--navy);
+            display: flex;
+            flex-direction: column;
+            z-index: 200;
+            transition: transform 0.25s ease;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 22px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .sidebar-logo-mark {
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
+            background: var(--red);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-logo-mark svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+
+        .sidebar-brand {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.02rem;
+            font-weight: 700;
+            color: var(--white);
+            letter-spacing: 0.02em;
+            line-height: 1.2;
+        }
+
+        .sidebar-brand span {
+            color: var(--red);
+        }
+
+        .sidebar-brand small {
+            display: block;
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 0.62rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 2px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            overflow-y: auto;
+            padding: 18px 14px;
+        }
+
+        .nav-group-label {
+            font-size: 0.64rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.28);
+            padding: 14px 12px 8px;
+        }
+
+        .nav-group-label:first-child {
+            padding-top: 4px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.58);
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 2px;
+            position: relative;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .sidebar-link svg {
+            width: 18px;
+            height: 18px;
+            min-width: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.7;
+        }
+
+        .sidebar-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .sidebar-link.active {
+            background: rgba(200, 16, 46, 0.14);
+            color: var(--white);
+        }
+
+        .sidebar-link.active::before {
+            content: '';
+            position: absolute;
+            left: -14px;
+            top: 8px;
+            bottom: 8px;
+            width: 3px;
+            background: var(--red);
+            border-radius: 0 3px 3px 0;
+        }
+
+        .sidebar-link .badge {
+            margin-left: auto;
+            background: var(--red);
+            color: white;
+            font-size: 0.66rem;
+            font-weight: 700;
+            padding: 1px 7px;
+            border-radius: 20px;
+            line-height: 1.5;
+        }
+
+        .sidebar-link .badge.muted {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.55);
+        }
+
+        .sidebar-foot {
+            padding: 16px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-avatar {
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
+            border-radius: 50%;
+            background: var(--mid);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.74rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .sidebar-user-name {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .sidebar-user-role {
+            font-size: 0.68rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* ───────────────────────── MAIN ───────────────────────── */
+        .main {
+            margin-left: var(--sidebar-w);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            background: var(--white);
+            border-bottom: 1px solid rgba(13, 27, 42, 0.08);
+            padding: 0 32px;
+            height: 68px;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            color: var(--navy);
+        }
+
+        .menu-toggle svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+        }
+
+        .breadcrumb {
+            font-size: 0.72rem;
+            color: var(--steel);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+        }
+
+        .breadcrumb span {
+            color: var(--navy);
+        }
+
+        .topbar-title {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--fog);
+            border-radius: 6px;
+            padding: 8px 14px;
+            min-width: 240px;
+        }
+
+        .search-box svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--steel);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .search-box input {
+            border: none;
+            background: none;
+            outline: none;
+            font-size: 0.82rem;
+            color: var(--text);
+            width: 100%;
+            font-family: 'Calibri', Calibri, sans-serif;
+        }
+
+        .search-box input::placeholder {
+            color: #9ab0c2;
+        }
+
+        .icon-btn {
+            position: relative;
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            border: 1px solid rgba(13, 27, 42, 0.08);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--mid);
+            transition: background 0.15s;
+        }
+
+        .icon-btn:hover {
+            background: var(--fog);
+        }
+
+        .icon-btn svg {
+            width: 17px;
+            height: 17px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+        }
+
+        .icon-btn .dot {
+            position: absolute;
+            top: 7px;
+            right: 7px;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--red);
+            border: 1.5px solid white;
+        }
+
+        .btn-new {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--red);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.1s;
+        }
+
+        .btn-new:hover {
+            background: #a50d23;
+            transform: translateY(-1px);
+        }
+
+        .btn-new svg {
+            width: 15px;
+            height: 15px;
+            stroke: white;
+            fill: none;
+            stroke-width: 2.2;
+        }
+
+        /* ───────────────────────── CONTENT ───────────────────────── */
+        .content {
+            flex: 1;
+            padding: 28px 32px 60px;
+        }
+
+        .page-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 26px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .page-head h1 {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 6px;
+        }
+
+        .page-head p {
+            font-size: 0.86rem;
+            color: var(--steel);
+            max-width: 520px;
+        }
+
+        .head-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn-outline-navy {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            border: 1.5px solid rgba(13, 27, 42, 0.14);
+            color: var(--navy);
+            background: white;
+            padding: 9px 16px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: border-color 0.15s, background 0.15s;
+        }
+
+        .btn-outline-navy:hover {
+            border-color: var(--steel);
+            background: var(--fog);
+        }
+
+        .btn-outline-navy svg {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* KPI cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .kpi-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px 22px;
+            border: 1px solid rgba(13, 27, 42, 0.06);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card.accent::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--accent-color, var(--red));
+        }
+
+        .kpi-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .kpi-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--fog);
+        }
+
+        .kpi-icon svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--navy);
+            fill: none;
+            stroke-width: 1.8;
+        }
+
+        .kpi-card.c-red .kpi-icon {
+            background: rgba(200, 16, 46, 0.1);
+        }
+
+        .kpi-card.c-red .kpi-icon svg {
+            stroke: var(--red);
+        }
+
+        .kpi-card.c-amber .kpi-icon {
+            background: rgba(199, 123, 18, 0.1);
+        }
+
+        .kpi-card.c-amber .kpi-icon svg {
+            stroke: var(--amber);
+        }
+
+        .kpi-card.c-green .kpi-icon {
+            background: rgba(30, 123, 77, 0.1);
+        }
+
+        .kpi-card.c-green .kpi-icon svg {
+            stroke: var(--green);
+        }
+
+        .kpi-trend {
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+
+        .kpi-trend.up {
+            background: rgba(30, 123, 77, 0.1);
+            color: var(--green);
+        }
+
+        .kpi-trend.down {
+            background: rgba(200, 16, 46, 0.1);
+            color: var(--red);
+        }
+
+        .kpi-value {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: var(--navy);
+            line-height: 1;
+        }
+
+        .kpi-value sup {
+            font-size: 0.9rem;
+            color: var(--steel);
+            font-weight: 500;
+        }
+
+        .kpi-label {
+            font-size: 0.74rem;
+            color: var(--steel);
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        /* Main grid: table + side panel */
+        .dash-grid {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 10px;
+            border: 1px solid rgba(13, 27, 42, 0.06);
+            margin-bottom: 20px;
+        }
+
+        .panel-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--fog);
+        }
+
+        .panel-head h2 {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .panel-head .panel-sub {
+            font-size: 0.74rem;
+            color: var(--steel);
+            margin-top: 2px;
+            font-weight: 400;
+            font-family: 'Calibri', Calibri, sans-serif;
+        }
+
+        .filter-chips {
+            display: flex;
+            gap: 6px;
+        }
+
+        .chip {
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 20px;
+            background: var(--fog);
+            color: var(--steel);
+            cursor: pointer;
+            border: none;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .chip.active {
+            background: var(--navy);
+            color: white;
+        }
+
+        /* Table */
+        table.iqc-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .iqc-table thead th {
+            text-align: left;
+            font-size: 0.66rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--steel);
+            padding: 12px 22px;
+            border-bottom: 1px solid var(--fog);
+            white-space: nowrap;
+        }
+
+        .iqc-table tbody td {
+            padding: 14px 22px;
+            font-size: 0.82rem;
+            color: var(--text);
+            border-bottom: 1px solid var(--fog);
+            white-space: nowrap;
+        }
+
+        .iqc-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .iqc-table tbody tr {
+            transition: background 0.15s;
+        }
+
+        .iqc-table tbody tr:hover {
+            background: #fafcfe;
+        }
+
+        .cell-part {
+            font-weight: 600;
+            color: var(--navy);
+        }
+
+        .cell-sub {
+            display: block;
+            font-size: 0.7rem;
+            color: var(--steel);
+            font-weight: 400;
+            margin-top: 1px;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 11px;
+            border-radius: 20px;
+        }
+
+        .status-pill::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .status-pill.pending {
+            background: rgba(199, 123, 18, 0.1);
+            color: var(--amber);
+        }
+
+        .status-pill.passed {
+            background: rgba(30, 123, 77, 0.1);
+            color: var(--green);
+        }
+
+        .status-pill.rejected {
+            background: rgba(200, 16, 46, 0.1);
+            color: var(--red);
+        }
+
+        .status-pill.hold {
+            background: rgba(107, 140, 174, 0.14);
+            color: var(--mid);
+        }
+
+        .aql-tag {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--mid);
+            background: var(--fog);
+            padding: 3px 9px;
+            border-radius: 4px;
+        }
+
+        .row-action {
+            background: none;
+            border: 1px solid rgba(13, 27, 42, 0.1);
+            color: var(--navy);
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .row-action:hover {
+            background: var(--fog);
+        }
+
+        .panel-foot {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 22px;
+            font-size: 0.74rem;
+            color: var(--steel);
+        }
+
+        .pager {
+            display: flex;
+            gap: 4px;
+        }
+
+        .pager button {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: 1px solid rgba(13, 27, 42, 0.08);
+            background: white;
+            font-size: 0.74rem;
+            font-weight: 600;
+            color: var(--mid);
+            cursor: pointer;
+        }
+
+        .pager button.active {
+            background: var(--navy);
+            color: white;
+            border-color: var(--navy);
+        }
+
+        /* Side panel: defect breakdown */
+        .defect-list {
+            padding: 18px 22px 6px;
+        }
+
+        .defect-row {
+            margin-bottom: 16px;
+        }
+
+        .defect-row-top {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.78rem;
+            margin-bottom: 6px;
+        }
+
+        .defect-row-top strong {
+            color: var(--navy);
+            font-weight: 600;
+        }
+
+        .defect-row-top span {
+            color: var(--steel);
+            font-weight: 600;
+        }
+
+        .bar-track {
+            width: 100%;
+            height: 6px;
+            background: var(--fog);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: var(--red);
+        }
+
+        /* Activity feed */
+        .activity-list {
+            padding: 6px 22px 18px;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 12px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--fog);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+            padding-bottom: 4px;
+        }
+
+        .activity-dot {
+            width: 30px;
+            height: 30px;
+            min-width: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1px;
+        }
+
+        .activity-dot.green {
+            background: rgba(30, 123, 77, 0.1);
+        }
+
+        .activity-dot.red {
+            background: rgba(200, 16, 46, 0.1);
+        }
+
+        .activity-dot.amber {
+            background: rgba(199, 123, 18, 0.1);
+        }
+
+        .activity-dot svg {
+            width: 14px;
+            height: 14px;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .activity-dot.green svg {
+            stroke: var(--green);
+        }
+
+        .activity-dot.red svg {
+            stroke: var(--red);
+        }
+
+        .activity-dot.amber svg {
+            stroke: var(--amber);
+        }
+
+        .activity-text {
+            font-size: 0.79rem;
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        .activity-text strong {
+            color: var(--navy);
+            font-weight: 600;
+        }
+
+        .activity-time {
+            font-size: 0.68rem;
+            color: var(--steel);
+            margin-top: 3px;
+        }
+
+        /* Inspector load */
+        .inspector-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 22px;
+        }
+
+        .inspector-avatar {
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
+            border-radius: 50%;
+            background: var(--mid);
+            color: white;
+            font-size: 0.68rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .inspector-info {
+            flex: 1;
+        }
+
+        .inspector-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--navy);
+        }
+
+        .inspector-meta {
+            font-size: 0.7rem;
+            color: var(--steel);
+        }
+
+        .inspector-count {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        /* ───────────────────────── RESPONSIVE ───────────────────────── */
+        @media (max-width: 1180px) {
+            .kpi-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .dash-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 860px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .search-box {
+                display: none;
+            }
+
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 560px) {
+            .kpi-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .content {
+                padding: 20px 16px 40px;
+            }
+
+            .topbar {
+                padding: 0 16px;
+            }
+
+            .iqc-table {
+                font-size: 0.76rem;
+            }
+        }
+
+        .sidebar-scrim {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(13, 27, 42, 0.5);
+            z-index: 150;
+        }
+
+        .sidebar-scrim.show {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar-scrim" id="scrim"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo" style="display: flex; justify-content: center; align-items: center; padding: 24px 16px;">
+            <img src="logo.png" alt="SCHILLER Logo" style="height: 48px; width: auto; object-fit: contain;">
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-group-label">Overview</div>
+            <a href="production.html" class="sidebar-link active">
+                <svg viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="7" height="9" rx="1.5" />
+                    <rect x="14" y="3" width="7" height="5" rx="1.5" />
+                    <rect x="14" y="12" width="7" height="9" rx="1.5" />
+                    <rect x="3" y="16" width="7" height="5" rx="1.5" />
+                </svg>
+                Dashboard
+            </a>
+
+            <div class="nav-group-label">Material Flow</div>
+            <a href="inwardp.html" class="sidebar-link">
+                <svg viewBox="0 0 24 24">
+                    <path d="M21 12H9M14 6l7 6-7 6" />
+                    <path d="M3 6v12" />
+                </svg>
+                Inward from IQC
+                <span class="badge" id="productionInwardBadge">0</span>
+            </a>
+            <a href="acceptedpro.html" class="sidebar-link">
+                <svg viewBox="0 0 24 24">
+                    <path d="M9 12l2 2 4-4" />
+                    <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Accepted
+            </a>
+            <a href="rejectedpro.html" class="sidebar-link">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="15" y1="9" x2="9" y2="15" />
+                    <line x1="9" y1="9" x2="15" y2="15" />
+                </svg>
+                Rejected
+                <span class="badge" id="productionRejectedBadge">0</span>
+            </a>
+            <a href="reinwardpro.html" class="sidebar-link">
+                <svg viewBox="0 0 24 24">
+                    <polyline points="23 4 23 10 17 10" />
+                    <polyline points="1 20 1 14 7 14" />
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                </svg>
+                Completed
+                <span class="badge" id="productionReInwardBadge">0</span>
+            </a>
+            <a href="firstrep.html" class="sidebar-link">
+                <svg viewBox="0 0 24 24">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                    <polyline points="10 9 9 9 8 9" />
+                </svg>
+                Reinward from IQC
+            </a>
+
+            <div class="nav-group-label">System</div>
+            <a href="#" class="sidebar-link">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="3" />
+                    <path
+                        d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 005 15a1.65 1.65 0 00-.33-1.82L4.6 13.1a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 9a1.65 1.65 0 001-1.51V7a2 2 0 014 0v.09A1.65 1.65 0 0015 9a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019 13a1.65 1.65 0 00.33 1.82z" />
+                </svg>
+                Settings
+            </a>
+        </nav>
+
+        <div class="sidebar-foot">
+            <div class="sidebar-avatar">VK</div>
+            <div>
+                <div class="sidebar-user-name">V. Krishnan</div>
+                <div class="sidebar-user-role">Production Manager · Puducherry</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <div class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menuToggle">
+                    <svg viewBox="0 0 24 24">
+                        <line x1="3" y1="6" x2="21" y2="6" />
+                        <line x1="3" y1="12" x2="21" y2="12" />
+                        <line x1="3" y1="18" x2="21" y2="18" />
+                    </svg>
+                </button>
+                <div>
+                    <div class="breadcrumb">Production Systems / <span>Dashboard</span></div>
+                </div>
+            </div>
+            <div class="topbar-right">
+                <div class="search-box">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="7" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <input type="text" placeholder="Search work order, batch no., part no..." />
+                </div>
+                <button class="icon-btn">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                        <path d="M13.73 21a2 2 0 01-3.46 0" />
+                    </svg>
+                    <span class="dot"></span>
+                </button>
+                <button class="icon-btn">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M9.09 9a3 3 0 015.83 1c0 2-3 2-3 4" />
+                        <path d="M12 17h.01" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="content">
+
+            <div class="page-head">
+                <div>
+                    <h1>Production Dashboard</h1>
+                    <p>Live status of material inward from IQC and shop-floor acceptance across the Puducherry
+                        and Bengaluru lines — today, 24 June 2026.</p>
+                </div>
+                <div class="head-actions">
+                    <button class="btn-outline-navy">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        Export Report
+                    </button>
+                    <button class="btn-new">
+                        <svg viewBox="0 0 24 24">
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg>
+                        New Work Order
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI ROW -->
+            
+
+            <!-- MAIN GRID -->
+            <div class="dash-grid">
+
+                <!-- LEFT: Inspection queue -->
+                <div>
+                    <div class="panel">
+                        <div class="panel-head">
+                            <div>
+                                <h2>Inward from IQC</h2>
+                                <div class="panel-sub">Lots transferred from quality control to the line</div>
+                            </div>
+                            <div class="filter-chips">
+                                <button class="chip active">All</button>
+                                <button class="chip">Inward</button>
+                                <button class="chip">Accepted</button>
+                                <button class="chip">Rejected</button>
+                            </div>
+                        </div>
+
+                        <table class="iqc-table">
+                            <thead>
+                                <tr>
+                                    <th>Lot / GRN No.</th>
+                                    <th>Part / Component</th>
+                                    <th>Work Order</th>
+                                    <th>Qty Inward</th>
+                                    <th>Line</th>
+                                    <th>Received By</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="cell-part">GRN-24816</span><span class="cell-sub">Lot
+                                            #PL-0931</span></td>
+                                    <td><span class="cell-part">ECG Lead Wire Set</span><span class="cell-sub">P/N
+                                            CV-LD-204</span></td>
+                                    <td>WO-5512</td>
+                                    <td>1,200</td>
+                                    <td>Line 2 — Cardiology</td>
+                                    <td>D. Suresh</td>
+                                    <td><span class="status-pill pending">Pending Acceptance</span></td>
+                                    <td><button class="row-action">Accept</button></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="cell-part">GRN-24805</span><span class="cell-sub">Lot
+                                            #PL-0920</span></td>
+                                    <td><span class="cell-part">Injection-Moulded Housing</span><span
+                                            class="cell-sub">P/N CV-HS-077</span></td>
+                                    <td>WO-5498</td>
+                                    <td>2,000</td>
+                                    <td>Line 4 — Sub-Assembly</td>
+                                    <td>N. Ramesh</td>
+                                    <td><span class="status-pill passed">Accepted</span></td>
+                                    <td><button class="row-action">View Entry</button></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="cell-part">GRN-24803</span><span class="cell-sub">Lot
+                                            #PL-0918</span></td>
+                                    <td><span class="cell-part">Patient Cable Assembly</span><span class="cell-sub">P/N
+                                            CC-CA-552</span></td>
+                                    <td>WO-5491</td>
+                                    <td>900</td>
+                                    <td>Line 1 — Critical Care</td>
+                                    <td>D. Suresh</td>
+                                    <td><span class="status-pill passed">Accepted</span></td>
+                                    <td><button class="row-action">View Entry</button></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="cell-part">GRN-24809</span><span class="cell-sub">Lot
+                                            #PL-0924</span></td>
+                                    <td><span class="cell-part">SMPS Power Board</span><span class="cell-sub">P/N
+                                            CC-PB-330</span></td>
+                                    <td>WO-5487</td>
+                                    <td>650</td>
+                                    <td>Line 3 — Power Modules</td>
+                                    <td>P. Vignesh</td>
+                                    <td><span class="status-pill rejected">Rejected</span></td>
+                                    <td><button class="row-action">View NCR</button></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="cell-part">GRN-24799</span><span class="cell-sub">Lot
+                                            #PL-0915</span></td>
+                                    <td><span class="cell-part">FeNO Sensor Cartridge</span><span class="cell-sub">P/N
+                                            NX-SC-014</span></td>
+                                    <td>WO-5480</td>
+                                    <td>320</td>
+                                    <td>Line 5 — Respiratory</td>
+                                    <td>N. Ramesh</td>
+                                    <td><span class="status-pill pending">Pending Acceptance</span></td>
+                                    <td><button class="row-action">Accept</button></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="cell-part">GRN-24791</span><span class="cell-sub">Lot
+                                            #PL-0909</span></td>
+                                    <td><span class="cell-part">Pressure Sensor Module</span><span class="cell-sub">P/N
+                                            VT-PS-118</span></td>
+                                    <td>WO-5476</td>
+                                    <td>480</td>
+                                    <td>Line 3 — Power Modules</td>
+                                    <td>P. Vignesh</td>
+                                    <td><span class="status-pill rejected">Rejected</span></td>
+                                    <td><button class="row-action">View NCR</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="panel-foot">
+                            <span>Showing 6 of 31 lots</span>
+                            <div class="pager">
+                                <button class="active">1</button>
+                                <button>2</button>
+                                <button>3</button>
+                                <button>...</button>
+                                <button>6</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-head">
+                            <div>
+                                <h2>Operator Workload</h2>
+                                <div class="panel-sub">Active acceptance assignments today</div>
+                            </div>
+                        </div>
+                        <div class="inspector-row">
+                            <div class="inspector-avatar">DS</div>
+                            <div class="inspector-info">
+                                <div class="inspector-name">D. Suresh</div>
+                                <div class="inspector-meta">Line 1 &amp; 2 — Critical Care, Cardiology</div>
+                            </div>
+                            <div class="inspector-count">6</div>
+                        </div>
+                        <div class="inspector-row">
+                            <div class="inspector-avatar">NR</div>
+                            <div class="inspector-info">
+                                <div class="inspector-name">N. Ramesh</div>
+                                <div class="inspector-meta">Line 4 &amp; 5 — Sub-Assembly, Respiratory</div>
+                            </div>
+                            <div class="inspector-count">5</div>
+                        </div>
+                        <div class="inspector-row" style="padding-bottom: 18px;">
+                            <div class="inspector-avatar">PV</div>
+                            <div class="inspector-info">
+                                <div class="inspector-name">P. Vignesh</div>
+                                <div class="inspector-meta">Line 3 — Power Modules</div>
+                            </div>
+                            <div class="inspector-count">4</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: side panels -->
+                <div>
+                    <div class="panel">
+                        <div class="panel-head">
+                            <div>
+                                <h2>Rejection Reasons</h2>
+                                <div class="panel-sub">At line acceptance · month to date</div>
+                            </div>
+                        </div>
+                        <div class="defect-list">
+                            <div class="defect-row">
+                                <div class="defect-row-top"><strong>Damaged in transit</strong><span>31%</span></div>
+                                <div class="bar-track">
+                                    <div class="bar-fill" style="width: 31%;"></div>
+                                </div>
+                            </div>
+                            <div class="defect-row">
+                                <div class="defect-row-top"><strong>Quantity mismatch</strong><span>24%</span></div>
+                                <div class="bar-track">
+                                    <div class="bar-fill" style="width: 24%; background: var(--amber);"></div>
+                                </div>
+                            </div>
+                            <div class="defect-row">
+                                <div class="defect-row-top"><strong>Wrong part / revision</strong><span>22%</span>
+                                </div>
+                                <div class="bar-track">
+                                    <div class="bar-fill" style="width: 22%; background: var(--steel);"></div>
+                                </div>
+                            </div>
+                            <div class="defect-row">
+                                <div class="defect-row-top"><strong>Missing IQC tag</strong><span>14%</span></div>
+                                <div class="bar-track">
+                                    <div class="bar-fill" style="width: 14%; background: var(--navy);"></div>
+                                </div>
+                            </div>
+                            <div class="defect-row">
+                                <div class="defect-row-top"><strong>Other</strong><span>9%</span>
+                                </div>
+                                <div class="bar-track">
+                                    <div class="bar-fill" style="width: 9%; background: var(--green);"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-head">
+                            <div>
+                                <h2>Recent Activity</h2>
+                                <div class="panel-sub">Latest line events</div>
+                            </div>
+                        </div>
+                        <div class="activity-list">
+                            <div class="activity-item">
+                                <div class="activity-dot green">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M9 12l2 2 4-4" />
+                                        <circle cx="12" cy="12" r="9" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="activity-text"><strong>GRN-24805</strong> accepted onto Line 4 —
+                                        moulded housing, 2,000.</div>
+                                    <div class="activity-time">11:50 AM · N. Ramesh</div>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-dot red">
+                                    <svg viewBox="0 0 24 24">
+                                        <circle cx="12" cy="12" r="10" />
+                                        <line x1="15" y1="9" x2="9" y2="15" />
+                                        <line x1="9" y1="9" x2="15" y2="15" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="activity-text"><strong>GRN-24791</strong> rejected at acceptance —
+                                        quantity short by 18. Returned to IQC.</div>
+                                    <div class="activity-time">11:05 AM · P. Vignesh</div>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-dot red">
+                                    <svg viewBox="0 0 24 24">
+                                        <circle cx="12" cy="12" r="10" />
+                                        <line x1="15" y1="9" x2="9" y2="15" />
+                                        <line x1="9" y1="9" x2="15" y2="15" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="activity-text"><strong>GRN-24809</strong> rejected at acceptance —
+                                        damage found on outer carton. NCR-1142 raised.</div>
+                                    <div class="activity-time">10:55 AM · P. Vignesh</div>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-dot green">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M9 12l2 2 4-4" />
+                                        <circle cx="12" cy="12" r="9" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="activity-text"><strong>GRN-24803</strong> accepted onto Line 1 —
+                                        patient cable assembly, 900.</div>
+                                    <div class="activity-time">9:38 AM · D. Suresh</div>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-dot amber">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M21 12H9M14 6l7 6-7 6" />
+                                        <path d="M3 6v12" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="activity-text"><strong>GRN-24816</strong> moved inward from IQC,
+                                        queued for acceptance on Line 2.</div>
+                                    <div class="activity-time">9:02 AM · IQC Handover Bay</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const scrim = document.getElementById('scrim');
+        const menuToggle = document.getElementById('menuToggle');
+
+        function openSidebar() {
+            sidebar.classList.add('open');
+            scrim.classList.add('show');
+        }
+        function closeSidebar() {
+            sidebar.classList.remove('open');
+            scrim.classList.remove('show');
+        }
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+        });
+        scrim.addEventListener('click', closeSidebar);
+
+        // Filter chips (visual toggle only)
+        document.querySelectorAll('.chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+            });
+        });
+
+        // Dynamic badge count for Inward from IQC
+        async function fetchInwardpCount() {
+            try {
+                const res = await fetch('/api/inwardp');
+                if (res.ok) {
+                    const data = await res.json();
+                    const badge = document.getElementById('productionInwardBadge');
+                    if (badge) {
+                        badge.textContent = data.length;
+                    }
+                }
+            } catch (err) {
+                console.error('Error fetching production inward count:', err);
+            }
+        }
+        
+        
+        async function fetchReInwardCount() {
+            try {
+                const res = await fetch('/api/reinwardpro');
+                if (res.ok) {
+                    const data = await res.json();
+                    const groups = {};
+                    data.forEach(e => {
+                        const d = e.date ? e.date.split('T')[0] : '';
+                        const key = d + '|' + e.model;
+                        groups[key] = true;
+                    });
+                    const count = Object.keys(groups).length;
+                    const badge = document.getElementById('productionReInwardBadge');
+                    if (badge) {
+                        badge.textContent = count;
+                    }
+                }
+            } catch (err) {
+                console.error('Error fetching production re-inward count:', err);
+            }
+        }
+        async function fetchRejectedproCount() {
+            try {
+                const res = await fetch('/api/rejectedpro');
+                if (res.ok) {
+                    const data = await res.json();
+                    const groups = {};
+                    data.forEach(e => {
+                        const d = e.date ? e.date.split('T')[0] : '';
+                        const key = d + '|' + e.model;
+                        groups[key] = true;
+                    });
+                    const count = Object.keys(groups).length;
+                    const badge = document.getElementById('productionRejectedBadge');
+                    if (badge) {
+                        badge.textContent = count;
+                    }
+                }
+            } catch (err) {
+                console.error('Error fetching production rejected count:', err);
+            }
+        }
+
+        fetchInwardpCount();
+        fetchRejectedproCount();
+        fetchReInwardCount();
+    </script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userName = localStorage.getItem('userName');
+            const userRole = localStorage.getItem('userRole');
+            if (userName) {
+                const nameEls = document.querySelectorAll('.sidebar-user-name');
+                const avatarEls = document.querySelectorAll('.sidebar-avatar');
+                const roleEls = document.querySelectorAll('.sidebar-user-role');
+                
+                nameEls.forEach(el => el.textContent = userName);
+                
+                const initials = userName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                avatarEls.forEach(el => el.textContent = initials);
+                
+                if (userRole) {
+                    const roleText = userRole.charAt(0).toUpperCase() + userRole.slice(1);
+                    roleEls.forEach(el => el.textContent = roleText);
+                }
+            }
+        });
+    </script>
+
+</body>
+
+</html>
+
