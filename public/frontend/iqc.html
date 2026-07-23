@@ -562,14 +562,89 @@
         .kpi-label {
             font-size: 0.74rem;
             color: var(--steel);
-            margin-top: 6px;
-            font-weight: 500;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.15s;
         }
 
-        /* Main grid: table + side panel */
+        .btn-new:hover {
+            background: #a50d23;
+            transform: translateY(-1px);
+        }
+
+        .btn-new svg {
+            width: 15px;
+            height: 15px;
+            stroke: white;
+            fill: none;
+            stroke-width: 2.2;
+        }
+
+        /* ───────────────────────── CONTENT ───────────────────────── */
+        .content {
+            flex: 1;
+            padding: 28px 32px 60px;
+        }
+
+        .page-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 26px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .page-head h1 {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 6px;
+        }
+
+        .head-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn-outline-navy {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            border: 1.5px solid rgba(13, 27, 42, 0.14);
+            color: var(--navy);
+            background: white;
+            padding: 9px 16px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: border-color 0.15s, background 0.15s;
+        }
+
+        .btn-outline-navy:hover {
+            border-color: var(--steel);
+            background: var(--fog);
+        }
+
+        .btn-outline-navy svg {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* Main grid: table */
         .dash-grid {
             display: grid;
-            grid-template-columns: 1fr 320px;
+            grid-template-columns: 1fr;
             gap: 20px;
             align-items: start;
         }
@@ -772,172 +847,8 @@
             border-color: var(--navy);
         }
 
-        /* Side panel: defect breakdown */
-        .defect-list {
-            padding: 18px 22px 6px;
-        }
-
-        .defect-row {
-            margin-bottom: 16px;
-        }
-
-        .defect-row-top {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.78rem;
-            margin-bottom: 6px;
-        }
-
-        .defect-row-top strong {
-            color: var(--navy);
-            font-weight: 600;
-        }
-
-        .defect-row-top span {
-            color: var(--steel);
-            font-weight: 600;
-        }
-
-        .bar-track {
-            width: 100%;
-            height: 6px;
-            background: var(--fog);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .bar-fill {
-            height: 100%;
-            border-radius: 4px;
-            background: var(--red);
-        }
-
-        /* Activity feed */
-        .activity-list {
-            padding: 6px 22px 18px;
-        }
-
-        .activity-item {
-            display: flex;
-            gap: 12px;
-            padding: 14px 0;
-            border-bottom: 1px solid var(--fog);
-        }
-
-        .activity-item:last-child {
-            border-bottom: none;
-            padding-bottom: 4px;
-        }
-
-        .activity-dot {
-            width: 30px;
-            height: 30px;
-            min-width: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 1px;
-        }
-
-        .activity-dot.green {
-            background: rgba(30, 123, 77, 0.1);
-        }
-
-        .activity-dot.red {
-            background: rgba(200, 16, 46, 0.1);
-        }
-
-        .activity-dot.amber {
-            background: rgba(199, 123, 18, 0.1);
-        }
-
-        .activity-dot svg {
-            width: 14px;
-            height: 14px;
-            stroke-width: 2;
-            fill: none;
-        }
-
-        .activity-dot.green svg {
-            stroke: var(--green);
-        }
-
-        .activity-dot.red svg {
-            stroke: var(--red);
-        }
-
-        .activity-dot.amber svg {
-            stroke: var(--amber);
-        }
-
-        .activity-text {
-            font-size: 0.79rem;
-            color: var(--text);
-            line-height: 1.5;
-        }
-
-        .activity-text strong {
-            color: var(--navy);
-            font-weight: 600;
-        }
-
-        .activity-time {
-            font-size: 0.68rem;
-            color: var(--steel);
-            margin-top: 3px;
-        }
-
-        /* Inspector load */
-        .inspector-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 22px;
-        }
-
-        .inspector-avatar {
-            width: 32px;
-            height: 32px;
-            min-width: 32px;
-            border-radius: 50%;
-            background: var(--mid);
-            color: white;
-            font-size: 0.68rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .inspector-info {
-            flex: 1;
-        }
-
-        .inspector-name {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--navy);
-        }
-
-        .inspector-meta {
-            font-size: 0.7rem;
-            color: var(--steel);
-        }
-
-        .inspector-count {
-            font-family: 'Calibri', Calibri, sans-serif;
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--navy);
-        }
-
         /* ───────────────────────── RESPONSIVE ───────────────────────── */
         @media (max-width: 1180px) {
-            .kpi-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-
             .dash-grid {
                 grid-template-columns: 1fr;
             }
@@ -963,17 +874,9 @@
             .search-box {
                 display: none;
             }
-
-            .kpi-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
         }
 
         @media (max-width: 560px) {
-            .kpi-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-
             .content {
                 padding: 20px 16px 40px;
             }
@@ -1066,300 +969,6 @@
                 </svg>
                 Settings
             </a>
-</nav>
-
-        <div class="sidebar-foot">
-            <div class="sidebar-avatar">RM</div>
-            <div>
-                <div class="sidebar-user-name">R. Menon</div>
-                <div class="sidebar-user-role">QC Manager · Puducherry</div>
-            </div>
-        </div>
-    </aside>
-
-    <!-- MAIN -->
-    <div class="main">
-
-        <div class="topbar">
-            <div class="topbar-left">
-                <button class="menu-toggle" id="menuToggle">
-                    <svg viewBox="0 0 24 24">
-                        <line x1="3" y1="6" x2="21" y2="6" />
-                        <line x1="3" y1="12" x2="21" y2="12" />
-                        <line x1="3" y1="18" x2="21" y2="18" />
-                    </svg>
-                </button>
-                <div>
-                    <div class="breadcrumb">Quality Systems / <span>IQC Dashboard</span></div>
-                </div>
-            </div>
-            <div class="topbar-right">
-                <div class="search-box">
-                    <svg viewBox="0 0 24 24">
-                        <circle cx="11" cy="11" r="7" />
-                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                    </svg>
-                    <input type="text" placeholder="Search lot no., GRN, part no..." />
-                </div>
-                <button class="icon-btn">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-                        <path d="M13.73 21a2 2 0 01-3.46 0" />
-                    </svg>
-                    <span class="dot"></span>
-                </button>
-                <button class="icon-btn">
-                    <svg viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="10" />
-                        <path d="M9.09 9a3 3 0 015.83 1c0 2-3 2-3 4" />
-                        <path d="M12 17h.01" />
-                    </svg>
-                </button>
-            </div>
-        </div>
-
-        <div class="content">
-
-            <div class="page-head">
-                <div>
-                    <h1>Incoming Quality Control</h1>
-                    <p>Live status of incoming material inspection across the Puducherry and Bengaluru receiving
-                        bays — today, 24 June 2026.</p>
-                </div>
-                <div class="head-actions">
-                    <button class="btn-outline-navy">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-                            <polyline points="7 10 12 15 17 10" />
-                            <line x1="12" y1="15" x2="12" y2="3" />
-                        </svg>
-                        Export Report
-                    </button>
-                    <button class="btn-new">
-                        <svg viewBox="0 0 24 24">
-                            <line x1="12" y1="5" x2="12" y2="19" />
-                            <line x1="5" y1="12" x2="19" y2="12" />
-                        </svg>
-                        New Inspection
-                    </button>
-                </div>
-            </div>
-
-            <!-- KPI ROW -->
-            
-
-            <!-- MAIN GRID -->
-            <div class="dash-grid">
-
-                <!-- LEFT: Inspection queue -->
-                <div>
-                    <div class="panel">
-                        <div class="panel-head">
-                            <div>
-                                <h2>Inward Items</h2>
-                                <div class="panel-sub">Lots awaiting or under IQC review</div>
-                            </div>
-                            <div class="filter-chips">
-                                <button class="chip active">All</button>
-                                <button class="chip">Pending</button>
-                                <button class="chip">On Hold</button>
-                                <button class="chip">Rejected</button>
-                            </div>
-                        </div>
-
-                        <table class="iqc-table">
-                            <thead>
-                                <tr>
-                                    <th>Lot / GRN No.</th>
-                                    <th>Part / Component</th>
-                                    <th>Supplier</th>
-                                    <th>Qty Received</th>
-                                    <th>AQL Plan</th>
-                                    <th>Inspector</th>
-                                    <th>Status</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody id="inwardTableBody">
-                                <!-- Populated dynamically -->
-                            </tbody>
-                        </table>
-
-                        <div class="panel-foot">
-                            <span>Showing 6 of 38 lots</span>
-                            <div class="pager">
-                                <button class="active">1</button>
-                                <button>2</button>
-                                <button>3</button>
-                                <button>...</button>
-                                <button>7</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="panel">
-                        <div class="panel-head">
-                            <div>
-                                <h2>Inspector Workload</h2>
-                                <div class="panel-sub">Open assignments today</div>
-                            </div>
-                        </div>
-                        <div class="inspector-row">
-                            <div class="inspector-avatar">SP</div>
-                            <div class="inspector-info">
-                                <div class="inspector-name">S. Pillai</div>
-                                <div class="inspector-meta">Electrical &amp; cable assemblies</div>
-                            </div>
-                            <div class="inspector-count">5</div>
-                        </div>
-                        <div class="inspector-row">
-                            <div class="inspector-avatar">KR</div>
-                            <div class="inspector-info">
-                                <div class="inspector-name">K. Raghavan</div>
-                                <div class="inspector-meta">Sensors &amp; PCB modules</div>
-                            </div>
-                            <div class="inspector-count">4</div>
-                        </div>
-                        <div class="inspector-row">
-                            <div class="inspector-avatar">AF</div>
-                            <div class="inspector-info">
-                                <div class="inspector-name">A. Fernandes</div>
-                                <div class="inspector-meta">Moulded &amp; mechanical parts</div>
-                            </div>
-                            <div class="inspector-count">3</div>
-                        </div>
-                        <div class="inspector-row" style="padding-bottom: 18px;">
-                            <div class="inspector-avatar">MI</div>
-                            <div class="inspector-info">
-                                <div class="inspector-name">M. Iyer</div>
-                                <div class="inspector-meta">Final cable &amp; harness QC</div>
-                            </div>
-                            <div class="inspector-count">2</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- RIGHT: side panels -->
-                <div>
-                    <div class="panel">
-                        <div class="panel-head">
-                            <div>
-                                <h2>Defects by Category</h2>
-                                <div class="panel-sub">Month to date</div>
-                            </div>
-                        </div>
-                        <div class="defect-list">
-                            <div class="defect-row">
-                                <div class="defect-row-top"><strong>Dimensional / fit</strong><span>34%</span></div>
-                                <div class="bar-track">
-                                    <div class="bar-fill" style="width: 34%;"></div>
-                                </div>
-                            </div>
-                            <div class="defect-row">
-                                <div class="defect-row-top"><strong>Solder / assembly</strong><span>27%</span></div>
-                                <div class="bar-track">
-                                    <div class="bar-fill" style="width: 27%; background: var(--amber);"></div>
-                                </div>
-                            </div>
-                            <div class="defect-row">
-                                <div class="defect-row-top"><strong>Cosmetic / surface</strong><span>19%</span></div>
-                                <div class="bar-track">
-                                    <div class="bar-fill" style="width: 19%; background: var(--steel);"></div>
-                                </div>
-                            </div>
-                            <div class="defect-row">
-                                <div class="defect-row-top"><strong>Electrical / continuity</strong><span>12%</span>
-                                </div>
-                                <div class="bar-track">
-                                    <div class="bar-fill" style="width: 12%; background: var(--navy);"></div>
-                                </div>
-                            </div>
-                            <div class="defect-row">
-                                <div class="defect-row-top"><strong>Documentation / labelling</strong><span>8%</span>
-                                </div>
-                                <div class="bar-track">
-                                    <div class="bar-fill" style="width: 8%; background: var(--green);"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="panel">
-                        <div class="panel-head">
-                            <div>
-                                <h2>Recent Activity</h2>
-                                <div class="panel-sub">Latest inspection events</div>
-                            </div>
-                        </div>
-                        <div class="activity-list">
-                            <div class="activity-item">
-                                <div class="activity-dot green">
-                                    <svg viewBox="0 0 24 24">
-                                        <path d="M9 12l2 2 4-4" />
-                                        <circle cx="12" cy="12" r="9" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <div class="activity-text"><strong>GRN-24805</strong> passed inspection — moulded
-                                        housing, 2,000.</div>
-                                    <div class="activity-time">11:42 AM · S. Pillai</div>
-                                </div>
-                            </div>
-                            <div class="activity-item">
-                                <div class="activity-dot red">
-                                    <svg viewBox="0 0 24 24">
-                                        <path
-                                            d="M10.29 3.86l-8.49 14.7A1 1 0 002.6 20h18.8a1 1 0 00.86-1.44l-8.49-14.7a1 1 0 00-1.72 0z" />
-                                        <path d="M12 9v4M12 17h.01" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <div class="activity-text"><strong>GRN-24809</strong> rejected — solder bridging on
-                                        SMPS board. NCR-1142 raised.</div>
-                                    <div class="activity-time">10:55 AM · A. Fernandes</div>
-                                </div>
-                            </div>
-                            <div class="activity-item">
-                                <div class="activity-dot amber">
-                                    <svg viewBox="0 0 24 24">
-                                        <circle cx="12" cy="12" r="10" />
-                                        <path d="M12 8v4l3 2" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <div class="activity-text"><strong>GRN-24812</strong> placed on hold pending
-                                        supplier CoA verification.</div>
-                                    <div class="activity-time">10:18 AM · K. Raghavan</div>
-                                </div>
-                            </div>
-                            <div class="activity-item">
-                                <div class="activity-dot green">
-                                    <svg viewBox="0 0 24 24">
-                                        <path d="M9 12l2 2 4-4" />
-                                        <circle cx="12" cy="12" r="9" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <div class="activity-text"><strong>GRN-24803</strong> passed inspection — patient
-                                        cable assembly, 900.</div>
-                                    <div class="activity-time">9:30 AM · M. Iyer</div>
-                                </div>
-                            </div>
-                            <div class="activity-item">
-                                <div class="activity-dot amber">
-                                    <svg viewBox="0 0 24 24">
-                                        <path
-                                            d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <div class="activity-text"><strong>GRN-24816</strong> received at Puducherry dock,
-                                        queued for inspection.</div>
-                                    <div class="activity-time">8:52 AM · Receiving Bay 2</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
             </div>
