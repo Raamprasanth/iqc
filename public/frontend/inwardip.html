@@ -2270,13 +2270,13 @@
             try {
                 let res;
                 if (editingId) {
-                    res = await fetch(`http://localhost:5000/api/users/${editingId}`, {
+                    res = await fetch(`/api/users/${editingId}`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
                     });
                 } else {
-                    res = await fetch('http://localhost:5000/api/users', {
+                    res = await fetch('/api/users', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
@@ -2315,7 +2315,7 @@
 
         async function confirmDelete() {
             try {
-                const res = await fetch(`http://localhost:5000/api/users/${deleteId}`, {
+                const res = await fetch(`/api/users/${deleteId}`, {
                     method: 'DELETE'
                 });
                 const data = await res.json();
@@ -2337,7 +2337,7 @@
         â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
         async function fetchUsers() {
             try {
-                const res = await fetch('http://localhost:5000/api/users');
+                const res = await fetch('/api/users');
                 const data = await res.json();
                 if (data.success) {
                     users = data.data.map(u => ({

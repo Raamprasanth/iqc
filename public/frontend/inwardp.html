@@ -1080,6 +1080,7 @@
                                     <th>Model</th>
                                     <th>Total Parts</th>
                                     <th>Total Quantity</th>
+                                    <th>Problem Reported Date</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -1324,13 +1325,16 @@
                     <td><span class="cell-part">${g.model}</span></td>
                     <td><strong>${g.parts.length}</strong> Parts</td>
                     <td>${g.totalQty.toLocaleString('en-IN')}</td>
+                    <td onclick="event.stopPropagation()">
+                        <input type="date" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-family: inherit; font-size: 0.8rem; outline: none; width: 130px; cursor: text;" />
+                    </td>
                     <td style="text-align: right;">
                         <button class="row-action" onclick="event.stopPropagation(); deleteGroup('${g.ids.join(',')}');">Remove</button>
                         <span style="font-size: 0.75rem; margin-left: 10px; color: var(--steel);">&#9660;</span>
                     </td>
                 </tr>
                 <tr id="subrow-${i}" style="display: none; background: #fafbfc;">
-                    <td colspan="7" style="padding: 0; border-bottom: 2px solid var(--fog);">
+                    <td colspan="8" style="padding: 0; border-bottom: 2px solid var(--fog);">
                         <div style="padding: 15px 30px;">
                             <table style="width:100%; border-collapse:collapse; font-size: 0.8rem;">
                                 <thead>
