@@ -1016,7 +1016,7 @@
             })
             .catch(err => {
                 loginBtn.classList.remove('loading');
-                errorText.textContent = 'Server connection failed. Is the backend running?';
+                errorText.textContent = 'Server connection failed: ' + err.message + ' (Check if using localhost instead of Render URL)';
                 errorMsg.classList.add('visible');
             });
         });
