@@ -13,9 +13,13 @@ router.get('/', async (req, res) => {
     }
 });
 
-// POST a new inward IPQC entry
+// POST a new inward IPQC entry (supports single entry or bulk array)
 router.post('/', async (req, res) => {
     try {
+        if (Array.isArray(req.body)) {
+            const savedEntries = await Inwardip.insertMany(req.body);
+            return res.status(201).json(savedEntries);
+        }
         const { date, model, partNo, partDescription, quantity, workOrder } = req.body;
         const newEntry = new Inwardip({ date, model, partNo, partDescription, quantity, workOrder });
         const savedEntry = await newEntry.save();

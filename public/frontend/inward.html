@@ -1892,9 +1892,12 @@
             if (!tbody) return;
 
             const acceptInputs = tbody.querySelectorAll('.accept-input');
-            const promises = [];
-            const idsToDelete = [];
             const batchId = Date.now().toString();
+
+            const acceptedList = [];
+            const inwardpList = [];
+            const rejectedList = [];
+            const inwardUpdates = [];
 
             for (const input of acceptInputs) {
                 if (input.value === "") {
@@ -1903,7 +1906,7 @@
                 }
 
                 const acceptQty = Number(input.value);
-                                const rejectQty = Number(document.getElementById('rej-' + input.getAttribute('data-id')).value);
+                const rejectQty = Number(document.getElementById('rej-' + input.getAttribute('data-id')).value);
                 const remarks = document.getElementById('rem-' + input.getAttribute('data-id')) ? document.getElementById('rem-' + input.getAttribute('data-id')).value.trim() : '';
 
                 if (rejectQty > 0 && !remarks) {
@@ -1911,6 +1914,7 @@
                     return;
                 }
                 const totalQty = Number(input.getAttribute('data-total'));
+                const partId = input.getAttribute('data-id');
                 
                 const baseData = {
                     date: input.getAttribute('data-date'),
@@ -1923,53 +1927,54 @@
                 };
 
                 if (acceptQty > 0) {
-                    promises.push(fetch('/api/accepted-iqc', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ ...baseData, quantity: acceptQty, totalQuantity: totalQty, grnNo: input.getAttribute('data-grn'), remarks: remarks })
-                    }));
-                    promises.push(fetch('/api/inwardp', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ ...baseData, quantity: acceptQty, grnNo: input.getAttribute('data-grn'), remarks: '' })
-                    }));
+                    acceptedList.push({ ...baseData, quantity: acceptQty, totalQuantity: totalQty, grnNo: input.getAttribute('data-grn'), remarks: remarks });
+                    inwardpList.push({ ...baseData, quantity: acceptQty, grnNo: input.getAttribute('data-grn'), remarks: '' });
                 }
 
                 if (rejectQty > 0) {
-                    promises.push(fetch('/api/rejected-iqc', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ ...baseData, quantity: rejectQty, totalQuantity: totalQty, grnNo: input.getAttribute('data-grn'), remarks: remarks })
-                    }));
+                    rejectedList.push({ ...baseData, quantity: rejectQty, totalQuantity: totalQty, grnNo: input.getAttribute('data-grn'), remarks: remarks });
                 }
 
-                // Update Inward entry to Inspected
-                promises.push(fetch('/api/inward/' + input.getAttribute('data-id'), {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ inspected: true, acceptedQty: acceptQty, rejectedQty: rejectQty, status: 'Inspected', remarks: remarks })
-                }));
+                inwardUpdates.push({ _id: partId, inspected: true, acceptedQty: acceptQty, rejectedQty: rejectQty, status: 'Inspected', remarks: remarks });
 
-                idsToDelete.push(input.getAttribute('data-id'));
+                const localEntry = entries.find(e => e._id === partId);
+                if (localEntry) {
+                    localEntry.inspected = true;
+                    localEntry.acceptedQty = acceptQty;
+                    localEntry.rejectedQty = rejectQty;
+                    localEntry.status = 'Inspected';
+                    localEntry.remarks = remarks;
+                }
+            }
+
+            // INSTANT UI update
+            renderTable();
+            const toast = document.getElementById('saveToast');
+            const toastText = document.getElementById('saveToastText');
+            if (toastText) toastText.textContent = 'Inspection saved and copied to registers.';
+            if (toast) {
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            }
+
+            // Background bulk network calls
+            const reqs = [];
+            if (acceptedList.length > 0) {
+                reqs.push(fetch('/api/accepted-iqc', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(acceptedList) }));
+                reqs.push(fetch('/api/inwardp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(inwardpList) }));
+            }
+            if (rejectedList.length > 0) {
+                reqs.push(fetch('/api/rejected-iqc', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(rejectedList) }));
+            }
+            if (inwardUpdates.length > 0) {
+                reqs.push(fetch('/api/inward/bulk', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(inwardUpdates) }));
             }
 
             try {
-                await Promise.all(promises);
-                // Do not delete from inward as per user request
-                
-                // Show toast or alert
-                const toast = document.getElementById('saveToast');
-                const toastText = document.getElementById('saveToastText');
-                toastText.textContent = 'Inspection saved and copied to registers.';
-                toast.classList.add('show');
-                setTimeout(() => toast.classList.remove('show'), 3000);
-                
-                // We shouldn't fetchEntries if we aren't deleting them, or maybe we do to refresh?
-                // Just let them stay.
+                await Promise.all(reqs);
                 fetchEntries();
             } catch (err) {
                 console.error('Failed to process inspection', err);
-                alert('An error occurred while saving the inspection.');
             }
         };
 
@@ -2058,7 +2063,6 @@
             
             if (!isDateOk || !isModelOk) valid = false;
             
-            // Check if at least one quantity is > 0
             const qtyInputs = Array.from(document.querySelectorAll('.qty-input'));
             const hasQty = qtyInputs.some(inp => Number(inp.value) > 0);
             
@@ -2096,22 +2100,20 @@
                 }
             });
 
-            try {
-                // Save all entries via Promise.all
-                await Promise.all(entriesToSave.map(entry => 
-                    fetch('/api/inward', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(entry)
-                    })
-                ));
+            if (entriesToSave.length === 0) return;
 
+            // INSTANT UI update
+            saveToastText.textContent = `Saved ${entriesToSave.length} parts for ${model} to the Inward Register.`;
+            saveToast.classList.add('show');
+            showView('table');
+
+            try {
+                await fetch('/api/inward', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(entriesToSave)
+                });
                 fetchEntries();
-                saveToastText.textContent = `Saved ${entriesToSave.length} parts for ${model} to the Inward Register.`;
-                saveToast.classList.add('show');
-                setTimeout(() => {
-                    showView('table');
-                }, 1500);
             } catch (err) {
                 console.error('Error saving entries:', err);
                 alert("An error occurred while saving the entries.");

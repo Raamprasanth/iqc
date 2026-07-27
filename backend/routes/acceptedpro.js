@@ -13,11 +13,15 @@ router.get('/', async (req, res) => {
     }
 });
 
-// POST a new production accepted entry
+// POST a new production accepted entry (supports single entry or bulk array)
 router.post('/', async (req, res) => {
     try {
-        const { date, model, partNo, partDescription, quantity, totalQuantity, batchId, invoiceNo, remarks } = req.body;
-        const newEntry = new Acceptedpro({ date, model, partNo, partDescription, quantity, totalQuantity, batchId, invoiceNo, remarks });
+        if (Array.isArray(req.body)) {
+            const savedEntries = await Acceptedpro.insertMany(req.body);
+            return res.status(201).json(savedEntries);
+        }
+        const { date, model, partNo, partDescription, quantity, totalQuantity, batchId, invoiceNo, remarks, yetToAcceptQty } = req.body;
+        const newEntry = new Acceptedpro({ date, model, partNo, partDescription, quantity, totalQuantity, batchId, invoiceNo, remarks, yetToAcceptQty });
         const savedEntry = await newEntry.save();
         res.status(201).json(savedEntry);
     } catch (err) {

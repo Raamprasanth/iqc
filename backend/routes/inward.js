@@ -24,15 +24,42 @@ router.get('/', async (req, res) => {
     }
 });
 
-// POST new inward entry
+// POST new inward entry (supports single entry or bulk array)
 router.post('/', async (req, res) => {
     try {
+        if (Array.isArray(req.body)) {
+            const savedEntries = await Inward.insertMany(req.body);
+            return res.status(201).json(savedEntries);
+        }
         const newEntry = new Inward(req.body);
         const savedEntry = await newEntry.save();
         res.status(201).json(savedEntry);
     } catch (err) {
         console.error('Error saving inward entry:', err);
         res.status(400).json({ error: 'Failed to save entry', details: err.message });
+    }
+});
+
+// PUT bulk update inward entries
+router.put('/bulk', async (req, res) => {
+    try {
+        if (!Array.isArray(req.body)) {
+            return res.status(400).json({ error: 'Expected array of updates' });
+        }
+        const ops = req.body.map(item => {
+            const { _id, ...updateData } = item;
+            return {
+                updateOne: {
+                    filter: { _id },
+                    update: { $set: updateData }
+                }
+            };
+        });
+        await Inward.bulkWrite(ops);
+        res.json({ message: 'Bulk update successful' });
+    } catch (err) {
+        console.error('Error bulk updating inward entries:', err);
+        res.status(400).json({ error: 'Failed bulk update', details: err.message });
     }
 });
 

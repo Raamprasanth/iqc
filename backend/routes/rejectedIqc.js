@@ -23,9 +23,13 @@ router.get('/', async (req, res) => {
 });
 
 
-// POST a new rejected IQC entry
+// POST a new rejected IQC entry (supports single entry or bulk array)
 router.post('/', async (req, res) => {
     try {
+        if (Array.isArray(req.body)) {
+            const savedEntries = await RejectedIQC.insertMany(req.body);
+            return res.status(201).json(savedEntries);
+        }
         const { date, model, partNo, partDescription, quantity, totalQuantity, batchId, reason, invoiceNo, grnNo, remarks } = req.body;
         const newEntry = new RejectedIQC({ date, model, partNo, partDescription, quantity, totalQuantity, batchId, reason, invoiceNo, grnNo, remarks });
         const savedEntry = await newEntry.save();

@@ -13,9 +13,13 @@ router.get('/', async (req, res) => {
     }
 });
 
-// POST a new production rejected entry
+// POST a new production rejected entry (supports single entry or bulk array)
 router.post('/', async (req, res) => {
     try {
+        if (Array.isArray(req.body)) {
+            const savedEntries = await Rejectedpro.insertMany(req.body);
+            return res.status(201).json(savedEntries);
+        }
         const { date, model, partNo, partDescription, quantity, totalQuantity, batchId, reason, invoiceNo, remarks, source } = req.body;
         const newEntry = new Rejectedpro({ date, model, partNo, partDescription, quantity, totalQuantity, batchId, reason, invoiceNo, remarks, source });
         const savedEntry = await newEntry.save();
