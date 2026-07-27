@@ -2185,7 +2185,23 @@
     </div>
 
     <script>
-                window.openRemarksModal = function(el) {
+        let allSparesMappings = [];
+        let currentModalPartDesc = '';
+        let currentModalModel = '';
+
+        async function fetchSparesMappings() {
+            try {
+                const res = await fetch('/api/spares');
+                if (res.ok) {
+                    allSparesMappings = await res.json();
+                }
+            } catch (err) {
+                console.error('Failed to fetch spares mappings:', err);
+            }
+        }
+        fetchSparesMappings();
+
+        window.openRemarksModal = function(el) {
             console.log('Opening remarks modal for', el);
             if (!el) return;
             const inputId = el.id || el;
@@ -2195,6 +2211,15 @@
             tbody.innerHTML = '';
             
             const partId = inputId.replace('rem-', '');
+            const acceptInput = document.getElementById('acc-' + partId);
+            if (acceptInput) {
+                currentModalPartDesc = acceptInput.getAttribute('data-partdesc') || '';
+                currentModalModel = acceptInput.getAttribute('data-model') || '';
+            } else {
+                currentModalPartDesc = '';
+                currentModalModel = '';
+            }
+
             const rejectInput = document.getElementById('rej-' + partId);
             const rejectCount = rejectInput ? parseInt(rejectInput.value || '0', 10) : 0;
             
@@ -2204,7 +2229,6 @@
                     let nature = p;
                     let qty = '';
                     const splitIdx = p.lastIndexOf(': ');
-                    // Ensure the part after ': ' is actually a number (the quantity)
                     if (splitIdx !== -1 && !isNaN(p.substring(splitIdx + 2).trim())) {
                         qty = p.substring(splitIdx + 2);
                         nature = p.substring(0, splitIdx);
@@ -2249,10 +2273,40 @@
         window.addRemarkRow = function(nature = '', serial = '', spare = '', qty = '') {
             const tbody = document.getElementById('remarksModalBody');
             const tr = document.createElement('tr');
+
+            // Find matching spares mapping by part description or model
+            const matchedSpareObj = allSparesMappings.find(s => 
+                s.partDescription && currentModalPartDesc && s.partDescription.toLowerCase().trim() === currentModalPartDesc.toLowerCase().trim()
+            ) || allSparesMappings.find(s => 
+                s.model && currentModalModel && s.model.toLowerCase().trim() === currentModalModel.toLowerCase().trim()
+            );
+
+            const availableSubParts = matchedSpareObj && matchedSpareObj.subParts ? matchedSpareObj.subParts : [];
+
+            let spareInputHtml = '';
+            if (availableSubParts.length > 0) {
+                let optionsHtml = '<option value="">Select Spare...</option>';
+                let matchedValueFound = false;
+
+                availableSubParts.forEach(sp => {
+                    const isSelected = (sp === spare);
+                    if (isSelected) matchedValueFound = true;
+                    optionsHtml += `<option value="${sp}" ${isSelected ? 'selected' : ''}>${sp}</option>`;
+                });
+
+                if (spare && !matchedValueFound) {
+                    optionsHtml += `<option value="${spare}" selected>${spare}</option>`;
+                }
+
+                spareInputHtml = `<select class="modal-spare" style="width: 100%; padding: 6px; border: 1px solid var(--fog); border-radius: 4px; font-family: 'Calibri', Calibri, sans-serif;">${optionsHtml}</select>`;
+            } else {
+                spareInputHtml = `<input type="text" class="modal-spare" value="${spare}" placeholder="Enter spare name" style="width: 100%; padding: 6px; border: 1px solid var(--fog); border-radius: 4px;" />`;
+            }
+
             tr.innerHTML = `
                 <td style="padding: 4px 2px;"><input type="text" class="modal-nature" list="remarksList" value="${nature}" style="width: 100%; padding: 6px; border: 1px solid var(--fog); border-radius: 4px;" /></td>
                 <td style="padding: 4px 2px;"><input type="text" class="modal-serial" value="${serial}" style="width: 100%; padding: 6px; border: 1px solid var(--fog); border-radius: 4px;" /></td>
-                <td style="padding: 4px 2px;"><input type="text" class="modal-spare" value="${spare}" style="width: 100%; padding: 6px; border: 1px solid var(--fog); border-radius: 4px;" /></td>
+                <td style="padding: 4px 2px;">${spareInputHtml}</td>
                 <td style="padding: 4px 2px;"><input type="number" class="modal-qty" value="${qty}" style="width: 100%; padding: 6px; border: 1px solid var(--fog); border-radius: 4px;" /></td>
                 <td style="padding: 4px 2px; text-align: right;"><button type="button" onclick="this.closest('tr').remove()" style="background: none; border: none; color: var(--red); cursor: pointer; font-size: 1.2rem;">&times;</button></td>
             `;
@@ -2267,7 +2321,8 @@
             rows.forEach(tr => {
                 const nature = tr.querySelector('.modal-nature').value.trim();
                 const serial = tr.querySelector('.modal-serial').value.trim();
-                const spare = tr.querySelector('.modal-spare').value.trim();
+                const spareEl = tr.querySelector('.modal-spare');
+                const spare = spareEl ? spareEl.value.trim() : '';
                 const qty = tr.querySelector('.modal-qty').value.trim();
                 
                 if (nature || serial || spare || qty) {

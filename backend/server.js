@@ -44,6 +44,7 @@ const reinward = require('./routes/reinward');
 const reinwardpro = require('./routes/reinwardpro');
 const reinwardip = require('./routes/reinwardip');
 const history = require('./routes/history');
+const spares = require('./routes/spares');
 
 // Mount routers
 app.use('/api/auth', auth);
@@ -65,6 +66,7 @@ app.use('/api/rejectedip', rejectedip);
 app.use('/api/reinward', reinward);
 app.use('/api/reinwardpro', reinwardpro);
 app.use('/api/reinwardip', reinwardip);
+app.use('/api/spares', spares);
 // Health check API route
 app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', message: 'IQC Backend API is running 🚀', version: '1.0.0' });
