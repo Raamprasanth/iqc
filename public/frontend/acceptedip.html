@@ -54,62 +54,21 @@
             transition: transform 0.25s ease;
         }
 
-        .sidebar-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 22px 24px;
+        .sb-brand {
+            padding: 22px 20px 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .sidebar-logo-mark {
-            width: 34px;
-            height: 34px;
-            min-width: 34px;
-            background: var(--red);
-            border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .sidebar-logo-mark svg {
-            width: 20px;
-            height: 20px;
-            fill: white;
-        }
-
-        .sidebar-brand {
-            font-family: 'Calibri', Calibri, sans-serif;
-            font-size: 1.02rem;
-            font-weight: 700;
-            color: var(--white);
-            letter-spacing: 0.02em;
-            line-height: 1.2;
-        }
-
-        .sidebar-brand span {
-            color: var(--red);
-        }
-
-        .sidebar-brand small {
-            display: block;
-            font-family: 'Calibri', Calibri, sans-serif;
-            font-size: 0.62rem;
-            font-weight: 500;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.4);
-            margin-top: 2px;
-        }
-
-        .sidebar-nav {
+        .sb-nav {
             flex: 1;
             overflow-y: auto;
             padding: 18px 14px;
         }
 
-        .nav-group-label {
+        .sb-section-label {
             font-size: 0.64rem;
             font-weight: 600;
             letter-spacing: 0.12em;
@@ -118,11 +77,11 @@
             padding: 14px 12px 8px;
         }
 
-        .nav-group-label:first-child {
+        .sb-section-label:first-child {
             padding-top: 4px;
         }
 
-        .sidebar-link {
+        .sb-item {
             display: flex;
             align-items: center;
             gap: 12px;
@@ -134,10 +93,11 @@
             font-weight: 500;
             margin-bottom: 2px;
             position: relative;
+            cursor: pointer;
             transition: background 0.15s, color 0.15s;
         }
 
-        .sidebar-link svg {
+        .sb-item svg {
             width: 18px;
             height: 18px;
             min-width: 18px;
@@ -146,17 +106,17 @@
             stroke-width: 1.7;
         }
 
-        .sidebar-link:hover {
+        .sb-item:hover {
             background: rgba(255, 255, 255, 0.05);
             color: rgba(255, 255, 255, 0.9);
         }
 
-        .sidebar-link.active {
+        .sb-item.active {
             background: rgba(200, 16, 46, 0.14);
             color: var(--white);
         }
 
-        .sidebar-link.active::before {
+        .sb-item.active::before {
             content: '';
             position: absolute;
             left: -14px;
@@ -167,7 +127,7 @@
             border-radius: 0 3px 3px 0;
         }
 
-        .sidebar-link .badge {
+        .sb-badge {
             margin-left: auto;
             background: var(--red);
             color: white;
@@ -178,20 +138,21 @@
             line-height: 1.5;
         }
 
-        .sidebar-link .badge.muted {
-            background: rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.55);
-        }
-
-        .sidebar-foot {
+        .sb-footer {
             padding: 16px 20px;
             border-top: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             align-items: center;
-            gap: 10px;
         }
 
-        .sidebar-avatar {
+        .sb-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .sb-avatar {
             width: 34px;
             height: 34px;
             min-width: 34px;
@@ -205,13 +166,17 @@
             color: white;
         }
 
-        .sidebar-user-name {
+        .sb-user-info {
+            flex: 1;
+        }
+
+        .sb-user-name {
             font-size: 0.78rem;
             font-weight: 600;
             color: white;
         }
 
-        .sidebar-user-role {
+        .sb-user-role {
             font-size: 0.68rem;
             color: rgba(255, 255, 255, 0.4);
         }
