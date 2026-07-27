@@ -1728,6 +1728,10 @@
                                 <tbody id="subrow-body-${i}">
                                     ${g.parts.map(p => {
                                         const qty = Number(p.quantity || p.qty || 0);
+                                        const hasSaved = (p.acceptedQty !== undefined && p.acceptedQty !== null && (p.acceptedQty > 0 || p.rejectedQty > 0 || (p.remarks && p.remarks.trim() !== '')));
+                                        const accVal = hasSaved ? p.acceptedQty : '';
+                                        const rejVal = hasSaved ? (p.rejectedQty || 0) : 0;
+                                        const remVal = (p.remarks || '').replace(/"/g, '&quot;');
                                         return `
                                         <tr>
                                             <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9;"><strong>${p.partNo}</strong></td>
@@ -1742,7 +1746,7 @@
                                                 </td>
                                                 <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:left;">
                                                     <span
-                                                        title="${(p.remarks || '').replace(/"/g, '&quot;')}"
+                                                        title="${remVal}"
                                                         onclick="this.style.whiteSpace=this.style.whiteSpace==='normal'?'nowrap':'normal'"
                                                         style="display:inline-block; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; cursor:pointer; padding:3px 6px; border-radius:4px; background:#f1f5f9; font-size:0.78rem;"
                                                     >${p.remarks || '-'}</span>
@@ -1751,6 +1755,7 @@
                                                 <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:center;">
                                                     <input type="number" min="0" max="${qty}" 
                                                         class="accept-input" 
+                                                        id="acc-${p._id}"
                                                         data-id="${p._id}" 
                                                         data-total="${qty}" 
                                                         data-model="${g.model}"
@@ -1759,15 +1764,17 @@
                                                         data-partdesc="${p.partDescription}"
                                                         data-grn="${p.grnNo || ''}"
                                                         data-invoice="${p.invoiceNo || ''}"
-                                                        oninput="calcReject(this, 'rej-${p._id}')" 
+                                                        value="${accVal}"
+                                                        oninput="calcReject(this, 'rej-${p._id}'); autoSaveInward('${p._id}');" 
+                                                        onchange="autoSaveInward('${p._id}', true);"
                                                         style="width: 70px; padding: 4px; text-align: center; border: 1px solid var(--fog); border-radius: 4px;" />
                                                 </td>
                                                 <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:center;">
                                                     <input type="number" id="rej-${p._id}" class="reject-input" data-id="${p._id}" readonly 
-                                                        style="width: 70px; padding: 4px; text-align: center; border: 1px solid transparent; background: transparent; color: var(--red); font-weight: bold;" value="0" />
+                                                        style="width: 70px; padding: 4px; text-align: center; border: 1px solid transparent; background: transparent; color: var(--red); font-weight: bold;" value="${rejVal}" />
                                                 </td>
                                                 <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:center;">
-                                                    <input type="text" id="rem-${p._id}" class="remarks-input" placeholder="Click to add..." onclick="window.openRemarksModal(this)" onfocus="window.openRemarksModal(this)" readonly style="width: 150px; padding: 6px; border: 1px solid var(--fog); border-radius: 4px; font-family: 'Calibri', Calibri, sans-serif; cursor: pointer;" />
+                                                    <input type="text" id="rem-${p._id}" class="remarks-input" placeholder="Click to add..." value="${remVal}" onclick="window.openRemarksModal(this)" onfocus="window.openRemarksModal(this)" readonly style="width: 150px; padding: 6px; border: 1px solid var(--fog); border-radius: 4px; font-family: 'Calibri', Calibri, sans-serif; cursor: pointer;" />
                                                 </td>
                                             `}
                                         </tr>
@@ -1802,6 +1809,68 @@
                 fetchEntries();
             } catch (err) {
                 console.error('Failed to delete', err);
+            }
+        };
+
+        const autoSaveTimeouts = {};
+        window.autoSaveInward = function(id, immediate = false) {
+            if (autoSaveTimeouts[id]) {
+                clearTimeout(autoSaveTimeouts[id]);
+            }
+            const doSave = async () => {
+                delete autoSaveTimeouts[id];
+                const acceptInput = document.getElementById('acc-' + id);
+                const rejectInput = document.getElementById('rej-' + id);
+                const remarksInput = document.getElementById('rem-' + id);
+                if (!acceptInput) return;
+
+                let acceptedQty = 0;
+                let rejectedQty = 0;
+                let hasValue = false;
+
+                if (acceptInput.value !== "") {
+                    acceptedQty = Number(acceptInput.value);
+                    rejectedQty = Number(rejectInput ? rejectInput.value : 0);
+                    hasValue = true;
+                }
+
+                const remarks = remarksInput ? remarksInput.value.trim() : '';
+
+                const entry = entries.find(e => e._id === id);
+                if (entry) {
+                    if (hasValue) {
+                        entry.acceptedQty = acceptedQty;
+                        entry.rejectedQty = rejectedQty;
+                    } else {
+                        entry.acceptedQty = 0;
+                        entry.rejectedQty = 0;
+                    }
+                    entry.remarks = remarks;
+                }
+
+                try {
+                    const payload = { remarks };
+                    if (hasValue) {
+                        payload.acceptedQty = acceptedQty;
+                        payload.rejectedQty = rejectedQty;
+                    } else {
+                        payload.acceptedQty = 0;
+                        payload.rejectedQty = 0;
+                    }
+                    await fetch('/api/inward/' + id, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                } catch (err) {
+                    console.error('Auto-save inward failed:', err);
+                }
+            };
+
+            if (immediate) {
+                doSave();
+            } else {
+                autoSaveTimeouts[id] = setTimeout(doSave, 300);
             }
         };
 
@@ -2192,6 +2261,7 @@
             const tbody = document.getElementById('remarksModalBody');
             const rows = tbody.querySelectorAll('tr');
             const remarks = [];
+            let totalRejected = 0;
             rows.forEach(tr => {
                 const nature = tr.querySelector('.modal-nature').value.trim();
                 const serial = tr.querySelector('.modal-serial').value.trim();
@@ -2205,11 +2275,23 @@
                     if (qty) text += ': ' + qty;
                     remarks.push(text);
                 }
+                totalRejected += Number(qty || 0);
             });
             
             const inputId = document.getElementById('currentRemarksId').value;
             if (inputId) {
                 document.getElementById(inputId).value = remarks.join(', ');
+                const partId = inputId.replace('rem-', '');
+                const rejectInput = document.getElementById('rej-' + partId);
+                const acceptInput = document.getElementById('acc-' + partId);
+                if (totalRejected > 0 && rejectInput && acceptInput) {
+                    rejectInput.value = totalRejected;
+                    const maxQty = parseInt(acceptInput.getAttribute('max') || '0', 10);
+                    acceptInput.value = maxQty - totalRejected;
+                }
+                if (window.autoSaveInward) {
+                    window.autoSaveInward(partId, true);
+                }
             }
             
             closeRemarksModal();

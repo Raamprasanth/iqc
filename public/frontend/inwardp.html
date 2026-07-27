@@ -1353,6 +1353,11 @@
                                 <tbody id="subrow-body-${i}">
                                     ${g.parts.map(p => {
                                         const qty = Number(p.quantity || p.qty || 0);
+                                        const hasSaved = (p.acceptedQty !== undefined && p.acceptedQty !== null && (p.acceptedQty > 0 || p.rejectedQty > 0 || (p.remarks && p.remarks.trim() !== '') || (p.problemStage && p.problemStage.trim() !== '')));
+                                        const accVal = hasSaved ? p.acceptedQty : '';
+                                        const rejVal = hasSaved ? (p.rejectedQty || 0) : 0;
+                                        const stageVal = (p.problemStage || '').replace(/"/g, '&quot;');
+                                        const remVal = (p.remarks || '').replace(/"/g, '&quot;');
                                         return `
                                         <tr>
                                             <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9;"><strong>${p.partNo}</strong></td>
@@ -1368,7 +1373,7 @@
                                                 <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:center; color: var(--text);">
                                                         ${p.problemStage || '-'}
                                                  </td>
-                                                 <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:left; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${p.remarks || ''}">
+                                                 <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:left; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${remVal}">
                                                      ${p.remarks || '-'}
                                                  </td>
                                                  <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:center;">
@@ -1381,6 +1386,7 @@
                                                  <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:center;">
                                                      <input type="number" min="0" max="${qty}" 
                                                          class="accept-input" 
+                                                         id="acc-${p._id}"
                                                          data-id="${p._id}" 
                                                          data-total="${qty}" 
                                                          data-model="${g.model}"
@@ -1389,18 +1395,20 @@
                                                          data-partdesc="${p.partDescription}"
                                                          data-grn="${p.grnNo || ''}"
                                                          data-invoice="${g.invoiceNo || ''}"
-                                                         oninput="calcReject(this, 'rej-${p._id}')" 
+                                                         value="${accVal}"
+                                                         oninput="calcReject(this, 'rej-${p._id}'); autoSaveInwardp('${p._id}');" 
+                                                         onchange="autoSaveInwardp('${p._id}', true);"
                                                          style="width: 70px; padding: 4px; text-align: center; border: 1px solid var(--fog); border-radius: 4px;" />
                                                  </td>
                                                 <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:center;">
                                                     <input type="number" id="rej-${p._id}" class="reject-input" data-id="${p._id}" readonly 
-                                                        style="width: 70px; padding: 4px; text-align: center; border: 1px solid transparent; background: transparent; color: var(--red); font-weight: bold;" value="0" />
+                                                        style="width: 70px; padding: 4px; text-align: center; border: 1px solid transparent; background: transparent; color: var(--red); font-weight: bold;" value="${rejVal}" />
                                                 </td>
                                                 <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:center;">
-                                                    <input id="stage-${p._id}" list="stageList" class="stage-input" placeholder="Select Stage" style="width: 110px; padding: 4px; border: 1px solid var(--fog); border-radius: 4px; font-size: 0.75rem;" />
+                                                    <input id="stage-${p._id}" list="stageList" class="stage-input" placeholder="Select Stage" value="${stageVal}" oninput="autoSaveInwardp('${p._id}')" onchange="autoSaveInwardp('${p._id}', true)" style="width: 110px; padding: 4px; border: 1px solid var(--fog); border-radius: 4px; font-size: 0.75rem;" />
                                                 </td>
                                                 <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:center;">
-                                                    <input type="text" id="rem-${p._id}" class="remarks-input" placeholder="Click to add..." value="" onclick="window.openRemarksModal(this)" onfocus="window.openRemarksModal(this)" readonly style="width: 150px; padding: 6px; border: 1px solid var(--fog); border-radius: 4px; font-family: 'Calibri', Calibri, sans-serif; cursor: pointer;" />
+                                                    <input type="text" id="rem-${p._id}" class="remarks-input" placeholder="Click to add..." value="${remVal}" onclick="window.openRemarksModal(this)" onfocus="window.openRemarksModal(this)" readonly style="width: 150px; padding: 6px; border: 1px solid var(--fog); border-radius: 4px; font-family: 'Calibri', Calibri, sans-serif; cursor: pointer;" />
                                                 </td>
                                                 <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:center;">
                                                     <button onclick="openHistory('${p.grnNo}')" style="background:#0284c7; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:0.75rem; cursor:pointer;">View History</button>
@@ -1441,6 +1449,74 @@
                 fetchEntries();
             } catch (err) {
                 console.error('Failed to delete', err);
+            }
+        };
+
+        const autoSaveTimeouts = {};
+        window.autoSaveInwardp = function(id, immediate = false) {
+            if (autoSaveTimeouts[id]) {
+                clearTimeout(autoSaveTimeouts[id]);
+            }
+            const doSave = async () => {
+                delete autoSaveTimeouts[id];
+                const acceptInput = document.getElementById('acc-' + id);
+                const rejectInput = document.getElementById('rej-' + id);
+                const stageInput = document.getElementById('stage-' + id);
+                const remarksInput = document.getElementById('rem-' + id);
+                if (!acceptInput) return;
+
+                let acceptedQty = 0;
+                let rejectedQty = 0;
+                let hasValue = false;
+
+                if (acceptInput.value !== "") {
+                    acceptedQty = Number(acceptInput.value);
+                    rejectedQty = Number(rejectInput ? rejectInput.value : 0);
+                    hasValue = true;
+                }
+
+                const problemStage = stageInput ? stageInput.value.trim() : '';
+                const remarks = remarksInput ? remarksInput.value.trim() : '';
+
+                const entry = entries.find(e => e._id === id);
+                if (entry) {
+                    if (hasValue) {
+                        entry.acceptedQty = acceptedQty;
+                        entry.rejectedQty = rejectedQty;
+                    } else {
+                        entry.acceptedQty = 0;
+                        entry.rejectedQty = 0;
+                    }
+                    entry.problemStage = problemStage;
+                    entry.remarks = remarks;
+                }
+
+                try {
+                    const payload = {
+                        problemStage: problemStage,
+                        remarks: remarks
+                    };
+                    if (hasValue) {
+                        payload.acceptedQty = acceptedQty;
+                        payload.rejectedQty = rejectedQty;
+                    } else {
+                        payload.acceptedQty = 0;
+                        payload.rejectedQty = 0;
+                    }
+                    await fetch('/api/inwardp/' + id, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                } catch (err) {
+                    console.error('Auto-save inwardp failed:', err);
+                }
+            };
+
+            if (immediate) {
+                doSave();
+            } else {
+                autoSaveTimeouts[id] = setTimeout(doSave, 300);
             }
         };
 
@@ -1802,6 +1878,9 @@
                 if (acceptInput && rejectInput) {
                     const maxQty = parseInt(acceptInput.getAttribute('max') || '0', 10);
                     acceptInput.value = maxQty - totalRejected;
+                }
+                if (window.autoSaveInwardp) {
+                    window.autoSaveInwardp(partId, true);
                 }
             }
             
