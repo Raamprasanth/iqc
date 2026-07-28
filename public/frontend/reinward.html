@@ -704,8 +704,6 @@
                                 <th>Date</th>
                                 <th>Invoice No.</th>
                                 <th>Model</th>
-                                <th>Total Parts</th>
-                                <th>Total Quantity</th>
                                 <th style="text-align:center;">Action</th>
                                 <th></th>
                             </tr>
@@ -819,8 +817,6 @@
                     <td><span class="cell-part">${formatDateDisplay(g.date)}</span></td>
                     <td><span class="cell-part">${g.invoiceNo}</span></td>
                     <td><span class="cell-part">${g.model}</span></td>
-                    <td><strong>${g.parts.length}</strong> Parts</td>
-                    <td>${g.totalQty.toLocaleString('en-IN')}</td>
                     <td style="text-align:center;">
                         <span class="status-pill accepted" style="background:#dcfce7; color:#16a34a; padding:4px 11px; border-radius:20px; font-weight:700; font-size:0.7rem;">Completed</span>
                     </td>
@@ -829,7 +825,7 @@
                     </td>
                 </tr>
                 <tr id="subrow-${i}" style="display: none; background: #fafbfc;">
-                    <td colspan="8" style="padding: 0; border-bottom: 2px solid var(--fog);">
+                    <td colspan="6" style="padding: 0; border-bottom: 2px solid var(--fog);">
                         <div style="padding: 15px 30px;">
                             <table style="width:100%; border-collapse:collapse; font-size: 0.8rem;">
                                 <thead>

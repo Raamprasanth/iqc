@@ -796,8 +796,6 @@
                                 <th>Sl. No.</th>
                                 <th>Log Date</th>
                                 <th>Model</th>
-                                <th>Total Parts</th>
-                                <th>Total Quantity</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -917,14 +915,12 @@
                     <td>${i + 1}</td>
                     <td><span class="cell-part">${formatDateDisplay(g.date)}</span></td>
                     <td><span class="cell-part">${g.model}</span></td>
-                    <td><strong>${g.parts.length}</strong> Parts</td>
-                    <td><strong>${g.totalQty.toLocaleString('en-IN')}</strong></td>
                     <td style="text-align: right;">
                         <span style="font-size: 0.75rem; color: var(--steel); user-select:none;">&#9660; Details</span>
                     </td>
                 </tr>
                 <tr id="subrow-${i}" style="display: none; background: #fafbfc;">
-                    <td colspan="6" style="padding: 0; border-bottom: 2px solid var(--fog);">
+                    <td colspan="4" style="padding: 0; border-bottom: 2px solid var(--fog);">
                         <div style="padding: 18px 30px;">
                             <table style="width:100%; border-collapse:collapse; font-size: 0.8rem;">
                                 <thead>
