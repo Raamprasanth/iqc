@@ -1972,7 +1972,7 @@
 
             try {
                 await Promise.all(reqs);
-                fetchEntries();
+                // fetchEntries(); // Removed to prevent 5-second delay and table flash after optimistic UI update
             } catch (err) {
                 console.error('Failed to process inspection', err);
             }

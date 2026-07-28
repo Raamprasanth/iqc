@@ -1647,7 +1647,7 @@
 
             try {
                 await Promise.all(reqs);
-                fetchEntries();
+                // fetchEntries(); // Removed to prevent 5-second delay and table flash after optimistic UI update
                 fetchRejectedproCount();
                 fetchReInwardCount();
             } catch (err) {
