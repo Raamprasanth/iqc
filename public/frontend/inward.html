@@ -2348,22 +2348,21 @@
 
             const availableSubParts = matchedSpareObj && matchedSpareObj.subParts ? matchedSpareObj.subParts : [];
 
+            const uniqueId = 'spareList-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+            
             let spareInputHtml = '';
             if (availableSubParts.length > 0) {
-                let optionsHtml = '<option value="">Select Spare...</option>';
-                let matchedValueFound = false;
-
+                let optionsHtml = '';
                 availableSubParts.forEach(sp => {
-                    const isSelected = (sp === spare);
-                    if (isSelected) matchedValueFound = true;
-                    optionsHtml += `<option value="${sp}" ${isSelected ? 'selected' : ''}>${sp}</option>`;
+                    optionsHtml += `<option value="${sp}">`;
                 });
 
-                if (spare && !matchedValueFound) {
-                    optionsHtml += `<option value="${spare}" selected>${spare}</option>`;
-                }
-
-                spareInputHtml = `<select class="modal-spare" style="width: 100%; padding: 6px; border: 1px solid var(--fog); border-radius: 4px; font-family: 'Calibri', Calibri, sans-serif;">${optionsHtml}</select>`;
+                spareInputHtml = `
+                    <input type="text" class="modal-spare" list="${uniqueId}" value="${spare}" placeholder="Select or type spare" style="width: 100%; padding: 6px; border: 1px solid var(--fog); border-radius: 4px; font-family: 'Calibri', Calibri, sans-serif;" />
+                    <datalist id="${uniqueId}">
+                        ${optionsHtml}
+                    </datalist>
+                `;
             } else {
                 spareInputHtml = `<input type="text" class="modal-spare" value="${spare}" placeholder="Enter spare name" style="width: 100%; padding: 6px; border: 1px solid var(--fog); border-radius: 4px;" />`;
             }
