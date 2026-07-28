@@ -2189,7 +2189,7 @@
             
             let matchedSpareObj = null;
             if (modalDesc) {
-                // 1. Try exact match on part description (with model if provided)
+                // 1. Exact match
                 matchedSpareObj = allSparesMappings.find(s => {
                     const sDesc = (s.partDescription || '').toLowerCase().trim();
                     const sModel = (s.model || '').toLowerCase().trim();
@@ -2197,29 +2197,60 @@
                     return modelMatch && sDesc === modalDesc;
                 });
                 
-                // 2. Try substring match (e.g. "battery" in "battery li-ion")
+                // 2. Substring match (pick the longest match to avoid generic short matches)
                 if (!matchedSpareObj) {
-                    matchedSpareObj = allSparesMappings.find(s => {
+                    let bestSubstMatch = null;
+                    let bestSubstLen = 0;
+                    allSparesMappings.forEach(s => {
                         const sDesc = (s.partDescription || '').toLowerCase().trim();
                         const sModel = (s.model || '').toLowerCase().trim();
                         const modelMatch = (!sModel || !modalModel) ? true : sModel === modalModel;
-                        return modelMatch && sDesc && modalDesc && (modalDesc.includes(sDesc) || sDesc.includes(modalDesc));
+                        if (modelMatch && sDesc && modalDesc) {
+                            if (modalDesc.includes(sDesc) || sDesc.includes(modalDesc)) {
+                                const matchLen = Math.min(sDesc.length, modalDesc.length);
+                                if (matchLen > bestSubstLen && matchLen > 3) {
+                                    bestSubstLen = matchLen;
+                                    bestSubstMatch = s;
+                                }
+                            }
+                        }
                     });
+                    matchedSpareObj = bestSubstMatch;
                 }
                 
-                // 3. Try keyword match (any word >= 3 chars)
+                // 3. Keyword Scoring Match (Best fit based on number of overlapping words)
                 if (!matchedSpareObj) {
-                    matchedSpareObj = allSparesMappings.find(s => {
+                    let bestScore = 0;
+                    let bestMatch = null;
+                    
+                    const mWords = modalDesc.split(/[\s,\-\(\)]+/).filter(w => w.length > 2);
+                    
+                    allSparesMappings.forEach(s => {
                         const sDesc = (s.partDescription || '').toLowerCase().trim();
                         const sModel = (s.model || '').toLowerCase().trim();
                         const modelMatch = (!sModel || !modalModel) ? true : sModel === modalModel;
                         
-                        if (!sDesc || !modalDesc) return false;
-                        const keywords = sDesc.split(/[\s,-]+/).filter(w => w.length >= 3);
-                        const hasKeywordMatch = keywords.some(kw => modalDesc.includes(kw));
+                        if (!modelMatch || !sDesc) return;
                         
-                        return modelMatch && hasKeywordMatch;
+                        const sWords = sDesc.split(/[\s,\-\(\)]+/).filter(w => w.length > 2);
+                        if (sWords.length === 0) return;
+                        
+                        let score = 0;
+                        sWords.forEach(sw => {
+                            if (mWords.some(mw => mw === sw || mw.includes(sw) || sw.includes(mw))) {
+                                score++;
+                            }
+                        });
+                        
+                        const matchRatio = score / sWords.length;
+                        const finalScore = score + matchRatio;
+                        
+                        if (score > 0 && finalScore > bestScore) {
+                            bestScore = finalScore;
+                            bestMatch = s;
+                        }
                     });
+                    matchedSpareObj = bestMatch;
                 }
             }
 
