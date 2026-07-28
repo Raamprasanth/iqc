@@ -1072,6 +1072,7 @@
         }
 
 
+        
         /* ── Per-Invoice Excel Download ── */
         window.downloadInvoiceExcel = function (groupIndex) {
             const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
@@ -1086,45 +1087,37 @@
             if (!g) return;
 
             const rows = [
-                ['Sl. No.', 'Date', 'Invoice No.', 'Model', 'Part No.', 'Part Description', 'Remarks (Nature)', 'SN', 'Spare', 'Qty', 'Replacement Status', 'Rep Serial No', 'Addl Remarks']
+                ['Inward Date', 'Invoice NO', 'Inward Qty', 'Part No', 'Defective Items', 'Problem Description', 'Spares Required', 'Required Qty', 'Serial No / Lot No']
             ];
 
-            let sl = 1;
             g.parts.forEach(p => {
+                const inwardQty = Number(p.totalQuantity || p.receivedQty || p.quantity || p.qty || 0);
                 if (p.itemDetails && p.itemDetails.length > 0) {
                     p.itemDetails.forEach(item => {
                         if (!item.isReplaced) {
                             rows.push([
-                                sl++,
                                 formatDateDisplay(g.date),
                                 g.invoiceNo || p.invoiceNo || '',
-                                g.model || p.model || '',
+                                inwardQty,
                                 p.partNo || '',
                                 p.partDescription || '',
                                 item.nature || '',
-                                item.serial || '',
                                 item.spare || '',
                                 item.qty || 1,
-                                item.isReplaced ? 'Replaced' : 'Replacement Pending from BLT',
-                                item.repSerialNo || '',
-                                item.additionalRemarks || ''
+                                item.serial || ''
                             ]);
                         }
                     });
                 } else {
                     rows.push([
-                        sl++,
                         formatDateDisplay(g.date),
                         g.invoiceNo || p.invoiceNo || '',
-                        g.model || p.model || '',
+                        inwardQty,
                         p.partNo || '',
                         p.partDescription || '',
                         p.remarks || p.reason || '',
                         '',
-                        '',
                         Number(p.quantity || p.qty || 0),
-                        p.isReplaced ? 'Replaced' : 'Replacement Pending from BLT',
-                        '',
                         ''
                     ]);
                 }
@@ -1136,7 +1129,7 @@
             const a = document.createElement('a');
             a.href = url;
             const invName = (g.invoiceNo && g.invoiceNo !== '-') ? g.invoiceNo.replace(/[^a-zA-Z0-9_-]/g, '_') : ('invoice_' + (groupIndex + 1));
-            a.download = `Rejected_PRO_${invName}.csv`;
+            a.download = `Rejected_Items_${invName}.csv`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
