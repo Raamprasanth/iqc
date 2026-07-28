@@ -916,8 +916,7 @@
                                 <th>Date</th>
                                 <th>Invoice No.</th>
                                 <th>Model</th>
-                                <th>Total Parts</th>
-                                <th>Total Quantity</th>
+                                
                                 <th style="text-align:center;">Action</th>
                                 <th></th>
                             </tr>
@@ -1128,8 +1127,7 @@
                     <td><span class="cell-part">${formatDateDisplay(g.date)}</span></td>
                     <td><span class="cell-part">${g.invoiceNo}</span></td>
                     <td><span class="cell-part">${g.model}</span></td>
-                    <td><strong>${g.parts.length}</strong> Parts</td>
-                    <td>${g.totalQty.toLocaleString('en-IN')}</td>
+                    
                     ${(() => {
                         const allDone = g.parts.every(p => Number(p.yetToAcceptQty || 0) === 0);
                         const partIds = g.ids.join(',');

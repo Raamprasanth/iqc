@@ -922,8 +922,7 @@
                                 <th>Date</th>
                                 <th>Invoice No</th>
                                 <th>Model</th>
-                                <th>Total Parts</th>
-                                <th>Total Quantity</th>
+                                
                                 <th></th>
                             </tr>
                         </thead>
@@ -1102,8 +1101,7 @@ function renderTable() {
                     <td><span class="cell-part">${formatDateDisplay(g.date)}</span></td>
                     <td><span class="cell-part" style="font-weight: 500;">${g.invoiceNo || '-'}</span></td>
                     <td><span class="cell-part">${g.model}</span></td>
-                    <td><strong>${g.parts.length}</strong> Parts</td>
-                    <td>${g.totalQty.toLocaleString('en-IN')}</td>
+                    
                     <td style="text-align: right;">
                         <span style="font-size: 0.75rem; color: var(--steel); user-select:none;">&#9660; Details</span>
                     </td>
