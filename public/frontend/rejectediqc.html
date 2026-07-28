@@ -62,23 +62,6 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        .sidebar-logo-mark {
-            width: 34px;
-            height: 34px;
-            min-width: 34px;
-            background: var(--red);
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .sidebar-logo-mark svg {
-            width: 20px;
-            height: 20px;
-            fill: white;
-        }
-
         .sidebar-brand {
             font-family: 'Calibri', Calibri, sans-serif;
             font-size: 1.02rem;
@@ -393,114 +376,6 @@
             max-width: 520px;
         }
 
-        /* KPI cards */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 28px;
-        }
-
-        .kpi-card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px 22px;
-            border: 1px solid rgba(13, 27, 42, 0.06);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .kpi-card.accent::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background: var(--accent-color, var(--red));
-        }
-
-        .kpi-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 14px;
-        }
-
-        .kpi-icon {
-            width: 34px;
-            height: 34px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--fog);
-        }
-
-        .kpi-icon svg {
-            width: 18px;
-            height: 18px;
-            stroke: var(--navy);
-            fill: none;
-            stroke-width: 1.8;
-        }
-
-        .kpi-card.c-red .kpi-icon {
-            background: rgba(30, 123, 77, 0.1);
-        }
-
-        .kpi-card.c-red .kpi-icon svg {
-            stroke: var(--red);
-        }
-
-        .kpi-card.c-amber .kpi-icon {
-            background: rgba(199, 123, 18, 0.1);
-        }
-
-        .kpi-card.c-amber .kpi-icon svg {
-            stroke: var(--amber);
-        }
-
-        .kpi-card.c-navy .kpi-icon {
-            background: rgba(44, 74, 110, 0.1);
-        }
-
-        .kpi-card.c-navy .kpi-icon svg {
-            stroke: var(--mid);
-        }
-
-        .kpi-trend {
-            font-size: 0.68rem;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 20px;
-        }
-
-        .kpi-trend.up {
-            background: rgba(30, 123, 77, 0.1);
-            color: var(--red);
-        }
-
-        .kpi-trend.neutral {
-            background: rgba(107, 140, 174, 0.12);
-            color: var(--steel);
-        }
-
-        .kpi-value {
-            font-family: 'Calibri', Calibri, sans-serif;
-            font-size: 1.9rem;
-            font-weight: 700;
-            color: var(--navy);
-            line-height: 1;
-        }
-
-        .kpi-label {
-            font-size: 0.74rem;
-            color: var(--steel);
-            margin-top: 6px;
-            font-weight: 500;
-        }
-
         /* Panel */
         .panel {
             background: white;
@@ -575,29 +450,6 @@
             color: var(--navy);
         }
 
-        .status-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 4px 11px;
-            border-radius: 20px;
-        }
-
-        .status-pill::before {
-            content: '';
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: currentColor;
-        }
-
-        .status-pill.accepted {
-            background: rgba(30, 123, 77, 0.1);
-            color: var(--red);
-        }
-
         /* Empty state */
         .empty-state {
             display: flex;
@@ -632,34 +484,6 @@
             max-width: 280px;
         }
 
-        /* Accepted banner accent */
-        .accepted-banner {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: rgba(30, 123, 77, 0.06);
-            border: 1px solid rgba(30, 123, 77, 0.18);
-            border-radius: 8px;
-            padding: 12px 18px;
-            margin-bottom: 22px;
-            font-size: 0.82rem;
-            color: var(--red);
-            font-weight: 500;
-        }
-
-        .accepted-banner svg {
-            width: 18px;
-            height: 18px;
-            min-width: 18px;
-            stroke: var(--red);
-            fill: none;
-            stroke-width: 2.2;
-        }
-
-        .accepted-banner strong {
-            font-weight: 700;
-        }
-
         /* Sidebar scrim */
         .sidebar-scrim {
             display: none;
@@ -674,12 +498,6 @@
         }
 
         /* ───────────────────────── RESPONSIVE ───────────────────────── */
-        @media (max-width: 1100px) {
-            .kpi-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
         @media (max-width: 860px) {
             .sidebar {
                 transform: translateX(-100%);
@@ -710,43 +528,6 @@
             .topbar {
                 padding: 0 16px;
             }
-        }
-
-        /* ───────────────────────── TOPBAR TABS ───────────────────────── */
-        .topbar-tabs {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            background: var(--fog);
-            border-radius: 8px;
-            padding: 4px;
-            margin-left: 20px;
-        }
-
-        .topbar-tab {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            border: none;
-            background: transparent;
-            color: var(--steel);
-            font-size: 0.8rem;
-            font-weight: 600;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background 0.15s, color 0.15s;
-            font-family: 'Calibri', Calibri, sans-serif;
-        }
-
-        .topbar-tab:hover {
-            color: var(--navy);
-        }
-
-        .topbar-tab.active {
-            background: white;
-            color: var(--navy);
-            box-shadow: 0 1px 3px rgba(13, 27, 42, 0.12);
         }
     </style>
 </head>
@@ -816,7 +597,7 @@
                 </svg>
                 Settings
             </a>
-</nav>
+        </nav>
 
         <div class="sidebar-foot">
             <div class="sidebar-avatar">RM</div>
@@ -839,8 +620,7 @@
                         <line x1="3" y1="18" x2="21" y2="18" />
                     </svg>
                 </button>
-                <div
-                    style="font-family: 'Calibri', Calibri, sans-serif; font-size:1.2rem; font-weight:700; color:var(--navy);">
+                <div style="font-family: 'Calibri', Calibri, sans-serif; font-size:1.2rem; font-weight:700; color:var(--navy);">
                     NCR / Rejections
                 </div>
             </div>
@@ -874,7 +654,7 @@
             <div class="page-head">
                 <div>
                     <h1>NCR / Rejections</h1>
-                    <p>All inward entries that have failed incoming quality inspection — Puducherry & Bengaluru.</p>
+                    <p>All inward entries that have failed incoming quality inspection — Puducherry &amp; Bengaluru.</p>
                 </div>
                 <div class="head-actions">
                     <button class="btn-outline-navy" id="exportBtn">
@@ -883,22 +663,10 @@
                             <polyline points="7 10 12 15 17 10" />
                             <line x1="12" y1="15" x2="12" y2="3" />
                         </svg>
-                        Export
+                        Export All
                     </button>
                 </div>
             </div>
-
-            <!-- KPI Cards -->
-            
-
-            <!-- Accepted banner -->
-            
-
-                        
-            
-
-            
-            <!-- Tabs removed as per user request -->
 
             <!-- Table panel -->
             <div class="panel">
@@ -921,6 +689,7 @@
                                 <th>Model</th>
                                 <th>Total Parts</th>
                                 <th>Total Quantity</th>
+                                <th style="text-align:center;">Action</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -951,8 +720,8 @@
 
         function openSidebar() { sidebar.classList.add('open'); scrim.classList.add('show'); }
         function closeSidebar() { sidebar.classList.remove('open'); scrim.classList.remove('show'); }
-        menuToggle.addEventListener('click', () => sidebar.classList.contains('open') ? closeSidebar() : openSidebar());
-        scrim.addEventListener('click', closeSidebar);
+        if (menuToggle) menuToggle.addEventListener('click', () => sidebar.classList.contains('open') ? closeSidebar() : openSidebar());
+        if (scrim) scrim.addEventListener('click', closeSidebar);
 
         /* ── Helpers ── */
         function formatDateDisplay(isoDate) {
@@ -963,7 +732,6 @@
             return `${day} ${months[parseInt(m, 10) - 1]} ${y}`;
         }
 
-        
         /* ── State ── */
         let activeTab = 'standard';
         let entries = [];
@@ -974,25 +742,6 @@
         const entryCount = document.getElementById('entryCount');
         const searchInput = document.getElementById('searchInput');
 
-
-        
-        
-
-        window.switchTab = function(tab) {
-            activeTab = tab;
-            document.querySelectorAll('.tab-btn').forEach(b => {
-                b.classList.remove('active');
-                b.style.borderBottom = 'none';
-                b.style.color = 'var(--steel)';
-            });
-            const activeBtn = document.getElementById('tab-' + tab);
-            activeBtn.classList.add('active');
-            activeBtn.style.borderBottom = '2px solid var(--blue)';
-            activeBtn.style.color = 'var(--navy)';
-            
-            fetchEntries();
-        };
-
         async function fetchEntries() {
             try {
                 const url = '/api/rejected-iqc' + (activeTab === 'reinward' ? '?type=reinward' : '?type=standard');
@@ -1000,135 +749,10 @@
                 if (res.ok) {
                     entries = await res.json();
                     renderTable();
-                    updateKPIs();
                 }
             } catch (err) {
                 console.error('Error fetching entries:', err);
                 renderTable();
-                updateKPIs();
-            }
-        }
-
-        // Fetch dynamic count for sidebar badge "Inward from IQC"
-        async function fetchInwardCount() {
-            try {
-                const res = await fetch('/api/inward');
-                if (res.ok) {
-                    const data = await res.json();
-                    const badge = document.getElementById('iqcInwardBadge');
-                    if (badge) {
-                        badge.textContent = data.length;
-                    }
-                }
-            } catch (err) {
-                console.error('Error fetching iqc inward count:', err);
-            }
-        }
-
-        
-        async function fetchReInwardCount() {
-            try {
-                const res = await fetch('/api/reinwardro');
-                if (res.ok) {
-                    const data = await res.json();
-                    const groups = {};
-                    data.forEach(e => {
-                        const d = e.date ? e.date.split('T')[0] : '';
-                        const key = d + '|' + e.model;
-                        groups[key] = true;
-                    });
-                    const count = Object.keys(groups).length;
-                    const badge = document.getElementById('iqcReInwardBadge');
-                    if (badge) {
-                        badge.textContent = count;
-                    }
-                }
-            } catch (err) {
-                console.error('Error fetching iqc re-inward count:', err);
-            }
-        }
-
-
-        function updateKPIs() {
-            // KPI cards are not present on this page — safely skip if elements don't exist
-            const grouped = groupEntries(entries);
-            const totalQty = entries.reduce((s, e) => s + Number(e.totalQuantity || e.quantity || e.qty || 0), 0);
-            const models = new Set(entries.map(e => e.model)).size;
-
-            const setEl = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-            setEl('kpiTotal', grouped.length);
-            setEl('kpiParts', entries.length);
-            setEl('kpiModels', models);
-            setEl('kpiQty', totalQty.toLocaleString('en-IN'));
-            setEl('trendTotal', grouped.length > 0 ? '▼ Active' : '—');
-            setEl('trendParts', entries.length + ' lines');
-            setEl('trendModels', models + ' models');
-            setEl('trendQty', totalQty > 0 ? '▼ Rejected' : '—');
-        }
-
-        
-        async function updateField(id, field, value) {
-            try {
-                const body = {};
-                body[field] = value;
-                const res = await fetch('/api/rejected-iqc/' + id, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body)
-                });
-                if (!res.ok) throw new Error('Failed to update ' + field);
-                const entry = entries.find(e => e._id === id);
-                if (entry) entry[field] = value;
-            } catch (err) {
-                console.error(err);
-                alert('Failed to update ' + field);
-            }
-        }
-
-        async function markAsReplaced(id, event) {
-            event.stopPropagation();
-            if(!confirm('Mark this item as successfully replaced?')) return;
-            try {
-                const res = await fetch('/api/rejected-iqc/' + id, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ isReplaced: true })
-                });
-                if (!res.ok) throw new Error('Failed to mark as replaced');
-                
-                // Remove from local array
-                const index = entries.findIndex(e => e._id === id);
-                if(index > -1) {
-                    entries.splice(index, 1);
-                    renderTable();
-                    updateKPIs();
-                }
-            } catch(err) {
-                console.error(err);
-                alert('Failed to mark as replaced');
-            }
-        }
-
-
-        async function fetchAcceptedproCount() {
-            try {
-                const res = await fetch('/api/rejectedpro');
-                if (res.ok) {
-                    const data = await res.json();
-                    const groups = {};
-                    data.forEach(e => {
-                        const d = e.date ? e.date.split('T')[0] : '';
-                        const key = d + '|' + e.model;
-                        groups[key] = true;
-                    });
-                    const count = Object.keys(groups).length;
-                    const badge = document.getElementById('iqcRejectedBadge');
-                    if (badge) {
-                        badge.textContent = count;
-                    }
-                }
-            } catch (err) {
-                console.error('Error fetching iqc rejected count:', err);
             }
         }
 
@@ -1151,7 +775,6 @@
             return Object.values(groups);
         }
 
-        
         function parseRemarksToItems(remarks, totalQty) {
             const items = [];
             if (remarks) {
@@ -1237,16 +860,14 @@
             btn.textContent = 'Accepted';
             btn.disabled = true;
             
-            // check if all items are replaced
             const allReplaced = entry.itemDetails.every(item => item.isReplaced);
             
             try {
                 const body = { itemDetails: entry.itemDetails };
                 if (allReplaced) {
-                    body.isReplaced = true; // Mark the whole document as replaced
+                    body.isReplaced = true;
                 }
                 
-                // Save the isReplaced flag — firstrep page picks up replaced items automatically
                 await fetch('/api/rejected-iqc/' + id, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
@@ -1255,7 +876,6 @@
                 
                 if (allReplaced) {
                     entry.isReplaced = true;
-                    // refresh table
                     setTimeout(renderTable, 500);
                 }
             } catch (err) {
@@ -1271,10 +891,81 @@
                 row.style.display = 'none';
             }
         }
+
+        /* ── Per-Invoice Excel Download ── */
+        window.downloadInvoiceExcel = function (groupIndex) {
+            const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+            const filtered = entries.filter(e => !e.isReplaced).filter(e =>
+                !query ||
+                (e.model && e.model.toLowerCase().includes(query)) ||
+                (e.partNo && e.partNo.toLowerCase().includes(query)) ||
+                (e.partDescription && e.partDescription.toLowerCase().includes(query))
+            );
+            const grouped = groupEntries(filtered);
+            const g = grouped[groupIndex];
+            if (!g) return;
+
+            const rows = [
+                ['Sl. No.', 'Date', 'Invoice No.', 'Model', 'Part No.', 'Part Description', 'Remarks (Nature)', 'SN', 'Spare', 'Qty', 'Replacement Status', 'Rep Serial No', 'Addl Remarks']
+            ];
+
+            let sl = 1;
+            g.parts.forEach(p => {
+                if (p.itemDetails && p.itemDetails.length > 0) {
+                    p.itemDetails.forEach(item => {
+                        if (!item.isReplaced) {
+                            rows.push([
+                                sl++,
+                                formatDateDisplay(g.date),
+                                g.invoiceNo || p.invoiceNo || '',
+                                g.model || p.model || '',
+                                p.partNo || '',
+                                p.partDescription || '',
+                                item.nature || '',
+                                item.serial || '',
+                                item.spare || '',
+                                item.qty || 1,
+                                item.isReplaced ? 'Replaced' : 'Replacement Pending from BLT',
+                                item.repSerialNo || '',
+                                item.additionalRemarks || ''
+                            ]);
+                        }
+                    });
+                } else {
+                    rows.push([
+                        sl++,
+                        formatDateDisplay(g.date),
+                        g.invoiceNo || p.invoiceNo || '',
+                        g.model || p.model || '',
+                        p.partNo || '',
+                        p.partDescription || '',
+                        p.remarks || p.reason || '',
+                        '',
+                        '',
+                        Number(p.quantity || p.qty || 0),
+                        p.isReplaced ? 'Replaced' : 'Replacement Pending from BLT',
+                        '',
+                        ''
+                    ]);
+                }
+            });
+
+            const csvContent = rows.map(r => r.map(c => '"' + (c == null ? '' : String(c)).replace(/"/g, '""') + '"').join(',')).join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const invName = (g.invoiceNo && g.invoiceNo !== '-') ? g.invoiceNo.replace(/[^a-zA-Z0-9_-]/g, '_') : ('invoice_' + (groupIndex + 1));
+            a.download = `Rejected_IQC_${invName}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        };
     
         function renderTable() {
-            const query = searchInput.value.trim().toLowerCase();
-            const filtered = entries.filter(e => !e.isReplaced).filter(e => !e.isReplaced).filter(e =>
+            const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+            const filtered = entries.filter(e => !e.isReplaced).filter(e =>
                 !query ||
                 (e.model && e.model.toLowerCase().includes(query)) ||
                 (e.partNo && e.partNo.toLowerCase().includes(query)) ||
@@ -1282,15 +973,15 @@
             );
 
             const grouped = groupEntries(filtered);
-            entryCount.textContent = grouped.length;
+            if (entryCount) entryCount.textContent = grouped.length;
 
             if (grouped.length === 0) {
-                tableWrap.style.display = 'none';
-                emptyState.style.display = 'flex';
+                if (tableWrap) tableWrap.style.display = 'none';
+                if (emptyState) emptyState.style.display = 'flex';
                 return;
             }
-            tableWrap.style.display = 'block';
-            emptyState.style.display = 'none';
+            if (tableWrap) tableWrap.style.display = 'block';
+            if (emptyState) emptyState.style.display = 'none';
 
             let html = '';
             grouped.forEach((g, i) => {
@@ -1304,12 +995,22 @@
                     <td><span class="cell-part">${g.model}</span></td>
                     <td><strong>${g.parts.length}</strong> Parts</td>
                     <td>${g.totalQty.toLocaleString('en-IN')}</td>
+                    <td style="text-align:center;" onclick="event.stopPropagation()">
+                        <button onclick="downloadInvoiceExcel(${i})" class="btn-outline-navy" style="padding:4px 10px; font-size:0.75rem; display:inline-flex; align-items:center; gap:5px; border-radius:6px; cursor:pointer;" title="Download Excel for this invoice">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                                <polyline points="7 10 12 15 17 10" />
+                                <line x1="12" y1="15" x2="12" y2="3" />
+                            </svg>
+                            Download Excel
+                        </button>
+                    </td>
                     <td style="text-align: right;">
                         <span style="font-size: 0.75rem; color: var(--steel); user-select:none;">&#9660; Details</span>
                     </td>
                 </tr>
                 <tr id="subrow-${i}" style="display: none; background: #fafbfc;">
-                    <td colspan="11" style="padding: 0; border-bottom: 2px solid var(--fog);">
+                    <td colspan="8" style="padding: 0; border-bottom: 2px solid var(--fog);">
                         <div style="padding: 15px 30px;">
                             <table style="width:100%; border-collapse:collapse; font-size: 0.8rem;">
                                 <thead>
@@ -1387,30 +1088,33 @@
             el.style.display = el.style.display === 'none' ? 'table-row' : 'none';
         };
 
-        searchInput.addEventListener('input', renderTable);
+        if (searchInput) searchInput.addEventListener('input', renderTable);
 
-        /* ── Export ── */
-        document.getElementById('exportBtn').addEventListener('click', () => {
-            const rows = [['Model', 'BLT Invoice No.', 'Received Date', 'Received Qty', 'Problem QTY', 'Problem reported date to BLT', 'Replacement Status ']];
-            groupEntries(entries).forEach(g => {
-                g.parts.forEach(p => {
-                    rows.push([
-                        g.model || '',
-                        g.invoiceNo || p.invoiceNo || '',
-                        g.date || '',
-                        p.totalQuantity || p.receivedQty || '',
-                        Number(p.quantity || p.qty || 0),
-                        '',
-                        p.isReplaced ? 'Replaced' : 'Replacement Pending from BLT'
-                    ]);
+        /* ── Overall Export ── */
+        const exportBtn = document.getElementById('exportBtn');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', () => {
+                const rows = [['Model', 'BLT Invoice No.', 'Received Date', 'Received Qty', 'Problem QTY', 'Problem reported date to BLT', 'Replacement Status']];
+                groupEntries(entries).forEach(g => {
+                    g.parts.forEach(p => {
+                        rows.push([
+                            g.model || '',
+                            g.invoiceNo || p.invoiceNo || '',
+                            g.date || '',
+                            p.totalQuantity || p.receivedQty || '',
+                            Number(p.quantity || p.qty || 0),
+                            '',
+                            p.isReplaced ? 'Replaced' : 'Replacement Pending from BLT'
+                        ]);
+                    });
                 });
+                const csv = rows.map(r => r.map(c => '"' + (c == null ? '' : String(c)).replace(/"/g, '""') + '"').join(',')).join('\n');
+                const a = document.createElement('a');
+                a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+                a.download = 'rejected_iqc_' + new Date().toISOString().split('T')[0] + '.csv';
+                a.click();
             });
-            const csv = rows.map(r => r.map(c => '"' + (c == null ? '' : String(c)).replace(/"/g, '""') + '"').join(',')).join('\n');
-            const a = document.createElement('a');
-            a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-            a.download = 'rejected_iqc_' + new Date().toISOString().split('T')[0] + '.csv';
-            a.click();
-        });
+        }
 
         /* ── Init ── */
         fetchEntries();
@@ -1438,7 +1142,7 @@
         });
     </script>
 
-<script>function highlightActiveSidebarLink() {    const links = document.querySelectorAll('.sidebar-link');    const currentPath = window.location.pathname.split('/').pop();    links.forEach(l => {        l.classList.remove('active');        if (l.getAttribute('href') === currentPath) {            l.classList.add('active');        }    });}document.addEventListener('DOMContentLoaded', highlightActiveSidebarLink);</script>\n</body>
+<script>function highlightActiveSidebarLink() { const links = document.querySelectorAll('.sidebar-link'); const currentPath = window.location.pathname.split('/').pop(); links.forEach(l => { l.classList.remove('active'); if (l.getAttribute('href') === currentPath) { l.classList.add('active'); } });}document.addEventListener('DOMContentLoaded', highlightActiveSidebarLink);</script>
+</body>
 
 </html>
-
