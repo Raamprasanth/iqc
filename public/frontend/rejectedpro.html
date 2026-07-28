@@ -1073,6 +1073,7 @@
 
 
         
+        
         /* ── Per-Invoice Excel Download ── */
         window.downloadInvoiceExcel = function (groupIndex) {
             const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
@@ -1092,21 +1093,31 @@
 
             g.parts.forEach(p => {
                 const inwardQty = Number(p.totalQuantity || p.receivedQty || p.quantity || p.qty || 0);
+                
                 if (p.itemDetails && p.itemDetails.length > 0) {
+                    const aggregated = {};
                     p.itemDetails.forEach(item => {
                         if (!item.isReplaced) {
-                            rows.push([
-                                formatDateDisplay(g.date),
-                                g.invoiceNo || p.invoiceNo || '',
-                                inwardQty,
-                                p.partNo || '',
-                                p.partDescription || '',
-                                item.nature || '',
-                                item.spare || '',
-                                item.qty || 1,
-                                item.serial || ''
-                            ]);
+                            const key = (item.nature || '') + '|' + (item.serial || '') + '|' + (item.spare || '');
+                            if (!aggregated[key]) {
+                                aggregated[key] = { ...item, qty: 0 };
+                            }
+                            aggregated[key].qty += Number(item.qty || 1);
                         }
+                    });
+                    
+                    Object.values(aggregated).forEach(item => {
+                        rows.push([
+                            formatDateDisplay(g.date),
+                            g.invoiceNo || p.invoiceNo || '',
+                            inwardQty,
+                            p.partNo || '',
+                            p.partDescription || '',
+                            item.nature || '',
+                            item.spare || '',
+                            item.qty,
+                            item.serial || ''
+                        ]);
                     });
                 } else {
                     rows.push([
