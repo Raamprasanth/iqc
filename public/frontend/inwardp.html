@@ -1742,151 +1742,14 @@
         });
     </script>
 
-    <!-- Remarks Modal -->
-    <div class="sidebar-scrim" id="remarksModalScrim" style="display:none; z-index: 300;"></div>
-    <div id="remarksModal" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 24px; border-radius: 8px; z-index: 301; width: 650px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-        <h3 style="margin-top: 0; color: var(--navy); margin-bottom: 16px;">Enter Remarks Details</h3>
-        <input type="hidden" id="currentRemarksId" />
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px;">
-            <thead>
-                <tr>
-                    <th style="text-align: left; padding-bottom: 8px; border-bottom: 1px solid var(--fog); font-size: 0.8rem; color: var(--steel);">Nature of Problem</th>
-                    <th style="text-align: left; padding-bottom: 8px; border-bottom: 1px solid var(--fog); font-size: 0.8rem; color: var(--steel);">Serial No</th>
-                    <th style="text-align: left; padding-bottom: 8px; border-bottom: 1px solid var(--fog); font-size: 0.8rem; color: var(--steel);">Spare Required</th>
-                    <th style="text-align: left; padding-bottom: 8px; border-bottom: 1px solid var(--fog); font-size: 0.8rem; color: var(--steel);">Quantity</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody id="remarksModalBody">
-            </tbody>
-        </table>
-        <button type="button" class="btn-outline-navy" style="font-size: 0.75rem; padding: 4px 8px; margin-bottom: 16px;" onclick="addRemarkRow()">+ Add Row</button>
-        <div style="display: flex; justify-content: flex-end; gap: 8px;">
-            <button type="button" class="btn-outline-navy" onclick="closeRemarksModal()">Cancel</button>
-            <button type="button" class="btn-new" onclick="saveRemarksModal()">Save</button>
-        </div>
-    </div>
+    /* Removed duplicate modal HTML */
 
     <script>
-                window.openRemarksModal = function(el) {
-            console.log('Opening remarks modal for', el);
-            if (!el) return;
-            const inputId = el.id || el;
-            document.getElementById('currentRemarksId').value = inputId;
-            const existingVal = document.getElementById(inputId).value;
-            const tbody = document.getElementById('remarksModalBody');
-            tbody.innerHTML = '';
-            
-            const partId = inputId.replace('rem-', '');
-            const rejectInput = document.getElementById('rej-' + partId);
-            const rejectCount = rejectInput ? parseInt(rejectInput.value || '0', 10) : 0;
-            
-            if (existingVal) {
-                const parts = existingVal.split(', ');
-                parts.forEach(p => {
-                    let nature = p;
-                    let qty = '';
-                    const splitIdx = p.lastIndexOf(': ');
-                    // Ensure the part after ': ' is actually a number (the quantity)
-                    if (splitIdx !== -1 && !isNaN(p.substring(splitIdx + 2).trim())) {
-                        qty = p.substring(splitIdx + 2);
-                        nature = p.substring(0, splitIdx);
-                    }
-
-                    let serial = '';
-                    let spare = '';
-
-                    const spareMatch = nature.match(/\(Spare: (.*?)\)$/);
-                    if (spareMatch) {
-                        spare = spareMatch[1];
-                        nature = nature.substring(0, spareMatch.index).trim();
-                    }
-
-                    const snMatch = nature.match(/\(SN: (.*?)\)$/);
-                    if (snMatch) {
-                        serial = snMatch[1];
-                        nature = nature.substring(0, snMatch.index).trim();
-                    }
-
-                    addRemarkRow(nature, serial, spare, qty);
-                });
-            } else {
-                if (rejectCount > 0) {
-                    for (let i = 0; i < rejectCount; i++) {
-                        addRemarkRow('', '', '', '1');
-                    }
-                } else {
-                    addRemarkRow('', '', '', '');
-                }
-            }
-
-            document.getElementById('remarksModalScrim').style.display = 'block';
-            document.getElementById('remarksModal').style.display = 'block';
-        };
-
-        window.closeRemarksModal = function() {
-            document.getElementById('remarksModalScrim').style.display = 'none';
-            document.getElementById('remarksModal').style.display = 'none';
-        };
-
-        window.addRemarkRow = function(nature = '', serial = '', spare = '', qty = '') {
-            const tbody = document.getElementById('remarksModalBody');
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td style="padding: 4px 2px;"><input type="text" class="modal-nature" list="remarksList" value="${nature}" style="width: 100%; padding: 6px; border: 1px solid var(--fog); border-radius: 4px;" /></td>
-                <td style="padding: 4px 2px;"><input type="text" class="modal-serial" value="${serial}" style="width: 100%; padding: 6px; border: 1px solid var(--fog); border-radius: 4px;" /></td>
-                <td style="padding: 4px 2px;"><input type="text" class="modal-spare" value="${spare}" style="width: 100%; padding: 6px; border: 1px solid var(--fog); border-radius: 4px;" /></td>
-                <td style="padding: 4px 2px;"><input type="number" class="modal-qty" value="${qty}" style="width: 100%; padding: 6px; border: 1px solid var(--fog); border-radius: 4px;" /></td>
-                <td style="padding: 4px 2px; text-align: right;"><button type="button" onclick="this.closest('tr').remove()" style="background: none; border: none; color: var(--red); cursor: pointer; font-size: 1.2rem;">&times;</button></td>
-            `;
-            tbody.appendChild(tr);
-        };
-
-        window.saveRemarksModal = function() {
-            const tbody = document.getElementById('remarksModalBody');
-            const rows = tbody.querySelectorAll('tr');
-            const remarks = [];
-            rows.forEach(tr => {
-                const nature = tr.querySelector('.modal-nature').value.trim();
-                const serial = tr.querySelector('.modal-serial').value.trim();
-                const spare = tr.querySelector('.modal-spare').value.trim();
-                const qty = tr.querySelector('.modal-qty').value.trim();
-                
-                if (nature || serial || spare || qty) {
-                    let text = nature || 'Remark';
-                    if (serial) text += ' (SN: ' + serial + ')';
-                    if (spare) text += ' (Spare: ' + spare + ')';
-                    if (qty) text += ': ' + qty;
-                    remarks.push(text);
-                }
-            });
-            
-            let totalRejected = 0;
-            rows.forEach(tr => {
-                const qty = tr.querySelector('.modal-qty').value.trim();
-                totalRejected += Number(qty || 0);
-            });
-
-            const inputId = document.getElementById('currentRemarksId').value;
-            if (inputId) {
-                document.getElementById(inputId).value = remarks.join(', ');
-                const partId = inputId.replace('rem-', '');
-                const rejectInput = document.getElementById('rej-' + partId);
-                const acceptInput = document.getElementById('acc-' + partId);
-                if (rejectInput) rejectInput.value = totalRejected;
-                if (acceptInput && rejectInput) {
-                    const maxQty = parseInt(acceptInput.getAttribute('max') || '0', 10);
-                    acceptInput.value = maxQty - totalRejected;
-                }
-                if (window.autoSaveInwardp) {
-                    window.autoSaveInwardp(partId, true);
-                }
-            }
-            
-            closeRemarksModal();
-        };
-
-        /* ───────────────────────── FORM SAVE ───────────────────────── */
+                /* removed openRemarksModal */
+/* removed closeRemarksModal */
+/* removed addRemarkRow */
+/* removed saveRemarksModal */
+/* ───────────────────────── FORM SAVE ───────────────────────── */
         const inwardForm = document.getElementById('inwardForm');
         const inputModel = document.getElementById('inputModel');
         const partsContainer = document.getElementById('partsContainer');
@@ -2321,9 +2184,8 @@
 
             // Match sub parts by part description or model
             const matchedSpareObj = allSparesMappings.find(s => 
+                s.model && currentModalModel && s.model.toLowerCase().trim() === currentModalModel.toLowerCase().trim() &&
                 s.partDescription && currentModalPartDesc && s.partDescription.toLowerCase().trim() === currentModalPartDesc.toLowerCase().trim()
-            ) || allSparesMappings.find(s => 
-                s.model && currentModalModel && s.model.toLowerCase().trim() === currentModalModel.toLowerCase().trim()
             );
 
             const availableSubParts = matchedSpareObj && matchedSpareObj.subParts ? matchedSpareObj.subParts : [];
