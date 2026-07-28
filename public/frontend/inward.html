@@ -2276,12 +2276,44 @@
             const tbody = document.getElementById('remarksModalBody');
             const tr = document.createElement('tr');
 
-            // Find matching spares mapping by part description or model
-            const matchedSpareObj = allSparesMappings.find(s => 
-                s.partDescription && currentModalPartDesc && s.partDescription.toLowerCase().trim() === currentModalPartDesc.toLowerCase().trim()
-            ) || allSparesMappings.find(s => 
-                s.model && currentModalModel && s.model.toLowerCase().trim() === currentModalModel.toLowerCase().trim()
-            );
+            const modalDesc = (currentModalPartDesc || '').toLowerCase().trim();
+            const modalModel = (currentModalModel || '').toLowerCase().trim();
+            
+            let matchedSpareObj = null;
+            if (modalDesc) {
+                // 1. Try exact match on part description (with model if provided)
+                matchedSpareObj = allSparesMappings.find(s => {
+                    const sDesc = (s.partDescription || '').toLowerCase().trim();
+                    const sModel = (s.model || '').toLowerCase().trim();
+                    const modelMatch = (!sModel || !modalModel) ? true : sModel === modalModel;
+                    return modelMatch && sDesc === modalDesc;
+                });
+                
+                // 2. Try substring match (e.g. "battery" in "battery li-ion")
+                if (!matchedSpareObj) {
+                    matchedSpareObj = allSparesMappings.find(s => {
+                        const sDesc = (s.partDescription || '').toLowerCase().trim();
+                        const sModel = (s.model || '').toLowerCase().trim();
+                        const modelMatch = (!sModel || !modalModel) ? true : sModel === modalModel;
+                        return modelMatch && sDesc && modalDesc && (modalDesc.includes(sDesc) || sDesc.includes(modalDesc));
+                    });
+                }
+                
+                // 3. Try keyword match (any word >= 3 chars)
+                if (!matchedSpareObj) {
+                    matchedSpareObj = allSparesMappings.find(s => {
+                        const sDesc = (s.partDescription || '').toLowerCase().trim();
+                        const sModel = (s.model || '').toLowerCase().trim();
+                        const modelMatch = (!sModel || !modalModel) ? true : sModel === modalModel;
+                        
+                        if (!sDesc || !modalDesc) return false;
+                        const keywords = sDesc.split(/[\s,-]+/).filter(w => w.length >= 3);
+                        const hasKeywordMatch = keywords.some(kw => modalDesc.includes(kw));
+                        
+                        return modelMatch && hasKeywordMatch;
+                    });
+                }
+            }
 
             const availableSubParts = matchedSpareObj && matchedSpareObj.subParts ? matchedSpareObj.subParts : [];
 
