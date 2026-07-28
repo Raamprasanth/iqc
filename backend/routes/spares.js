@@ -16,9 +16,43 @@ router.get('/', async (req, res) => {
     }
 });
 
-// POST create new spare record
+// POST create new spare record(s) - supports single or batch
 router.post('/', async (req, res) => {
     try {
+        // If batch array provided as { model, items: [{ partDescription, subParts }, ...] }
+        if (req.body.model && Array.isArray(req.body.items)) {
+            const modelName = req.body.model.trim();
+            const docs = req.body.items.map(item => ({
+                model: modelName,
+                partDescription: String(item.partDescription || '').trim(),
+                subParts: Array.isArray(item.subParts) 
+                    ? item.subParts.map(s => String(s).trim()).filter(Boolean)
+                    : []
+            })).filter(d => d.partDescription);
+
+            if (docs.length === 0) {
+                return res.status(400).json({ error: 'At least one valid Part Description is required.' });
+            }
+
+            const savedDocs = await Spare.insertMany(docs);
+            return res.status(201).json(savedDocs);
+        }
+
+        // If direct array of spares
+        if (Array.isArray(req.body)) {
+            const docs = req.body.map(item => ({
+                model: String(item.model || '').trim(),
+                partDescription: String(item.partDescription || '').trim(),
+                subParts: Array.isArray(item.subParts) 
+                    ? item.subParts.map(s => String(s).trim()).filter(Boolean)
+                    : []
+            })).filter(d => d.model && d.partDescription);
+
+            const savedDocs = await Spare.insertMany(docs);
+            return res.status(201).json(savedDocs);
+        }
+
+        // Single spare creation
         const { model, partDescription, subParts } = req.body;
         if (!model || !partDescription) {
             return res.status(400).json({ error: 'Model and Part Description are required.' });

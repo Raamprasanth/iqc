@@ -2606,14 +2606,17 @@
         #page-spares-required .spares-card-head span { font-size:0.82rem; color:var(--steel); }
         #page-spares-required .add-form-card { background:#f8fafc; border:1px solid var(--fog); border-radius:10px; padding:22px 24px; margin-bottom:22px; display:none; }
         #page-spares-required .add-form-card.open { display:block; }
-        #page-spares-required .srow-table { width:100%; border-collapse:collapse; font-size:0.85rem; margin-top:12px; }
-        #page-spares-required .srow-table th { padding:9px 12px; background:#f1f5f9; font-weight:600; color:var(--navy); text-align:left; font-size:0.72rem; text-transform:uppercase; letter-spacing:.5px; border-bottom:1px solid var(--fog); }
+        #page-spares-required .part-desc-card { background:white; border:1px solid #e2e8f0; border-radius:8px; padding:16px; margin-bottom:16px; position:relative; }
+        #page-spares-required .srow-table { width:100%; border-collapse:collapse; font-size:0.85rem; margin-top:8px; }
+        #page-spares-required .srow-table th { padding:8px 12px; background:#f1f5f9; font-weight:600; color:var(--navy); text-align:left; font-size:0.72rem; text-transform:uppercase; letter-spacing:.5px; border-bottom:1px solid var(--fog); }
         #page-spares-required .srow-table td { padding:5px 8px; border-bottom:1px solid #f1f5f9; }
         #page-spares-required .srow-table input { width:100%; border:1.5px solid rgba(13,27,42,0.11); border-radius:6px; padding:6px 10px; font-size:0.84rem; font-family:inherit; outline:none; background:white; }
         #page-spares-required .srow-table input:focus { border-color:var(--indigo); }
-        #page-spares-required .add-row-btn { width:100%; margin-top:10px; background:white; border:1.5px dashed #94a3b8; color:#64748b; border-radius:7px; padding:8px; font-size:0.82rem; font-weight:600; cursor:pointer; transition:all .15s; }
-        #page-spares-required .add-row-btn:hover { border-color:var(--navy); color:var(--navy); }
-        #page-spares-required .form-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:16px; }
+        #page-spares-required .add-subpart-btn { background:white; border:1.5px dashed #94a3b8; color:#64748b; border-radius:7px; padding:6px 12px; font-size:0.8rem; font-weight:600; cursor:pointer; margin-top:8px; transition:all .15s; }
+        #page-spares-required .add-subpart-btn:hover { border-color:var(--navy); color:var(--navy); }
+        #page-spares-required .add-partdesc-btn { width:100%; margin-top:6px; background:#f1f5f9; border:1.5px dashed var(--steel); color:var(--navy); border-radius:8px; padding:10px; font-size:0.85rem; font-weight:600; cursor:pointer; transition:all .15s; }
+        #page-spares-required .add-partdesc-btn:hover { background:#e2e8f0; border-color:var(--navy); }
+        #page-spares-required .form-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:20px; }
         #page-spares-required .spares-table { width:100%; border-collapse:collapse; font-size:0.85rem; }
         #page-spares-required .spares-table th { padding:10px 16px; background:#f8fafc; font-weight:600; color:var(--navy); text-align:left; border-bottom:1px solid var(--fog); font-size:0.75rem; text-transform:uppercase; letter-spacing:.5px; }
         #page-spares-required .spares-table td { padding:0; }
@@ -2636,7 +2639,7 @@
             <div class="scat-header">
                 <div>
                     <h2>Spares Required</h2>
-                    <p>Manage model, part descriptions, and sub-parts mapping</p>
+                    <p>Manage models, multiple part descriptions, and sub-parts mapping</p>
                 </div>
                 <button class="btn-primary" id="sAddBtn" onclick="toggleSparesForm()">
                     <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -2650,32 +2653,25 @@
                     <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.5;"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
                     <span id="sSaveToastText">Spare mapping saved.</span>
                 </div>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px;">
-                    <div>
-                        <label style="display:block;font-size:0.75rem;font-weight:600;color:var(--navy);margin-bottom:7px;">Model Name <span style="color:var(--red);">*</span></label>
-                        <select id="sNewModel" style="width:100%;border:1.5px solid rgba(13,27,42,0.12);border-radius:7px;padding:10px 13px;font-size:0.86rem;font-family:inherit;outline:none;background:white;">
-                            <option value="" disabled selected>Select Model...</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label style="display:block;font-size:0.75rem;font-weight:600;color:var(--navy);margin-bottom:7px;">Part Description <span style="color:var(--red);">*</span></label>
-                        <input type="text" id="sNewPartDesc" placeholder="e.g. Display Board" style="width:100%;border:1.5px solid rgba(13,27,42,0.12);border-radius:7px;padding:10px 13px;font-size:0.86rem;font-family:inherit;outline:none;background:white;" />
-                    </div>
+
+                <div style="margin-bottom: 18px;">
+                    <label style="display:block;font-size:0.75rem;font-weight:600;color:var(--navy);margin-bottom:7px;">Model Name <span style="color:var(--red);">*</span></label>
+                    <select id="sNewModel" style="width:100%;border:1.5px solid rgba(13,27,42,0.12);border-radius:7px;padding:10px 13px;font-size:0.86rem;font-family:inherit;outline:none;background:white;">
+                        <option value="" disabled selected>Select Model...</option>
+                    </select>
                 </div>
 
-                <label style="display:block;font-size:0.75rem;font-weight:600;color:var(--navy);margin-bottom:7px;">Sub Parts <span style="color:var(--red);">*</span></label>
-                <div style="border:1px solid var(--fog);border-radius:8px;overflow:hidden;">
-                    <table class="srow-table">
-                        <thead><tr><th>Sub Part Name *</th><th style="width:44px;"></th></tr></thead>
-                        <tbody id="sSubPartsRowsBody"></tbody>
-                    </table>
-                </div>
-                <button type="button" class="add-row-btn" onclick="sAddSubPartRow()">+ Add Sub-part</button>
+                <label style="display:block;font-size:0.75rem;font-weight:600;color:var(--navy);margin-bottom:8px;">Part Descriptions & Sub Parts <span style="color:var(--red);">*</span></label>
+                
+                <div id="sPartDescContainer"></div>
+
+                <button type="button" class="add-partdesc-btn" onclick="sAddPartDescBlock()">+ Add Another Part Description</button>
+
                 <div class="form-actions">
                     <button type="button" onclick="toggleSparesForm()" style="padding:9px 18px;border:1.5px solid rgba(13,27,42,0.15);background:white;border-radius:7px;font-size:0.84rem;font-weight:600;color:var(--text);cursor:pointer;">Cancel</button>
                     <button type="button" class="btn-primary" onclick="sSaveSpare()">
                         <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                        Save Spare Mapping
+                        Save All Spares
                     </button>
                 </div>
             </div>
@@ -2701,6 +2697,7 @@
 
     <script>
         let sparesData = [];
+        let partDescBlockCounter = 0;
 
         async function fetchSparesData() {
             try {
@@ -2762,16 +2759,69 @@
                 card.classList.remove('open');
             } else {
                 card.classList.add('open');
-                if (document.getElementById('sSubPartsRowsBody').rows.length === 0) sAddSubPartRow();
+                const container = document.getElementById('sPartDescContainer');
+                if (container && container.children.length === 0) {
+                    sAddPartDescBlock();
+                }
             }
         }
 
-        function sAddSubPartRow(val = '') {
-            const tbody = document.getElementById('sSubPartsRowsBody');
+        function sAddPartDescBlock(initialDesc = '') {
+            partDescBlockCounter++;
+            const blockId = 'partDescBlock_' + partDescBlockCounter;
+            const container = document.getElementById('sPartDescContainer');
+            if (!container) return;
+
+            const div = document.createElement('div');
+            div.className = 'part-desc-card';
+            div.id = blockId;
+            div.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <strong style="font-size:0.8rem; color:var(--navy);">Part Description #${container.children.length + 1}</strong>
+                    <button type="button" onclick="sRemovePartDescBlock('${blockId}')" style="background:transparent; color:var(--red); border:none; font-weight:600; font-size:0.75rem; cursor:pointer;" title="Remove Part Description">&times; Remove</button>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <input type="text" class="sp-part-desc" placeholder="Part Description (e.g. Display Board)" value="${initialDesc}" style="width:100%; border:1.5px solid rgba(13,27,42,0.12); border-radius:7px; padding:8px 12px; font-size:0.86rem; font-family:inherit; outline:none; background:white;" />
+                </div>
+                <div>
+                    <label style="display:block; font-size:0.72rem; font-weight:600; color:var(--steel); margin-bottom:4px;">SUB PARTS FOR THIS PART DESCRIPTION</label>
+                    <table class="srow-table">
+                        <thead><tr><th>Sub Part Name *</th><th style="width:40px;"></th></tr></thead>
+                        <tbody class="sp-subparts-body"></tbody>
+                    </table>
+                    <button type="button" class="add-subpart-btn" onclick="sAddSubPartRowToBlock('${blockId}')">+ Add Sub-part</button>
+                </div>
+            `;
+            container.appendChild(div);
+            sAddSubPartRowToBlock(blockId);
+        }
+
+        function sRemovePartDescBlock(blockId) {
+            const container = document.getElementById('sPartDescContainer');
+            const block = document.getElementById(blockId);
+            if (block && container) {
+                if (container.children.length <= 1) {
+                    alert('At least one Part Description block is required.');
+                    return;
+                }
+                block.remove();
+                // Renumber headers
+                Array.from(container.children).forEach((card, idx) => {
+                    const header = card.querySelector('strong');
+                    if (header) header.textContent = `Part Description #${idx + 1}`;
+                });
+            }
+        }
+
+        function sAddSubPartRowToBlock(blockId, val = '') {
+            const block = document.getElementById(blockId);
+            if (!block) return;
+            const tbody = block.querySelector('.sp-subparts-body');
             if (!tbody) return;
+
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td><input type="text" placeholder="Sub Part Name" class="subpart-name" value="${val}" /></td>
+                <td><input type="text" placeholder="Sub Part Name (e.g. LCD Cable)" class="subpart-name" value="${val}" /></td>
                 <td style="text-align:center;">
                     <button type="button" onclick="this.closest('tr').remove()" style="background:transparent;color:var(--red);border:none;font-size:1.1rem;cursor:pointer;line-height:1;" title="Remove">&times;</button>
                 </td>`;
@@ -2780,37 +2830,60 @@
 
         async function sSaveSpare() {
             const model = (document.getElementById('sNewModel').value || '').trim();
-            const partDescription = (document.getElementById('sNewPartDesc').value || '').trim();
             if (!model) { alert('Please select a Model.'); return; }
-            if (!partDescription) { alert('Please enter a Part Description.'); return; }
 
-            const rows = document.querySelectorAll('#sSubPartsRowsBody tr');
-            const subParts = [];
-            rows.forEach(row => {
-                const sp = (row.querySelector('.subpart-name').value || '').trim();
-                if (sp) subParts.push(sp);
+            const blocks = document.querySelectorAll('#sPartDescContainer .part-desc-card');
+            if (!blocks.length) { alert('Please add at least one Part Description.'); return; }
+
+            const items = [];
+            let hasError = false;
+
+            blocks.forEach((block, idx) => {
+                const descInput = block.querySelector('.sp-part-desc');
+                const partDescription = descInput ? descInput.value.trim() : '';
+                if (!partDescription) {
+                    alert(`Please enter a Part Description for Block #${idx + 1}.`);
+                    hasError = true;
+                    return;
+                }
+
+                const subRows = block.querySelectorAll('.sp-subparts-body tr');
+                const subParts = [];
+                subRows.forEach(r => {
+                    const val = (r.querySelector('.subpart-name').value || '').trim();
+                    if (val) subParts.push(val);
+                });
+
+                if (!subParts.length) {
+                    alert(`Please add at least one Sub Part for "${partDescription}".`);
+                    hasError = true;
+                    return;
+                }
+
+                items.push({ partDescription, subParts });
             });
 
-            if (!subParts.length) { alert('Please add at least one Sub Part Name.'); return; }
+            if (hasError) return;
 
             try {
                 const res = await fetch('/api/spares', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ model, partDescription, subParts })
+                    body: JSON.stringify({ model, items })
                 });
                 if (res.ok) {
                     const toast = document.getElementById('sSaveToast');
-                    document.getElementById('sSaveToastText').textContent = `Spare mapping saved for "${partDescription}".`;
+                    document.getElementById('sSaveToastText').textContent = `Saved ${items.length} part description(s) for "${model}".`;
                     toast.style.opacity = '1';
                     setTimeout(() => { toast.style.opacity = '0'; }, 2800);
-                    document.getElementById('sNewPartDesc').value = '';
-                    document.getElementById('sSubPartsRowsBody').innerHTML = '';
-                    sAddSubPartRow();
+                    
+                    const container = document.getElementById('sPartDescContainer');
+                    if (container) container.innerHTML = '';
+                    sAddPartDescBlock();
                     fetchSparesData();
                 } else {
                     const d = await res.json();
-                    alert(d.error || 'Error saving spare mapping.');
+                    alert(d.error || 'Error saving spares mapping.');
                 }
             } catch (err) { alert('Network error. Please try again.'); }
         }
