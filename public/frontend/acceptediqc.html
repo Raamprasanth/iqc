@@ -1015,24 +1015,8 @@
                 ? Number(p.yetToAcceptQty || 0)
                 : Math.max(0, Number(p.totalQuantity || p.quantity || 0) - Number(p.quantity || p.qty || 0));
 
-            if (rejectedList && rejectedList.length > 0 && baseYetQty > 0) {
-                const inv = gInvoiceNo || p.invoiceNo || '';
-                const mod = gModel || p.model || '';
-                const matchingRej = rejectedList.filter(r => 
-                    ((inv && r.invoiceNo === inv) || (r.model === mod)) &&
-                    r.partNo === p.partNo
-                );
-                let replacedCount = 0;
-                matchingRej.forEach(r => {
-                    if (r.itemDetails && r.itemDetails.length > 0) {
-                        r.itemDetails.forEach(item => {
-                            if (item.isReplaced) replacedCount += Number(item.qty || 1);
-                        });
-                    } else if (r.isReplaced) {
-                        replacedCount += Number(r.quantity || r.qty || 0);
-                    }
-                });
-                baseYetQty = Math.max(0, baseYetQty - replacedCount);
+            if (false) {
+                // Frontend subtraction removed as backend handles it via firstrep.html
             }
             return baseYetQty;
         }

@@ -95,7 +95,12 @@ router.put('/reduce-yet-to-accept', async (req, res) => {
         const { batchId, partNo, reduceBy, source } = req.body;
         const entry = await AcceptedIQC.findOne({ batchId, partNo });
         if (entry) {
-            const prevQty = entry.yetToAcceptQty || 0;
+            let prevQty = entry.yetToAcceptQty || 0;
+            if (prevQty === 0 && (!entry.yetToAcceptHistory || entry.yetToAcceptHistory.length === 0)) {
+                const total = Number(entry.totalQuantity || entry.quantity || 0);
+                const acc = Number(entry.quantity || 0);
+                prevQty = Math.max(0, total - acc);
+            }
             entry.yetToAcceptQty = Math.max(0, prevQty - (reduceBy || 1));
             entry.yetToAcceptUpdatedAt = new Date();
             if (!entry.yetToAcceptHistory) entry.yetToAcceptHistory = [];
