@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Completed — SCHILLER Healthcare India</title>
+    <title>Completed Register — SCHILLER Healthcare India</title>
     
     <style>
         *,
@@ -167,6 +167,17 @@
             border-radius: 0 3px 3px 0;
         }
 
+        .sidebar-link .badge {
+            margin-left: auto;
+            background: var(--red);
+            color: white;
+            font-size: 0.66rem;
+            font-weight: 700;
+            padding: 1px 7px;
+            border-radius: 20px;
+            line-height: 1.5;
+        }
+
         .sidebar-foot {
             padding: 16px 20px;
             border-top: 1px solid rgba(255, 255, 255, 0.08);
@@ -249,18 +260,6 @@
             stroke-width: 1.8;
         }
 
-        .breadcrumb {
-            font-size: 0.72rem;
-            color: var(--steel);
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            font-weight: 600;
-        }
-
-        .breadcrumb span {
-            color: var(--navy);
-        }
-
         .topbar-right {
             display: flex;
             align-items: center;
@@ -326,6 +325,45 @@
             stroke-width: 1.8;
         }
 
+        .icon-btn .dot {
+            position: absolute;
+            top: 7px;
+            right: 7px;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--red);
+            border: 1.5px solid white;
+        }
+
+        .btn-outline-navy {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            border: 1.5px solid rgba(13, 27, 42, 0.14);
+            color: var(--navy);
+            background: white;
+            padding: 9px 16px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: border-color 0.15s, background 0.15s;
+        }
+
+        .btn-outline-navy:hover {
+            border-color: var(--steel);
+            background: var(--fog);
+        }
+
+        .btn-outline-navy svg {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
         /* ───────────────────────── CONTENT ───────────────────────── */
         .content {
             flex: 1;
@@ -353,76 +391,6 @@
             font-size: 0.86rem;
             color: var(--steel);
             max-width: 520px;
-        }
-
-        /* KPI cards */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-bottom: 28px;
-        }
-
-        .kpi-card {
-            background: white;
-            border-radius: 10px;
-            padding: 18px 20px;
-            border: 1px solid rgba(13, 27, 42, 0.06);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .kpi-card::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background: var(--navy);
-        }
-
-        .kpi-card.c-navy::before { background: var(--mid); }
-        .kpi-card.c-amber::before { background: var(--amber); }
-
-        .kpi-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-
-        .kpi-icon {
-            width: 30px;
-            height: 30px;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--fog);
-        }
-
-        .kpi-icon svg {
-            width: 16px;
-            height: 16px;
-            stroke: var(--navy);
-            fill: none;
-            stroke-width: 1.8;
-        }
-
-        .kpi-value {
-            font-family: 'Calibri', Calibri, sans-serif;
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: var(--navy);
-            line-height: 1.1;
-        }
-
-        .kpi-label {
-            font-size: 0.72rem;
-            color: var(--steel);
-            margin-top: 5px;
-            font-weight: 500;
         }
 
         /* Panel */
@@ -490,69 +458,13 @@
             transition: background 0.15s;
         }
 
-        .iqc-table tbody tr.group-row:hover {
+        .iqc-table tbody tr:hover {
             background: #fafcfe;
         }
 
         .cell-part {
             font-weight: 600;
             color: var(--navy);
-        }
-
-        .status-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 4px 11px;
-            border-radius: 20px;
-        }
-
-        .status-pill::before {
-            content: '';
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: currentColor;
-        }
-
-        .status-pill.pending {
-            background: rgba(199, 123, 18, 0.1);
-            color: var(--amber);
-        }
-
-        /* Toast notifications */
-        .save-toast {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(30, 123, 77, 0.1);
-            color: var(--green);
-            border: 1px solid rgba(30, 123, 77, 0.25);
-            border-radius: 8px;
-            padding: 12px 18px;
-            font-size: 0.82rem;
-            font-weight: 600;
-            margin-bottom: 22px;
-            opacity: 0;
-            transform: translateY(-6px);
-            transition: opacity 0.25s, transform 0.25s;
-            pointer-events: none;
-        }
-
-        .save-toast.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .save-toast svg {
-            width: 16px;
-            height: 16px;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 2.4;
-            min-width: 16px;
         }
 
         /* Empty state */
@@ -589,6 +501,7 @@
             max-width: 280px;
         }
 
+        /* Sidebar scrim */
         .sidebar-scrim {
             display: none;
             position: fixed;
@@ -622,10 +535,6 @@
             .search-box {
                 display: none;
             }
-
-            .kpi-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
         }
 
         @media (max-width: 560px) {
@@ -635,10 +544,6 @@
 
             .topbar {
                 padding: 0 16px;
-            }
-
-            .kpi-grid {
-                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -709,7 +614,7 @@
                 </svg>
                 Settings
             </a>
-</nav>
+        </nav>
 
         <div class="sidebar-foot">
             <div class="sidebar-avatar">RM</div>
@@ -732,7 +637,9 @@
                         <line x1="3" y1="18" x2="21" y2="18" />
                     </svg>
                 </button>
-                <div class="breadcrumb">Incoming QC &gt; <span>Completed</span></div>
+                <div style="font-family: 'Calibri', Calibri, sans-serif; font-size:1.2rem; font-weight:700; color:var(--navy);">
+                    Completed Register
+                </div>
             </div>
             <div class="topbar-right">
                 <div class="search-box">
@@ -740,7 +647,7 @@
                         <circle cx="11" cy="11" r="7" />
                         <line x1="21" y1="21" x2="16.65" y2="16.65" />
                     </svg>
-                    <input type="text" id="searchInput" placeholder="Search model, part no, stage..." />
+                    <input type="text" id="searchInput" placeholder="Search model, part no..." />
                 </div>
                 <button class="icon-btn">
                     <svg viewBox="0 0 24 24">
@@ -749,6 +656,13 @@
                     </svg>
                     <span class="dot"></span>
                 </button>
+                <button class="icon-btn">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M9.09 9a3 3 0 015.83 1c0 2-3 2-3 4" />
+                        <path d="M12 17h.01" />
+                    </svg>
+                </button>
             </div>
         </div>
 
@@ -756,29 +670,29 @@
 
             <div class="page-head">
                 <div>
-                    <h1>Completed</h1>
-                    <p>Re-inspect rejected parts from Incoming QC, Production, and In-Process QC to re-integrate or re-reject them.</p>
+                    <h1>Completed Register</h1>
+                    <p>All inward entries that have been completed and moved to the re-inward register.</p>
+                </div>
+                <div class="head-actions">
+                    <button class="btn-outline-navy" id="exportBtn">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        Export
+                    </button>
                 </div>
             </div>
-
-            <!-- Toast notification -->
-            <div class="save-toast" id="saveToast">
-                <svg viewBox="0 0 24 24">
-                    <path d="M9 12l2 2 4-4" />
-                    <circle cx="12" cy="12" r="9" />
-                </svg>
-                <span>Completed inspection saved successfully.</span>
-            </div>
-
-            <!-- KPI Cards -->
-            
 
             <!-- Table panel -->
             <div class="panel">
                 <div class="panel-head">
-                    <div>
-                        <h2>Completed Pending List</h2>
-                        <div class="panel-sub"><span id="entryCount">0</span> lots shown</div>
+                    <div style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h2>Completed Register</h2>
+                            <div class="panel-sub"><span id="entryCount">0</span> entries</div>
+                        </div>
                     </div>
                 </div>
 
@@ -787,25 +701,28 @@
                         <thead>
                             <tr>
                                 <th>Sl. No.</th>
-                                <th>Log Date</th>
+                                <th>Date</th>
+                                <th>Invoice No.</th>
                                 <th>Model</th>
                                 <th>Total Parts</th>
                                 <th>Total Quantity</th>
+                                <th style="text-align:center;">Action</th>
                                 <th></th>
                             </tr>
                         </thead>
-                        <tbody id="entryTableBody"></tbody>
+                        <tbody id="entryTableBody">
+                            <!-- rows injected here -->
+                        </tbody>
                     </table>
                 </div>
 
                 <div class="empty-state" id="emptyState" style="display:none;">
                     <svg viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="10" />
-                        <line x1="12" y1="16" x2="12" y2="12" />
-                        <line x1="12" y1="8" x2="12.01" y2="8" />
+                        <path d="M9 12l2 2 4-4" />
+                        <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <strong>No re-inward items pending</strong>
-                    <p>There are no outstanding rejected items awaiting re-inspection from IQC, Production, or IPQC.</p>
+                    <strong>No completed entries yet</strong>
+                    <p>Items moved to re-inward register will appear here.</p>
                 </div>
             </div>
 
@@ -820,8 +737,8 @@
 
         function openSidebar() { sidebar.classList.add('open'); scrim.classList.add('show'); }
         function closeSidebar() { sidebar.classList.remove('open'); scrim.classList.remove('show'); }
-        menuToggle.addEventListener('click', () => sidebar.classList.contains('open') ? closeSidebar() : openSidebar());
-        scrim.addEventListener('click', closeSidebar);
+        if (menuToggle) menuToggle.addEventListener('click', () => sidebar.classList.contains('open') ? closeSidebar() : openSidebar());
+        if (scrim) scrim.addEventListener('click', closeSidebar);
 
         /* ── Helpers ── */
         function formatDateDisplay(isoDate) {
@@ -836,6 +753,7 @@
         const tableBody = document.getElementById('entryTableBody');
         const tableWrap = document.getElementById('tableWrap');
         const emptyState = document.getElementById('emptyState');
+        const entryCount = document.getElementById('entryCount');
         const searchInput = document.getElementById('searchInput');
 
         async function fetchEntries() {
@@ -844,7 +762,7 @@
                 if (res.ok) {
                     entries = await res.json();
                     renderTable();
-                    
+
                     // Update badges
                     const badge = document.getElementById('iqcReInwardBadge');
                     if (badge) {
@@ -860,18 +778,19 @@
             const groups = {};
             data.forEach(e => {
                 const d = e.date ? e.date.split('T')[0] : '';
-                const key = d + '|' + e.model;
+                const key = (e.invoiceNo && e.invoiceNo !== '-') ? e.invoiceNo : (e.batchId ? e.batchId : (d + '|' + e.model));
                 if (!groups[key]) {
-                    groups[key] = { date: d, model: e.model, parts: [], totalQty: 0 };
+                    groups[key] = { date: d, invoiceNo: e.invoiceNo || '-', model: e.model, parts: [], totalQty: 0, ids: [] };
                 }
                 groups[key].parts.push(e);
-                groups[key].totalQty += Number(e.quantity || 0);
+                groups[key].totalQty += Number(e.totalQuantity || e.quantity || e.qty || 0);
+                groups[key].ids.push(e._id);
             });
             return Object.values(groups);
         }
 
         function renderTable() {
-            const query = searchInput.value.trim().toLowerCase();
+            const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
             const filtered = entries.filter(e =>
                 !query ||
                 (e.model && e.model.toLowerCase().includes(query)) ||
@@ -879,141 +798,73 @@
                 (e.partDescription && e.partDescription.toLowerCase().includes(query))
             );
 
-            const groupedArray = groupEntries(filtered);
-            if (document.getElementById('entryCount')) document.getElementById('entryCount').textContent = groupedArray.length;
+            const grouped = groupEntries(filtered);
+            if (entryCount) entryCount.textContent = grouped.length;
 
-            const totalLots = groupedArray.length;
-            let totalParts = 0;
-            let totalQty = 0;
-            groupedArray.forEach(g => {
-                totalParts += g.parts.length;
-                totalQty += g.totalQty;
-            });
-
-            const kpiLots = document.getElementById('kpiLots');
-            if(kpiLots) kpiLots.textContent = totalLots;
-            
-            const kpiParts = document.getElementById('kpiParts');
-            if(kpiParts) kpiParts.textContent = totalParts;
-            
-            const kpiQty = document.getElementById('kpiQty');
-            if(kpiQty) kpiQty.textContent = totalQty.toLocaleString('en-IN');
-
-            if (groupedArray.length === 0) {
-                tableWrap.style.display = 'none';
-                emptyState.style.display = 'flex';
+            if (grouped.length === 0) {
+                if (tableWrap) tableWrap.style.display = 'none';
+                if (emptyState) emptyState.style.display = 'flex';
                 return;
             }
-
-            tableWrap.style.display = 'block';
-            emptyState.style.display = 'none';
+            if (tableWrap) tableWrap.style.display = 'block';
+            if (emptyState) emptyState.style.display = 'none';
 
             let html = '';
-            groupedArray.forEach((g, i) => {
+            grouped.forEach((g, i) => {
                 html += `
                 <tr class="group-row" style="cursor:pointer; transition: background 0.15s;"
                     onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'"
                     onclick="toggleSubRow('subrow-${i}')">
                     <td>${i + 1}</td>
                     <td><span class="cell-part">${formatDateDisplay(g.date)}</span></td>
-                    <td><strong>${g.model}</strong></td>
-                    <td>${g.parts.length}</td>
-                    <td><strong>${g.totalQty.toLocaleString('en-IN')}</strong></td>
-                    <td style="text-align: right; color: var(--navy);">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;">
-                            <polyline points="6 9 12 15 18 9"></polyline>
-                        </svg>
+                    <td><span class="cell-part">${g.invoiceNo}</span></td>
+                    <td><span class="cell-part">${g.model}</span></td>
+                    <td><strong>${g.parts.length}</strong> Parts</td>
+                    <td>${g.totalQty.toLocaleString('en-IN')}</td>
+                    <td style="text-align:center;">
+                        <span class="status-pill accepted" style="background:#dcfce7; color:#16a34a; padding:4px 11px; border-radius:20px; font-weight:700; font-size:0.7rem;">Completed</span>
+                    </td>
+                    <td style="text-align: right;">
+                        <span style="font-size: 0.75rem; color: var(--steel); user-select:none;">&#9660; Details</span>
                     </td>
                 </tr>
-                <tr class="sub-row" id="subrow-${i}" style="display:none;">
-                    <td colspan="6" style="padding: 0;">
-                        <div class="sub-table-container">
-                            <table class="sub-table">
+                <tr id="subrow-${i}" style="display: none; background: #fafbfc;">
+                    <td colspan="8" style="padding: 0; border-bottom: 2px solid var(--fog);">
+                        <div style="padding: 15px 30px;">
+                            <table style="width:100%; border-collapse:collapse; font-size: 0.8rem;">
                                 <thead>
                                     <tr>
-                                        <th>Part No</th>
-                                        <th>Description</th>
-                                        <th>IQC Qty</th>
-                                        <th>IQC Rej</th>
-                                        <th>Pro Rej</th>
-                                        <th>Tot Qty</th>
-                                        <th>Problem Desc</th>
-                                        <th>Problem Serial</th>
-                                        <th>Recv Serial No</th>
-                                        <th>Recv Qty</th>
-                                        <th>Accept</th>
-                                        <th>Reject</th>
-                                        <th>Remarks</th>
-                                        <th style="text-align:center;">Actions</th>
+                                        <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:left; border-bottom:1px solid #e2e8f0;">Part No.</th>
+                                        <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:left; border-bottom:1px solid #e2e8f0;">Description</th>
+                                        <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:right; border-bottom:1px solid #e2e8f0;">Inward Qty</th>
+                                        <th style="padding:8px 12px; font-weight:600; color:var(--green); text-align:right; border-bottom:1px solid #e2e8f0;">Accepted Qty</th>
+                                        <th style="padding:8px 12px; font-weight:600; color:#d97706; text-align:right; border-bottom:1px solid #e2e8f0;">Yet to Accept Qty</th>
+                                        <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:center; border-bottom:1px solid #e2e8f0;">Status / Remarks</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    ${g.parts.map((p, pIdx) => {
-                                        const qty = Number(p.quantity) || 0;
-                                        const totalInwardQty = Number(p.totalInwardQty) || 0;
-                                        const iqcRej = Number(p.iqcRej) || 0;
-                                        const proRej = Number(p.proRej) || 0;
-                                        const pItems = (p.items && p.items.length) ? p.items : ((p.itemDetails && p.itemDetails.length) ? p.itemDetails : [p]);
-                                        const itemsJson = JSON.stringify(pItems).replace(/"/g, '&quot;');
-                                        const probDesc = pItems[0]?.problemDescription || p.problemDescription || '-';
-                                        const probSerial = pItems[0]?.problemSerialNo || p.problemSerialNo || '-';
+                                    ${g.parts.map(p => {
+                                        const totQty = Number(p.totalQuantity || p.quantity || p.qty || 0);
+                                        const accQty = Number(p.quantity || p.qty || 0);
+                                        const yetQty = Number(p.yetToAcceptQty || 0);
+                                        const remarksText = p.remarks || p.reason || 'Completed';
                                         return `
                                         <tr>
                                             <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9;"><strong>${p.partNo}</strong></td>
-                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; color: var(--text);">
-                                                ${p.partDescription || '-'}
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; color: var(--text);">${p.partDescription || '-'}</td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right;">${totQty.toLocaleString('en-IN')}</td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right; color:var(--green); font-weight:600;">${accQty.toLocaleString('en-IN')}</td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right;">
+                                                <span style="font-weight:700; color:${yetQty > 0 ? '#d97706' : '#16a34a'}; background:${yetQty > 0 ? '#fef3c7' : '#dcfce7'}; padding:2px 8px; border-radius:10px;">${yetQty}</span>
                                             </td>
-                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right; font-weight: 500;">
-                                                ${totalInwardQty > 0 ? totalInwardQty.toLocaleString('en-IN') + '' : '—'}
-                                            </td>
-                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right; font-weight: 500;">
-                                                ${iqcRej}
-                                            </td>
-                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right; font-weight: 500;">
-                                                ${proRej}
-                                            </td>
-                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right; font-weight: 600;">
-                                                ${qty.toLocaleString('en-IN')}
-                                            </td>
-                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; color: var(--text);">
-                                                ${probDesc}
-                                            </td>
-                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; color: var(--text);">
-                                                ${probSerial}
-                                            </td>
-                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9;">
-                                                <input type="text" id="recvserial-${i}-${pIdx}" class="input-field" placeholder="Recv Serial No" style="width: 100px; font-size: 0.75rem;" />
-                                            </td>
-                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9;">
-                                                <input type="number" id="recvqty-${i}-${pIdx}" class="input-field" placeholder="Recv Qty" style="width: 70px; font-size: 0.75rem;" />
-                                            </td>
-                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:center;">
-                                                <input type="number" min="0" max="${qty}" 
-                                                    class="accept-input" 
-                                                    id="accept-${i}-${pIdx}"
-                                                    data-items="${itemsJson}"
-                                                    data-total="${qty}" 
-                                                    oninput="calcReject(this, 'rej-${i}-${pIdx}')" 
-                                                    style="width: 70px; padding: 4px; text-align: center; border: 1px solid var(--fog); border-radius: 4px;" />
-                                            </td>
-                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:center;">
-                                                <input type="number" id="rej-${i}-${pIdx}" class="reject-input" readonly 
-                                                    style="width: 70px; padding: 4px; text-align: center; border: 1px solid transparent; background: transparent; color: var(--red); font-weight: bold;" value="0" />
-                                            </td>
-                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9;">
-                                                <input type="text" id="remarks-${i}-${pIdx}" class="input-field" placeholder="Remarks" style="width: 120px; font-size: 0.75rem;" />
-                                            </td>
-                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align: center;">
-                                                <button class="btn-outline-navy" style="padding:4px 8px; font-size:0.75rem;" onclick="viewHistory('${p.partNo}')">View History</button>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:center; color:var(--steel); font-size:0.78rem;">
+                                                ${remarksText}
                                             </td>
                                         </tr>
                                         `;
                                     }).join('')}
                                 </tbody>
                             </table>
-                            <div style="text-align: right; padding-top: 15px;">
-                                <button onclick="processInspection(${i})" style="background: var(--navy); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.8rem;">Save Inspection</button>
-                            </div>
                         </div>
                     </td>
                 </tr>
@@ -1022,102 +873,31 @@
             tableBody.innerHTML = html;
         }
 
-        window.toggleSubRow = function(id) {
+        window.toggleSubRow = function (id) {
             const el = document.getElementById(id);
             el.style.display = el.style.display === 'none' ? 'table-row' : 'none';
         };
 
-        window.calcReject = function(acceptInput, rejectId) {
-            const total = Number(acceptInput.getAttribute('data-total'));
-            let accept = Number(acceptInput.value);
-            if (accept < 0) { accept = 0; acceptInput.value = 0; }
-            if (accept > total) { accept = total; acceptInput.value = total; }
-            const rejectInput = document.getElementById(rejectId);
-            if (acceptInput.value === "") {
-                rejectInput.value = 0;
-            } else {
-                rejectInput.value = total - accept;
-            }
-        };
+        if (searchInput) searchInput.addEventListener('input', renderTable);
 
-        window.processInspection = async function(groupIndex) {
-            const tbody = document.getElementById('subrow-body-' + groupIndex);
-            if (!tbody) return;
-
-            const acceptInputs = tbody.querySelectorAll('.accept-input');
-            const inspections = [];
-
-            for (const input of acceptInputs) {
-                if (input.value === "") {
-                    alert("Please enter the Accepted Quantity for all parts before saving.");
-                    return;
-                }
-
-                const totalAccepted = Number(input.value);
-                const items = JSON.parse(input.getAttribute('data-items'));
-                
-                let remainingAccepted = totalAccepted;
-
-                const pIdx = input.id.split('-')[2];
-                const iVal = input.id.split('-')[1];
-                const recvSerialInput = document.getElementById('recvserial-' + iVal + '-' + pIdx);
-                const recvQtyInput = document.getElementById('recvqty-' + iVal + '-' + pIdx);
-                const remarksInput = document.getElementById('remarks-' + iVal + '-' + pIdx);
-
-                items.forEach(item => {
-                    const itemQty = Number(item.quantity || 0);
-                    let itemAccepted = 0;
-                    if (remainingAccepted >= itemQty) {
-                        itemAccepted = itemQty;
-                        remainingAccepted -= itemQty;
-                    } else {
-                        itemAccepted = remainingAccepted;
-                        remainingAccepted = 0;
-                    }
-                    const itemRejected = itemQty - itemAccepted;
-
-                    inspections.push({
-                        id: item._id,
-                        stage: item.stage,
-                        acceptedQty: itemAccepted,
-                        rejectedQty: itemRejected,
-                        date: item.date,
-                        model: item.model,
-                        partNo: item.partNo,
-                        partDescription: item.partDescription || item.description || '',
-                        grnNo: item.grnNo || '',
-                        batchId: item.batchId || '',
-                        workOrder: item.workOrder || '',
-                        reason: item.reason || '',
-                        recvSerialNo: recvSerialInput ? recvSerialInput.value : '',
-                        recvQty: recvQtyInput ? Number(recvQtyInput.value) : 0,
-                        remarks: remarksInput ? remarksInput.value : ''
+        /* ── Export ── */
+        const exportBtn = document.getElementById('exportBtn');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', () => {
+                const rows = [['Sl.No.', 'Date', 'Invoice No.', 'Model', 'Part No.', 'Description', 'Quantity', 'Status']];
+                let sl = 1;
+                groupEntries(entries).forEach(g => {
+                    g.parts.forEach(p => {
+                        rows.push([sl++, g.date, g.invoiceNo, g.model, p.partNo, p.partDescription || '', Number(p.quantity || p.qty || 0), 'Completed']);
                     });
                 });
-            }
-
-            try {
-                const res = await fetch('/api/reinward/inspect', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ inspections })
-                });
-
-                if (res.ok) {
-                    const toast = document.getElementById('saveToast');
-                    toast.classList.add('show');
-                    setTimeout(() => toast.classList.remove('show'), 3000);
-                    fetchEntries();
-                } else {
-                    alert('Failed to save inspection.');
-                }
-            } catch (err) {
-                console.error('Failed to process inspection', err);
-                alert('An error occurred while saving the inspection.');
-            }
-        };
-
-        searchInput.addEventListener('input', renderTable);
+                const csv = rows.map(r => r.map(cell => '"' + String(cell).replace(/"/g, '""') + '"').join(',')).join('\n');
+                const a = document.createElement('a');
+                a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+                a.download = 'completed_reinward_' + new Date().toISOString().split('T')[0] + '.csv';
+                a.click();
+            });
+        }
 
         /* ── Init ── */
         fetchEntries();
@@ -1145,181 +925,7 @@
         });
     </script>
 
-    <!-- History Modal -->
-    <div class="modal-overlay" id="historyModal">
-        <div class="modal">
-            <div class="modal-head">
-                <h2>Component History</h2>
-                <button class="close-modal" onclick="closeHistoryModal()">
-                    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                </button>
-            </div>
-            <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
-                <div id="historyLoading" style="text-align: center; padding: 20px; color: var(--steel);">Loading history...</div>
-                <div id="historyTimeline" style="display: none; position: relative; padding-left: 20px; margin-top: 10px;">
-                    <!-- Timeline items injected here -->
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <style>
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(13, 27, 42, 0.55);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-        .modal-overlay.show {
-            display: flex;
-        }
-        .modal {
-            background: white;
-            border-radius: 12px;
-            width: 100%;
-            max-width: 480px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 32px 80px rgba(13, 27, 42, 0.2);
-            display: flex;
-            flex-direction: column;
-        }
-        .modal-head {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            border-bottom: 1px solid var(--fog);
-        }
-        .modal-head h2 {
-            margin: 0;
-            font-size: 1.1rem;
-            color: var(--navy);
-        }
-        .close-modal {
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: var(--steel);
-        }
-        .close-modal svg {
-            width: 24px;
-            height: 24px;
-            stroke: currentColor;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-        .timeline-item {
-            position: relative;
-            padding-bottom: 20px;
-        }
-        .timeline-item:last-child {
-            padding-bottom: 0;
-        }
-        .timeline-dot {
-            position: absolute;
-            left: -20px;
-            top: 5px;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--sapphire);
-            border: 2px solid white;
-            box-shadow: 0 0 0 2px var(--sapphire);
-        }
-        .timeline-line {
-            position: absolute;
-            left: -16px;
-            top: 20px;
-            bottom: -5px;
-            width: 2px;
-            background: var(--fog);
-        }
-        .timeline-item:last-child .timeline-line {
-            display: none;
-        }
-        .timeline-content {
-            background: #f8fafc;
-            padding: 12px;
-            border-radius: 6px;
-            border: 1px solid var(--fog);
-        }
-        .timeline-date {
-            font-size: 0.75rem;
-            color: var(--steel);
-            margin-bottom: 4px;
-        }
-        .timeline-stage {
-            font-weight: 600;
-            color: var(--navy);
-            font-size: 0.9rem;
-            margin-bottom: 4px;
-        }
-        .timeline-desc {
-            font-size: 0.85rem;
-            color: var(--text);
-            margin: 0;
-        }
-    </style>
-
-    <script>
-        window.viewHistory = function(partNo) {
-            if (!partNo) {
-                alert('No Part No found for this component.');
-                return;
-            }
-            document.getElementById('historyModal').classList.add('show');
-            document.getElementById('historyLoading').style.display = 'block';
-            document.getElementById('historyTimeline').style.display = 'none';
-
-            fetch('/api/history/' + encodeURIComponent(partNo))
-                .then(res => res.json())
-                .then(data => {
-                    document.getElementById('historyLoading').style.display = 'none';
-                    const timeline = document.getElementById('historyTimeline');
-                    timeline.style.display = 'block';
-                    
-                    if (data.error || data.length === 0) {
-                        timeline.innerHTML = '<p style="color:var(--steel); font-size:0.85rem;">No history available.</p>';
-                        return;
-                    }
-
-                    let html = '';
-                    data.forEach(item => {
-                        let badgeColor = 'var(--steel)';
-                        if (item.status.includes('Accepted') || item.status.includes('Moved') || item.status.includes('Inspected')) badgeColor = 'var(--green)';
-                        if (item.status.includes('Rejected')) badgeColor = 'var(--red)';
-
-                        html += `
-                            <div class="timeline-item">
-                                <div class="timeline-dot" style="background:${badgeColor}; box-shadow: 0 0 0 2px ${badgeColor};"></div>
-                                <div class="timeline-line"></div>
-                                <div class="timeline-content">
-                                    <div class="timeline-date">${new Date(item.date).toLocaleString()}</div>
-                                    <div class="timeline-stage">${item.stage} <span style="font-size:0.75rem; padding:2px 6px; border-radius:12px; background:rgba(0,0,0,0.05); color:${badgeColor}; border:1px solid ${badgeColor};">${item.status}</span></div>
-                                    <p class="timeline-desc">${item.desc}</p>
-                                    ${item.remarks ? `<p style="margin:4px 0 0 0; font-size:0.8rem; color:var(--amber);"><strong>Remarks:</strong> ${item.remarks}</p>` : ''}
-                                </div>
-                            </div>
-                        `;
-                    });
-                    timeline.innerHTML = html;
-                })
-                .catch(err => {
-                    console.error('Error fetching history:', err);
-                    document.getElementById('historyLoading').innerHTML = 'Error loading history.';
-                });
-        };
-
-        window.closeHistoryModal = function() {
-            document.getElementById('historyModal').classList.remove('show');
-        };
-    </script>
-<script>function highlightActiveSidebarLink() {    const links = document.querySelectorAll('.sidebar-link');    const currentPath = window.location.pathname.split('/').pop();    links.forEach(l => {        l.classList.remove('active');        if (l.getAttribute('href') === currentPath) {            l.classList.add('active');        }    });}document.addEventListener('DOMContentLoaded', highlightActiveSidebarLink);</script>\n</body>
+<script>function highlightActiveSidebarLink() { const links = document.querySelectorAll('.sidebar-link'); const currentPath = window.location.pathname.split('/').pop(); links.forEach(l => { l.classList.remove('active'); if (l.getAttribute('href') === currentPath) { l.classList.add('active'); } });}document.addEventListener('DOMContentLoaded', highlightActiveSidebarLink);</script>
+</body>
 
 </html>
-
