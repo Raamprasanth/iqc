@@ -1,0 +1,1 @@
+const mongoose = require('mongoose'); const Spare = require('./models/Spare'); mongoose.connect('mongodb+srv://supportqvs_db_user:fx58tCqbju9YSyB9@cluster1.qshoy0k.mongodb.net/iqc?appName=Cluster1').then(()=>Spare.find({ model: /nellcor/i })).then(s => { console.log(JSON.stringify(s, null, 2)); process.exit(); }).catch(console.error);

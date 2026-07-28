@@ -1939,7 +1939,8 @@
                 };
 
                 if (acceptQty > 0) {
-                    acceptedList.push({ ...baseData, quantity: acceptQty, totalQuantity: totalQty, grnNo: input.getAttribute('data-grn'), remarks: remarks });
+                    const yetQty = Math.max(0, totalQty - acceptQty);
+                    acceptedList.push({ ...baseData, quantity: acceptQty, totalQuantity: totalQty, grnNo: input.getAttribute('data-grn'), remarks: remarks, yetToAcceptQty: yetQty });
                     inwardpList.push({ ...baseData, quantity: acceptQty, grnNo: input.getAttribute('data-grn'), remarks: '' });
                 }
 

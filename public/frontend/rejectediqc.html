@@ -741,6 +741,19 @@
         const entryCount = document.getElementById('entryCount');
         const searchInput = document.getElementById('searchInput');
 
+        function formatDateDisplay(isoDate) {
+            if (!isoDate) return '';
+            const cleanStr = String(isoDate).trim().split('T')[0];
+            if (!cleanStr) return '';
+            const parts = cleanStr.split('-');
+            if (parts.length !== 3) return cleanStr;
+            const [y, m, day] = parts;
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const monthIdx = parseInt(m, 10) - 1;
+            if (isNaN(monthIdx) || monthIdx < 0 || monthIdx > 11) return cleanStr;
+            return `${day} ${months[monthIdx]} ${y}`;
+        }
+
         async function fetchEntries() {
             try {
                 const url = '/api/rejected-iqc' + (activeTab === 'reinward' ? '?type=reinward' : '?type=standard');
