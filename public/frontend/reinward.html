@@ -953,7 +953,10 @@
                                         const totalInwardQty = Number(p.totalInwardQty) || 0;
                                         const iqcRej = Number(p.iqcRej) || 0;
                                         const proRej = Number(p.proRej) || 0;
-                                        const itemsJson = JSON.stringify(p.items || []).replace(/"/g, '&quot;');
+                                        const pItems = (p.items && p.items.length) ? p.items : ((p.itemDetails && p.itemDetails.length) ? p.itemDetails : [p]);
+                                        const itemsJson = JSON.stringify(pItems).replace(/"/g, '&quot;');
+                                        const probDesc = pItems[0]?.problemDescription || p.problemDescription || '-';
+                                        const probSerial = pItems[0]?.problemSerialNo || p.problemSerialNo || '-';
                                         return `
                                         <tr>
                                             <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9;"><strong>${p.partNo}</strong></td>
@@ -973,10 +976,10 @@
                                                 ${qty.toLocaleString('en-IN')}
                                             </td>
                                             <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; color: var(--text);">
-                                                ${p.items[0]?.problemDescription || '-'}
+                                                ${probDesc}
                                             </td>
                                             <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; color: var(--text);">
-                                                ${p.items[0]?.problemSerialNo || '-'}
+                                                ${probSerial}
                                             </td>
                                             <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9;">
                                                 <input type="text" id="recvserial-${i}-${pIdx}" class="input-field" placeholder="Recv Serial No" style="width: 100px; font-size: 0.75rem;" />
