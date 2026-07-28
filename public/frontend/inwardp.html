@@ -1437,7 +1437,9 @@
                                     `}).join('')}
                                 </tbody>
                             </table>
-                            <div style="text-align: right; padding-top: 15px;">
+                            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px; padding-top: 15px;">
+                                <input type="number" id="bulkAccept-${i}" placeholder="Bulk Accept Qty" style="width: 130px; padding: 6px; border: 1px solid var(--fog); border-radius: 4px;" min="0" />
+                                <button onclick="applyBulkAccept(${i})" type="button" class="btn-outline-navy" style="padding: 6px 12px; font-size: 0.8rem;">Apply</button>
                                 <button onclick="processInspection(${i})" style="background: var(--navy); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.8rem;">Save Inspection</button>
                             </div>
                         </div>
