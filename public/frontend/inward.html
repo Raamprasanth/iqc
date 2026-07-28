@@ -2049,6 +2049,9 @@
                             </td>
                         </tr>
                     `).join('');
+                    if (document.getElementById('bulkQtyInput') && document.getElementById('bulkQtyInput').value) {
+                        applyBulkQty();
+                    }
                 }
             } catch (err) {
                 console.error('Failed to fetch parts:', err);
