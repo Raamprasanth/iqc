@@ -11,6 +11,7 @@ const rejectedIQCSchema = new mongoose.Schema({
     status: { type: String, default: 'Pending' },
     grnNo: { type: String },
     invoiceNo: { type: String, default: '' },
+    invoiceDate: { type: Date },
     remarks: { type: String, default: '' },
     repSerialNo: { type: String, default: '' },
     additionalRemarks: { type: String, default: '' },

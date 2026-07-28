@@ -913,7 +913,8 @@
                         <thead>
                             <tr>
                                 <th>Sl. No.</th>
-                                <th>Date</th>
+                                <th>Inward Date</th>
+                                <th>Invoice Date</th>
                                 <th>Invoice No.</th>
                                 <th>Model</th>
                                 
@@ -1046,6 +1047,7 @@
                     const groups = {};
                     data.forEach(e => {
                         const d = e.date ? e.date.split('T')[0] : '';
+                  const invD = e.invoiceDate ? e.invoiceDate.split('T')[0] : '';
                         const key = d + '|' + e.model;
                         groups[key] = true;
                     });
@@ -1086,6 +1088,7 @@
                     const groups = {};
                     data.forEach(e => {
                         const d = e.date ? e.date.split('T')[0] : '';
+                  const invD = e.invoiceDate ? e.invoiceDate.split('T')[0] : '';
                         const key = d + '|' + e.model;
                         groups[key] = true;
                     });
@@ -1104,9 +1107,10 @@
             const groups = {};
             data.forEach(e => {
                 const d = e.date ? e.date.split('T')[0] : '';
+                  const invD = e.invoiceDate ? e.invoiceDate.split('T')[0] : '';
                 const key = (e.invoiceNo && e.invoiceNo !== '-') ? e.invoiceNo : (e.batchId ? e.batchId : (d + '|' + e.model));
                 if (!groups[key]) {
-                    groups[key] = { date: d, invoiceNo: e.invoiceNo || '-', model: e.model, parts: [], totalQty: 0, ids: [] };
+                    groups[key] = { date: d, invoiceDate: invD, invoiceNo: e.invoiceNo || '-', model: e.model, parts: [], totalQty: 0, ids: [] };
                 }
                 groups[key].parts.push(e);
                 groups[key].totalQty += Number(e.totalQuantity || e.quantity || e.qty || 0);
@@ -1143,7 +1147,8 @@
                     onclick="toggleSubRow('subrow-${i}')">
                     <td>${i + 1}</td>
                     <td><span class="cell-part">${formatDateDisplay(g.date)}</span></td>
-                    <td><span class="cell-part">${g.invoiceNo}</span></td>
+                      <td><span class="cell-part" style="font-weight: 500;">${g.invoiceDate ? formatDateDisplay(g.invoiceDate) : '<span style="color:var(--steel); font-weight:normal;">N/A</span>'}</span></td>
+                      <td><span class="cell-part">${g.invoiceNo}</span></td>
                     <td><span class="cell-part">${g.model}</span></td>
                     
                     ${(() => {

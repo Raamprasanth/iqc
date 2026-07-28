@@ -684,7 +684,8 @@
                         <thead>
                             <tr>
                                 <th>Sl. No.</th>
-                                <th>Date</th>
+                                <th>Inward Date</th>
+                                <th>Invoice Date</th>
                                 <th>Invoice No.</th>
                                 <th>Model</th>
                                 
@@ -1010,7 +1011,8 @@
                     onclick="toggleSubRow('subrow-${i}')">
                     <td>${i + 1}</td>
                     <td><span class="cell-part">${formatDateDisplay(g.date)}</span></td>
-                    <td><span class="cell-part">${g.invoiceNo}</span></td>
+                      <td><span class="cell-part" style="font-weight: 500;">${g.invoiceDate ? formatDateDisplay(g.invoiceDate) : '<span style="color:var(--steel); font-weight:normal;">N/A</span>'}</span></td>
+                      <td><span class="cell-part">${g.invoiceNo}</span></td>
                     <td><span class="cell-part">${g.model}</span></td>
                     
                     <td style="text-align:center;" onclick="event.stopPropagation()">

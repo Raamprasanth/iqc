@@ -1170,7 +1170,7 @@
                                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
                                     <h3 style="font-size: 1rem; color: var(--navy); margin: 0;">Parts List</h3>
                                     <div style="display:flex; gap: 8px; align-items:center;">
-                                        <input type="number" id="bulkQtyInput" placeholder="Inward Qty" style="width: 100px; padding: 6px; border: 1px solid var(--fog); border-radius: 4px;" min="0" step="1" />
+                                        <input type="number" id="bulkQtyInput" placeholder="Inward Qty" style="width: 100px; padding: 6px; border: 1px solid var(--fog); border-radius: 4px;" min="0" step="1" oninput="applyBulkQty()" />
                                         <button type="button" class="btn-outline-navy" style="padding: 6px 12px; font-size: 0.75rem;" onclick="applyBulkQty()">Apply to All</button>
                                     </div>
                                 </div>

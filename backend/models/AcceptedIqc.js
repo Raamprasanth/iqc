@@ -11,6 +11,7 @@ const acceptedIQCSchema = new mongoose.Schema({
     status: { type: String, default: 'Pending' },
     grnNo: { type: String },
     invoiceNo: { type: String, default: '' },
+    invoiceDate: { type: Date },
     remarks: { type: String, default: '' },
     historyOfComponents: { type: String, default: '' },
     isReInward: { type: Boolean, default: false },
