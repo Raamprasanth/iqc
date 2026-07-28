@@ -1087,7 +1087,7 @@
                                     <th>Invoice Date</th>
                                     <th>Invoice No.</th>
                                     <th>Model</th>
-                                    <th>Bulk Quantity</th>
+                                    <th>Inward Qty</th>
                                     <th>Problem Reported Date</th>
                                     <th></th>
                                 </tr>
@@ -1340,7 +1340,7 @@
                     <td><span class="cell-part" style="font-weight: 500;">${g.invoiceDate ? formatDateDisplay(g.invoiceDate) : '<span style="color:var(--steel); font-weight:normal;">N/A</span>'}</span></td>
                     <td><span class="cell-part" style="font-weight: 500;">${g.invoiceNo !== '-' ? g.invoiceNo : '<span style="color:var(--steel); font-weight:normal;">N/A</span>'}</span></td>
                     <td><span class="cell-part">${g.model}</span></td>
-                    <td>${g.parts.length === 1 ? g.totalQty.toLocaleString('en-IN') : '-'}</td>
+                    <td>${g.parts.length > 0 && g.parts.every(p => Number(p.quantity || p.qty || 0) === Number(g.parts[0].quantity || g.parts[0].qty || 0)) ? Number(g.parts[0].quantity || g.parts[0].qty || 0).toLocaleString('en-IN') : '-'}</td>
                     <td onclick="event.stopPropagation()">
                         <input type="date" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-family: inherit; font-size: 0.8rem; outline: none; width: 130px; cursor: text;" />
                     </td>
