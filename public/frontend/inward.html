@@ -1455,7 +1455,8 @@
                             <thead>
                                 <tr>
                                     <th>Sl. No.</th>
-                                    <th>Date</th>
+                                    <th>Inward Date</th>
+                                    <th>Invoice Date</th>
                                     <th>Invoice No.</th>
                                     <th>Model</th>
                                     <th>Total Parts</th>
@@ -1637,9 +1638,16 @@
         }
 
         function formatDateDisplay(isoDate) {
-            const [y, m, d] = isoDate.split('-');
+            if (!isoDate) return '-';
+            const cleanDate = typeof isoDate === 'string' ? isoDate.split('T')[0] : '';
+            if (!cleanDate) return '-';
+            const parts = cleanDate.split('-');
+            if (parts.length !== 3) return cleanDate;
+            const [y, m, d] = parts;
             const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            return `${d} ${months[parseInt(m, 10) - 1]} ${y}`;
+            const monthIdx = parseInt(m, 10) - 1;
+            if (isNaN(monthIdx) || monthIdx < 0 || monthIdx > 11) return cleanDate;
+            return `${d} ${months[monthIdx]} ${y}`;
         }
 
         /* ─────────────────────────────────────────────────────────────── STATE ─────────────────────────────────────────────────────────────── */
@@ -1669,14 +1677,15 @@
                 !query || e.model.toLowerCase().includes(query) || e.partNo.toLowerCase().includes(query) || (e.partDescription && e.partDescription.toLowerCase().includes(query))
             );
 
-            // Group by Date + Invoice + Model
+            // Group by Date + Invoice Date + Invoice No + Model
             const groups = {};
             filtered.forEach(e => {
                 const d = e.date ? e.date.split('T')[0] : '';
+                const invD = e.invoiceDate ? e.invoiceDate.split('T')[0] : '';
                 const inv = e.invoiceNo || '-';
-                const key = d + '|' + inv + '|' + e.model;
+                const key = d + '|' + invD + '|' + inv + '|' + e.model;
                 if (!groups[key]) {
-                    groups[key] = { date: d, invoiceNo: inv, model: e.model, parts: [], totalQty: 0, ids: [] };
+                    groups[key] = { date: d, invoiceDate: invD, invoiceNo: inv, model: e.model, parts: [], totalQty: 0, ids: [] };
                 }
                 groups[key].parts.push(e);
                 groups[key].totalQty += Number(e.quantity || e.qty || 0);
@@ -1700,6 +1709,7 @@
                 <tr class="group-row" style="cursor:pointer; transition: background 0.15s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'" onclick="toggleSubRow('subrow-${i}')">
                     <td>${i + 1}</td>
                     <td><span class="cell-part">${formatDateDisplay(g.date)}</span></td>
+                    <td><span class="cell-part" style="font-weight: 500;">${g.invoiceDate ? formatDateDisplay(g.invoiceDate) : '<span style="color:var(--steel); font-weight:normal;">N/A</span>'}</span></td>
                     <td><span class="cell-part">${g.invoiceNo !== '-' ? g.invoiceNo : '<span style="color:var(--steel); font-weight:normal;">N/A</span>'}</span></td>
                     <td><span class="cell-part">${g.model}</span></td>
                     <td><strong>${g.parts.length}</strong> Parts</td>
@@ -1712,7 +1722,7 @@
                     </td>
                 </tr>
                 <tr id="subrow-${i}" style="display: none; background: #fafbfc;">
-                    <td colspan="8" style="padding: 0; border-bottom: 2px solid var(--fog);">
+                    <td colspan="9" style="padding: 0; border-bottom: 2px solid var(--fog);">
                         <div style="padding: 15px 30px;">
                             <table style="width:100%; border-collapse:collapse; font-size: 0.8rem;">
                                 <thead>
