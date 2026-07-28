@@ -2186,8 +2186,9 @@
 
             // Match sub parts by part description or model
             const matchedSpareObj = allSparesMappings.find(s => 
-                s.model && currentModalModel && s.model.toLowerCase().trim() === currentModalModel.toLowerCase().trim() &&
                 s.partDescription && currentModalPartDesc && s.partDescription.toLowerCase().trim() === currentModalPartDesc.toLowerCase().trim()
+            ) || allSparesMappings.find(s => 
+                s.model && currentModalModel && s.model.toLowerCase().trim() === currentModalModel.toLowerCase().trim()
             );
 
             const availableSubParts = matchedSpareObj && matchedSpareObj.subParts ? matchedSpareObj.subParts : [];
