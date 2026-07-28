@@ -55,8 +55,8 @@
         }
 
         .sb-brand {
-            padding: 22px 20px 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 28px 20px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -64,121 +64,138 @@
 
         .sb-nav {
             flex: 1;
+            padding: 20px 12px;
             overflow-y: auto;
-            padding: 18px 14px;
         }
 
         .sb-section-label {
-            font-size: 0.64rem;
+            font-size: 0.58rem;
             font-weight: 600;
-            letter-spacing: 0.12em;
+            letter-spacing: 0.16em;
             text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.28);
-            padding: 14px 12px 8px;
+            color: rgba(255, 255, 255, 0.25);
+            padding: 0 8px;
+            margin: 20px 0 8px;
         }
 
         .sb-section-label:first-child {
-            padding-top: 4px;
+            margin-top: 0;
+            padding-top: 0;
         }
 
         .sb-item {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             padding: 10px 12px;
             border-radius: 6px;
             text-decoration: none;
-            color: rgba(255, 255, 255, 0.58);
-            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.52);
+            font-size: 0.82rem;
             font-weight: 500;
-            margin-bottom: 2px;
+            user-select: none;
             position: relative;
             cursor: pointer;
             transition: background 0.15s, color 0.15s;
         }
 
         .sb-item svg {
-            width: 18px;
-            height: 18px;
-            min-width: 18px;
+            width: 16px;
+            height: 16px;
             stroke: currentColor;
             fill: none;
-            stroke-width: 1.7;
+            stroke-width: 1.8;
+            flex-shrink: 0;
         }
 
         .sb-item:hover {
             background: rgba(255, 255, 255, 0.05);
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(255, 255, 255, 0.85);
         }
 
         .sb-item.active {
-            background: rgba(200, 16, 46, 0.14);
-            color: var(--white);
+            background: rgba(200, 16, 46, 0.10);
+            color: white;
         }
 
         .sb-item.active::before {
             content: '';
             position: absolute;
-            left: -14px;
-            top: 8px;
-            bottom: 8px;
+            left: 0;
+            top: 6px;
+            bottom: 6px;
             width: 3px;
             background: var(--red);
-            border-radius: 0 3px 3px 0;
+            border-radius: 0 2px 2px 0;
+        }
+
+        .sb-item.active svg {
+            stroke: var(--red);
         }
 
         .sb-badge {
             margin-left: auto;
             background: var(--red);
             color: white;
-            font-size: 0.66rem;
+            font-size: 0.6rem;
             font-weight: 700;
-            padding: 1px 7px;
-            border-radius: 20px;
-            line-height: 1.5;
+            padding: 2px 7px;
+            border-radius: 100px;
+            min-width: 20px;
+            text-align: center;
         }
 
         .sb-footer {
-            padding: 16px 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            display: flex;
-            align-items: center;
+            padding: 16px 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            flex-shrink: 0;
         }
 
         .sb-user {
             display: flex;
             align-items: center;
             gap: 10px;
-            width: 100%;
+            padding: 10px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .sb-user:hover {
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .sb-avatar {
-            width: 34px;
-            height: 34px;
-            min-width: 34px;
+            width: 32px;
+            height: 32px;
+            background: var(--red);
             border-radius: 50%;
-            background: var(--mid);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.74rem;
+            font-size: 0.72rem;
             font-weight: 700;
             color: white;
+            flex-shrink: 0;
         }
 
         .sb-user-info {
             flex: 1;
+            min-width: 0;
         }
 
         .sb-user-name {
             font-size: 0.78rem;
             font-weight: 600;
             color: white;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .sb-user-role {
-            font-size: 0.68rem;
-            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.35);
+            margin-top: 1px;
         }
 
         /* ───────────────────────── MAIN ───────────────────────── */
