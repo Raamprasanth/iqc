@@ -152,8 +152,49 @@ router.post('/complete', async (req, res) => {
             return res.status(404).json({ error: 'No records found for given ids' });
         }
 
-        // Guard: all yetToAcceptQty must be 0
-        const hasRemaining = records.some(r => Number(r.yetToAcceptQty || 0) > 0);
+        const Rejectedpro = require('../models/Rejectedpro');
+        const invoiceNos = [...new Set(records.map(r => r.invoiceNo).filter(Boolean))];
+        const models = [...new Set(records.map(r => r.model).filter(Boolean))];
+        const batchIds = [...new Set(records.map(r => r.batchId).filter(Boolean))];
+
+        const rejectedRecords = await Rejectedpro.find({
+            $or: [
+                { invoiceNo: { $in: invoiceNos } },
+                { batchId: { $in: batchIds } },
+                { model: { $in: models } }
+            ]
+        }).lean();
+
+        // Verify if any part in this invoice group still has unreplaced/pending items
+        let hasRemaining = false;
+        for (const r of records) {
+            const matchingRej = rejectedRecords.filter(rej => 
+                ((rej.invoiceNo && r.invoiceNo && rej.invoiceNo === r.invoiceNo) ||
+                 (rej.batchId && r.batchId && rej.batchId === r.batchId) ||
+                 (rej.model === r.model)) &&
+                rej.partNo === r.partNo
+            );
+
+            if (matchingRej.length > 0) {
+                for (const rej of matchingRej) {
+                    if (rej.itemDetails && rej.itemDetails.length > 0) {
+                        const hasUnreplaced = rej.itemDetails.some(item => !item.isReplaced);
+                        if (hasUnreplaced) {
+                            hasRemaining = true;
+                            break;
+                        }
+                    } else if (!rej.isReplaced) {
+                        hasRemaining = true;
+                        break;
+                    }
+                }
+            } else if (Number(r.yetToAcceptQty || 0) > 0 && !r.isReplaced) {
+                hasRemaining = true;
+            }
+
+            if (hasRemaining) break;
+        }
+
         if (hasRemaining) {
             return res.status(400).json({ error: 'Cannot complete: some parts still have pending qty to accept.' });
         }
@@ -177,7 +218,7 @@ router.post('/complete', async (req, res) => {
         await ReInwardPro.insertMany(reInwardDocs);
 
         // Mark originals as completed so they are hidden from acceptedpro page
-        await Acceptedpro.updateMany({ _id: { $in: ids } }, { $set: { status: 'Completed' } });
+        await Acceptedpro.updateMany({ _id: { $in: ids } }, { $set: { status: 'Completed', yetToAcceptQty: 0 } });
 
         res.json({ success: true, message: 'Invoice moved to Completed (Re-Inward Pro).' });
     } catch (err) {
