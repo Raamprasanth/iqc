@@ -956,11 +956,16 @@
 
         /* ── Helpers ── */
         function formatDateDisplay(isoDate) {
-            if (!isoDate) return '—';
-            const d = isoDate.split('T')[0];
-            const [y, m, day] = d.split('-');
+            if (!isoDate) return '';
+            const cleanStr = String(isoDate).trim().split('T')[0];
+            if (!cleanStr) return '';
+            const parts = cleanStr.split('-');
+            if (parts.length !== 3) return cleanStr;
+            const [y, m, day] = parts;
             const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            return `${day} ${months[parseInt(m, 10) - 1]} ${y}`;
+            const monthIdx = parseInt(m, 10) - 1;
+            if (isNaN(monthIdx) || monthIdx < 0 || monthIdx > 11) return cleanStr;
+            return `${day} ${months[monthIdx]} ${y}`;
         }
 
         /* ── State ── */
@@ -1149,7 +1154,7 @@
                 }
             });
 
-            const csvContent = rows.map(r => r.map(c => '"' + (c == null ? '' : String(c)).replace(/"/g, '""') + '"').join(',')).join('\n');
+            const csvContent = '\uFEFF' + rows.map(r => r.map(c => '"' + (c == null ? '' : String(c)).replace(/"/g, '""') + '"').join(',')).join('\n');
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -1378,7 +1383,7 @@
                     ]);
                 });
             });
-            const csv = rows.map(r => r.map(c => `"${(c == null ? '' : String(c)).replace(/"/g, '""')}"`).join(',')).join('\n');
+            const csv = '\uFEFF' + rows.map(r => r.map(c => `"${(c == null ? '' : String(c)).replace(/"/g, '""')}"`).join(',')).join('\n');
             const a = document.createElement('a');
             a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
             a.download = 'rejected_production_' + new Date().toISOString().split('T')[0] + '.csv';
