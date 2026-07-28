@@ -1001,10 +1001,22 @@
                         qty = parseInt(p.substring(splitIdx + 2).trim(), 10) || 1;
                         nature = p.substring(0, splitIdx).trim();
                     }
-                    items.push({ nature: nature, qty: qty });
+                    let serial = '';
+                    let spare = '';
+                    const spareMatch = nature.match(/\(Spare:\s*(.*?)\)$/i);
+                    if (spareMatch) {
+                        spare = spareMatch[1].trim();
+                        nature = nature.substring(0, spareMatch.index).trim();
+                    }
+                    const snMatch = nature.match(/\(SN:\s*(.*?)\)$/i);
+                    if (snMatch) {
+                        serial = snMatch[1].trim();
+                        nature = nature.substring(0, snMatch.index).trim();
+                    }
+                    items.push({ nature: nature, serial: serial, spare: spare, qty: qty });
                 });
             } else if (totalQty > 0) {
-                items.push({ nature: '-', qty: totalQty });
+                items.push({ nature: '-', serial: '', spare: '', qty: totalQty });
             }
             return items;
         }
@@ -1020,10 +1032,11 @@
                 if (e.reInwarded || e.sentToReInward || e.isReplaced) return;
 
                 const d = e.date ? e.date.split('T')[0] : '';
+                const invD = e.invoiceDate ? e.invoiceDate.split('T')[0] : '';
                 const inv = e.invoiceNo || '-';
                 const key = inv + '|' + e.model;
                 if (!groups[key]) {
-                    groups[key] = { date: d, invoiceNo: inv, model: e.model, parts: [], totalQty: 0, rejections: [], mergedParts: {} };
+                    groups[key] = { date: d, invoiceDate: invD, invoiceNo: inv, model: e.model, parts: [], totalQty: 0, rejections: [], mergedParts: {} };
                 }
 
                 let activeQty = 0;
@@ -1088,7 +1101,7 @@
             if (!g) return;
 
             const rows = [
-                ['Inward Date', 'Invoice NO', 'Inward Qty', 'Part No', 'Defective Items', 'Problem Description', 'Spares Required', 'Required Qty', 'Serial No / Lot No']
+                ['Inward Date', 'Invoice Date', 'Invoice NO', 'Inward Qty', 'Part No', 'Defective Items', 'Problem Description', 'Spares Required', 'Required Qty', 'Serial No / Lot No']
             ];
 
             g.parts.forEach(p => {
@@ -1109,6 +1122,7 @@
                     Object.values(aggregated).forEach(item => {
                         rows.push([
                             formatDateDisplay(g.date),
+                            formatDateDisplay(g.invoiceDate || p.invoiceDate || ''),
                             g.invoiceNo || p.invoiceNo || '',
                             inwardQty,
                             p.partNo || '',
@@ -1122,6 +1136,7 @@
                 } else {
                     rows.push([
                         formatDateDisplay(g.date),
+                        formatDateDisplay(g.invoiceDate || p.invoiceDate || ''),
                         g.invoiceNo || p.invoiceNo || '',
                         inwardQty,
                         p.partNo || '',
@@ -1348,13 +1363,14 @@
 
         /* ── Export ── */
         document.getElementById('exportBtn').addEventListener('click', () => {
-            const rows = [['Model', 'BLT Invoice No.', 'Received Date', 'Received Qty', 'Problem QTY', 'Problem reported date to BLT', 'Replacement Status ']];
+            const rows = [['Model', 'BLT Invoice No.', 'Received Date', 'Invoice Date', 'Received Qty', 'Problem QTY', 'Problem reported date to BLT', 'Replacement Status']];
             groupEntries(entries).forEach(g => {
                 g.parts.forEach(p => {
                     rows.push([
                         g.model || '',
                         g.invoiceNo || p.invoiceNo || '',
-                        g.date || '',
+                        formatDateDisplay(g.date || p.date || ''),
+                        formatDateDisplay(g.invoiceDate || p.invoiceDate || ''),
                         p.totalQuantity || p.receivedQty || '',
                         Number(p.quantity || p.qty || 0),
                         '',

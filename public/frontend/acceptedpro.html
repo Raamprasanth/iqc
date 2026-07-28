@@ -1018,10 +1018,22 @@
                         qty = parseInt(p.substring(splitIdx + 2).trim(), 10) || 1;
                         nature = p.substring(0, splitIdx).trim();
                     }
-                    items.push({ nature: nature, qty: qty });
+                    let serial = '';
+                    let spare = '';
+                    const spareMatch = nature.match(/\(Spare:\s*(.*?)\)$/i);
+                    if (spareMatch) {
+                        spare = spareMatch[1].trim();
+                        nature = nature.substring(0, spareMatch.index).trim();
+                    }
+                    const snMatch = nature.match(/\(SN:\s*(.*?)\)$/i);
+                    if (snMatch) {
+                        serial = snMatch[1].trim();
+                        nature = nature.substring(0, snMatch.index).trim();
+                    }
+                    items.push({ nature: nature, serial: serial, spare: spare, qty: qty });
                 });
             } else if (totalQty > 0) {
-                items.push({ nature: '-', qty: totalQty });
+                items.push({ nature: '-', serial: '', spare: '', qty: totalQty });
             }
             return items;
         }

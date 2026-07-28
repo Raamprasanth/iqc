@@ -763,9 +763,10 @@
                 }
 
                 const d = e.date ? e.date.split('T')[0] : '';
+                const invD = e.invoiceDate ? e.invoiceDate.split('T')[0] : '';
                 const key = (e.invoiceNo && e.invoiceNo !== '-') ? e.invoiceNo : (e.batchId ? e.batchId : (d + '|' + e.model));
                 if (!groups[key]) {
-                    groups[key] = { date: d, invoiceNo: e.invoiceNo || '-', model: e.model, parts: [], totalQty: 0, ids: [] };
+                    groups[key] = { date: d, invoiceDate: invD, invoiceNo: e.invoiceNo || '-', model: e.model, parts: [], totalQty: 0, ids: [] };
                 }
                 groups[key].parts.push(e);
                 groups[key].totalQty += Number(e.totalQuantity || e.quantity || e.qty || 0);
@@ -907,7 +908,7 @@
             if (!g) return;
 
             const rows = [
-                ['Inward Date', 'Invoice NO', 'Inward Qty', 'Part No', 'Defective Items', 'Problem Description', 'Spares Required', 'Required Qty', 'Serial No / Lot No']
+                ['Inward Date', 'Invoice Date', 'Invoice NO', 'Inward Qty', 'Part No', 'Defective Items', 'Problem Description', 'Spares Required', 'Required Qty', 'Serial No / Lot No']
             ];
 
             g.parts.forEach(p => {
@@ -928,6 +929,7 @@
                     Object.values(aggregated).forEach(item => {
                         rows.push([
                             formatDateDisplay(g.date),
+                            formatDateDisplay(g.invoiceDate || p.invoiceDate || ''),
                             g.invoiceNo || p.invoiceNo || '',
                             inwardQty,
                             p.partNo || '',
@@ -941,6 +943,7 @@
                 } else {
                     rows.push([
                         formatDateDisplay(g.date),
+                        formatDateDisplay(g.invoiceDate || p.invoiceDate || ''),
                         g.invoiceNo || p.invoiceNo || '',
                         inwardQty,
                         p.partNo || '',
@@ -1096,13 +1099,14 @@
         const exportBtn = document.getElementById('exportBtn');
         if (exportBtn) {
             exportBtn.addEventListener('click', () => {
-                const rows = [['Model', 'BLT Invoice No.', 'Received Date', 'Received Qty', 'Problem QTY', 'Problem reported date to BLT', 'Replacement Status']];
+                const rows = [['Model', 'BLT Invoice No.', 'Received Date', 'Invoice Date', 'Received Qty', 'Problem QTY', 'Problem reported date to BLT', 'Replacement Status']];
                 groupEntries(entries).forEach(g => {
                     g.parts.forEach(p => {
                         rows.push([
                             g.model || '',
                             g.invoiceNo || p.invoiceNo || '',
-                            g.date || '',
+                            formatDateDisplay(g.date || p.date || ''),
+                            formatDateDisplay(g.invoiceDate || p.invoiceDate || ''),
                             p.totalQuantity || p.receivedQty || '',
                             Number(p.quantity || p.qty || 0),
                             '',

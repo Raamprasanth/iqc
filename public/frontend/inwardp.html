@@ -1410,6 +1410,7 @@
                                                          data-partdesc="${p.partDescription}"
                                                          data-grn="${p.grnNo || ''}"
                                                          data-invoice="${g.invoiceNo || ''}"
+                                                         data-invoicedate="${g.invoiceDate || ''}"
                                                          value="${accVal}"
                                                          oninput="calcReject(this, 'rej-${p._id}'); autoSaveInwardp('${p._id}');" 
                                                          onchange="autoSaveInwardp('${p._id}', true);"
@@ -1598,6 +1599,38 @@
                     yetToAcceptQty: rejectQty
                 };
 
+        window.parseRemarksToItems = function(remarks, totalQty) {
+            const items = [];
+            if (remarks) {
+                const parts = remarks.split(', ');
+                parts.forEach(p => {
+                    let nature = p;
+                    let qty = 1;
+                    const splitIdx = p.lastIndexOf(': ');
+                    if (splitIdx !== -1 && !isNaN(p.substring(splitIdx + 2).trim())) {
+                        qty = parseInt(p.substring(splitIdx + 2).trim(), 10) || 1;
+                        nature = p.substring(0, splitIdx).trim();
+                    }
+                    let serial = '';
+                    let spare = '';
+                    const spareMatch = nature.match(/\(Spare:\s*(.*?)\)$/i);
+                    if (spareMatch) {
+                        spare = spareMatch[1].trim();
+                        nature = nature.substring(0, spareMatch.index).trim();
+                    }
+                    const snMatch = nature.match(/\(SN:\s*(.*?)\)$/i);
+                    if (snMatch) {
+                        serial = snMatch[1].trim();
+                        nature = nature.substring(0, snMatch.index).trim();
+                    }
+                    items.push({ nature: nature, serial: serial, spare: spare, qty: qty });
+                });
+            } else if (totalQty > 0) {
+                items.push({ nature: '-', serial: '', spare: '', qty: totalQty });
+            }
+            return items;
+        };
+
                 const baseRejectedProData = {
                     date: input.getAttribute('data-date'),
                     model: input.getAttribute('data-model'),
@@ -1607,9 +1640,11 @@
                     totalQuantity: totalQty,
                     batchId: batchId,
                     invoiceNo: input.getAttribute('data-invoice'),
+                    invoiceDate: input.getAttribute('data-invoicedate'),
                     problemStage: problemStage,
                     remarks: remarks,
-                    source: 'inwardp'
+                    source: 'inwardp',
+                    itemDetails: window.parseRemarksToItems(remarks, rejectQty)
                 };
 
                 if (acceptQty > 0) {
