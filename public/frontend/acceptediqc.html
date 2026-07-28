@@ -964,6 +964,7 @@
         /* ── State ── */
         let activeTab = 'standard';
         let entries = [];
+        let rejectedEntries = [];
 
         const tableBody = document.getElementById('entryTableBody');
         const tableWrap = document.getElementById('tableWrap');
@@ -990,17 +991,50 @@
         async function fetchEntries() {
             try {
                 const url = '/api/accepted-iqc' + (activeTab === 'reinward' ? '?type=reinward' : '?type=standard');
-                const res = await fetch(url);
+                const [res, rejRes] = await Promise.all([
+                    fetch(url),
+                    fetch('/api/rejected-iqc')
+                ]);
                 if (res.ok) {
                     entries = await res.json();
-                    renderTable();
-                    updateKPIs();
                 }
+                if (rejRes && rejRes.ok) {
+                    rejectedEntries = await rejRes.json();
+                }
+                renderTable();
+                updateKPIs();
             } catch (err) {
                 console.error('Error fetching entries:', err);
                 renderTable();
                 updateKPIs();
             }
+        }
+
+        function getPartYetQty(p, gInvoiceNo, gModel, rejectedList) {
+            let baseYetQty = (p.yetToAcceptHistory && p.yetToAcceptHistory.length > 0)
+                ? Number(p.yetToAcceptQty || 0)
+                : Math.max(0, Number(p.totalQuantity || p.quantity || 0) - Number(p.quantity || p.qty || 0));
+
+            if (rejectedList && rejectedList.length > 0 && baseYetQty > 0) {
+                const inv = gInvoiceNo || p.invoiceNo || '';
+                const mod = gModel || p.model || '';
+                const matchingRej = rejectedList.filter(r => 
+                    ((inv && r.invoiceNo === inv) || (r.model === mod)) &&
+                    r.partNo === p.partNo
+                );
+                let replacedCount = 0;
+                matchingRej.forEach(r => {
+                    if (r.itemDetails && r.itemDetails.length > 0) {
+                        r.itemDetails.forEach(item => {
+                            if (item.isReplaced) replacedCount += Number(item.qty || 1);
+                        });
+                    } else if (r.isReplaced) {
+                        replacedCount += Number(r.quantity || r.qty || 0);
+                    }
+                });
+                baseYetQty = Math.max(0, baseYetQty - replacedCount);
+            }
+            return baseYetQty;
         }
 
         // Fetch dynamic count for sidebar badge "Inward from IQC"
@@ -1129,7 +1163,7 @@
                     <td><span class="cell-part">${g.model}</span></td>
                     
                     ${(() => {
-                        const allDone = g.parts.every(p => Number(p.yetToAcceptQty || 0) === 0);
+                        const allDone = g.parts.every(p => getPartYetQty(p, g.invoiceNo, g.model, rejectedEntries) === 0);
                         const partIds = g.ids.join(',');
                         if (allDone) {
                             return `<td style="text-align:center;" onclick="event.stopPropagation()">
@@ -1161,9 +1195,7 @@
                                 </thead>
                                 <tbody>
                                     ${g.parts.map(p => {
-                                        const yetQty = (p.yetToAcceptHistory && p.yetToAcceptHistory.length > 0)
-                                            ? Number(p.yetToAcceptQty || 0)
-                                            : Math.max(0, Number(p.totalQuantity || 0) - Number(p.quantity || p.qty || 0));
+                                        const yetQty = getPartYetQty(p, g.invoiceNo, g.model, rejectedEntries);
                                         const updatedAt = p.yetToAcceptUpdatedAt ? new Date(p.yetToAcceptUpdatedAt) : null;
                                         const updatedStr = updatedAt ? updatedAt.toLocaleString('en-IN', {day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '-';
                                         const history = p.yetToAcceptHistory || [];
