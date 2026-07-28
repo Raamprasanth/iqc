@@ -2442,6 +2442,15 @@
            INIT
         ══════════════════════ */
         fetchUsers();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetView = urlParams.get('view');
+        if (targetView && titles[targetView]) {
+            const targetNav = document.querySelector(`.sb-item[onclick*="${targetView}"]`);
+            if (targetNav) {
+                navigate(targetView, targetNav);
+            }
+        }
     </script>
 
     <!-- ══ MODELS JS ══ -->
