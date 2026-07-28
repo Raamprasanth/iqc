@@ -796,8 +796,10 @@
                         <thead>
                             <tr>
                                 <th>Sl. No.</th>
-                                <th>Log Date</th>
+                                <th>Date</th>
+                                <th>Invoice No.</th>
                                 <th>Model</th>
+                                <th style="text-align:center;">Action</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -876,7 +878,7 @@
         }
 
         function renderTable() {
-            const query = searchInput.value.trim().toLowerCase();
+            const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
             const filtered = entries.filter(e =>
                 !query ||
                 (e.model && e.model.toLowerCase().includes(query)) ||
@@ -884,106 +886,71 @@
                 (e.partDescription && e.partDescription.toLowerCase().includes(query))
             );
 
-            const groupedArray = groupEntries(filtered);
-            document.getElementById('entryCount').textContent = groupedArray.length;
+            const grouped = groupEntries(filtered);
+            if (entryCount) entryCount.textContent = grouped.length;
 
-            const totalLots = groupedArray.length;
-            let totalParts = 0;
-            let totalQty = 0;
-            groupedArray.forEach(g => {
-                totalParts += g.parts.length;
-                totalQty += g.totalQty;
-            });
-
-            document.getElementById('kpiLots').textContent = totalLots;
-            document.getElementById('kpiParts').textContent = totalParts;
-            document.getElementById('kpiQty').textContent = totalQty.toLocaleString('en-IN');
-
-            if (groupedArray.length === 0) {
-                tableWrap.style.display = 'none';
-                emptyState.style.display = 'flex';
+            if (grouped.length === 0) {
+                if (tableWrap) tableWrap.style.display = 'none';
+                if (emptyState) emptyState.style.display = 'flex';
                 return;
             }
-
-            tableWrap.style.display = 'block';
-            emptyState.style.display = 'none';
+            if (tableWrap) tableWrap.style.display = 'block';
+            if (emptyState) emptyState.style.display = 'none';
 
             let html = '';
-            groupedArray.forEach((g, i) => {
+            grouped.forEach((g, i) => {
                 html += `
                 <tr class="group-row" style="cursor:pointer; transition: background 0.15s;"
                     onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'"
                     onclick="toggleSubRow('subrow-${i}')">
                     <td>${i + 1}</td>
                     <td><span class="cell-part">${formatDateDisplay(g.date)}</span></td>
+                    <td><span class="cell-part">${g.invoiceNo}</span></td>
                     <td><span class="cell-part">${g.model}</span></td>
+                    <td style="text-align:center;">
+                        <span class="status-pill accepted" style="background:#dcfce7; color:#16a34a; padding:4px 11px; border-radius:20px; font-weight:700; font-size:0.7rem;">Completed</span>
+                    </td>
                     <td style="text-align: right;">
                         <span style="font-size: 0.75rem; color: var(--steel); user-select:none;">&#9660; Details</span>
                     </td>
                 </tr>
                 <tr id="subrow-${i}" style="display: none; background: #fafbfc;">
-                    <td colspan="4" style="padding: 0; border-bottom: 2px solid var(--fog);">
-                        <div style="padding: 18px 30px;">
+                    <td colspan="6" style="padding: 0; border-bottom: 2px solid var(--fog);">
+                        <div style="padding: 15px 30px;">
                             <table style="width:100%; border-collapse:collapse; font-size: 0.8rem;">
                                 <thead>
                                     <tr>
                                         <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:left; border-bottom:1px solid #e2e8f0;">Part No.</th>
                                         <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:left; border-bottom:1px solid #e2e8f0;">Description</th>
-                                        <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:right; border-bottom:1px solid #e2e8f0;">Total Inward</th>
-                                        <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:right; border-bottom:1px solid #e2e8f0;">IQC Rejected</th>
-                                        <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:right; border-bottom:1px solid #e2e8f0;">Production Rejected</th>
-                                        <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:right; border-bottom:1px solid #e2e8f0;">In-Process Rejected</th>
-                                        <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:right; border-bottom:1px solid #e2e8f0;">Completed Qty</th>
-                                        <th style="padding:8px 12px; font-weight:600; color:var(--green); text-align:center; border-bottom:1px solid #e2e8f0;">Accept Qty</th>
-                                        <th style="padding:8px 12px; font-weight:600; color:var(--red); text-align:center; border-bottom:1px solid #e2e8f0;">Reject Qty</th>
+                                        <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:right; border-bottom:1px solid #e2e8f0;">Inward Qty</th>
+                                        <th style="padding:8px 12px; font-weight:600; color:var(--green); text-align:right; border-bottom:1px solid #e2e8f0;">Accepted Qty</th>
+                                        <th style="padding:8px 12px; font-weight:600; color:#d97706; text-align:right; border-bottom:1px solid #e2e8f0;">Yet to Accept Qty</th>
+                                        <th style="padding:8px 12px; font-weight:600; color:var(--navy); text-align:center; border-bottom:1px solid #e2e8f0;">Status / Remarks</th>
                                     </tr>
                                 </thead>
-                                <tbody id="subrow-body-${i}">
+                                <tbody>
                                     ${g.parts.map(p => {
-                                        const qty = Number(p.quantity || 0);
-                                        const totalInwardQty = Number(p.totalQuantity || p.quantity || 0);
+                                        const totQty = Number(p.totalQuantity || p.quantity || p.qty || 0);
+                                        const accQty = Number(p.quantity || p.qty || 0);
+                                        const yetQty = Number(p.yetToAcceptQty || 0);
+                                        const remarksText = p.remarks || p.reason || 'Completed';
                                         return `
                                         <tr>
                                             <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9;"><strong>${p.partNo}</strong></td>
-                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; color: var(--text);">
-                                                ${p.partDescription || '-'}
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; color: var(--text);">${p.partDescription || '-'}</td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right;">${totQty.toLocaleString('en-IN')}</td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right; color:var(--green); font-weight:600;">${accQty.toLocaleString('en-IN')}</td>
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right;">
+                                                <span style="font-weight:700; color:${yetQty > 0 ? '#d97706' : '#16a34a'}; background:${yetQty > 0 ? '#fef3c7' : '#dcfce7'}; padding:2px 8px; border-radius:10px;">${yetQty}</span>
                                             </td>
-                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right; font-weight: 500;">
-                                                ${totalInwardQty > 0 ? totalInwardQty.toLocaleString('en-IN') + '' : '—'}
-                                            </td>
-                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right; font-weight: 500;">—</td>
-                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right; font-weight: 500;">
-                                                <strong>${qty.toLocaleString('en-IN')}</strong>
-                                            </td>
-                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right; font-weight: 500;">—</td>
-                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:right; font-weight: 600;">
-                                                ${qty.toLocaleString('en-IN')}
-                                            </td>
-                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:center;">
-                                                <input type="number" min="0" max="${qty}" 
-                                                    class="accept-input" 
-                                                    data-id="${p._id}" 
-                                                    data-total="${qty}" 
-                                                    data-model="${g.model}"
-                                                    data-date="${p.date}"
-                                                    data-partno="${p.partNo}"
-                                                    data-partdesc="${p.partDescription || ''}"
-                                                    data-reason="${p.reason || ''}"
-                                                    oninput="calcReject(this, 'rej-${p._id}')" 
-                                                    style="width: 70px; padding: 4px; text-align: center; border: 1px solid var(--fog); border-radius: 4px;" />
-                                            </td>
-                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:center;">
-                                                <input type="number" id="rej-${p._id}" class="reject-input" data-id="${p._id}" readonly 
-                                                    style="width: 70px; padding: 4px; text-align: center; border: 1px solid transparent; background: transparent; color: var(--red); font-weight: bold;" value="0" />
+                                            <td style="padding:8px 12px; border-bottom: 1px solid #f1f5f9; text-align:center; color:var(--steel); font-size:0.78rem;">
+                                                ${remarksText}
                                             </td>
                                         </tr>
                                         `;
                                     }).join('')}
                                 </tbody>
                             </table>
-                            <div style="text-align: right; padding-top: 15px;">
-                                <button onclick="processInspection(${i})" style="background: var(--navy); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.8rem;">Save Inspection</button>
-                            </div>
                         </div>
                     </td>
                 </tr>
@@ -995,64 +962,6 @@
         window.toggleSubRow = function(id) {
             const el = document.getElementById(id);
             el.style.display = el.style.display === 'none' ? 'table-row' : 'none';
-        };
-
-        window.calcReject = function(acceptInput, rejectId) {
-            const total = Number(acceptInput.getAttribute('data-total'));
-            let accept = Number(acceptInput.value);
-            if (accept < 0) { accept = 0; acceptInput.value = 0; }
-            if (accept > total) { accept = total; acceptInput.value = total; }
-            const rejectInput = document.getElementById(rejectId);
-            if (acceptInput.value === "") {
-                rejectInput.value = 0;
-            } else {
-                rejectInput.value = total - accept;
-            }
-        };
-
-        window.processInspection = async function(groupIndex) {
-            const tbody = document.getElementById('subrow-body-' + groupIndex);
-            if (!tbody) return;
-
-            const acceptInputs = tbody.querySelectorAll('.accept-input');
-            const inspections = [];
-
-            for (const input of acceptInputs) {
-                if (input.value === "") {
-                    alert("Please enter the Accepted Quantity for all parts before saving.");
-                    return;
-                }
-
-                const acceptQty = Number(input.value);
-                const rejectQty = Number(document.getElementById('rej-' + input.getAttribute('data-id')).value);
-                
-                inspections.push({
-                    id: input.getAttribute('data-id'),
-                    acceptedQty: acceptQty,
-                    rejectedQty: rejectQty,
-                    reason: input.getAttribute('data-reason')
-                });
-            }
-
-            try {
-                const res = await fetch('/api/reinwardpro/inspect', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ inspections })
-                });
-
-                if (res.ok) {
-                    const toast = document.getElementById('saveToast');
-                    toast.classList.add('show');
-                    setTimeout(() => toast.classList.remove('show'), 3000);
-                    fetchEntries();
-                } else {
-                    alert('Failed to save inspection.');
-                }
-            } catch (err) {
-                console.error('Failed to process inspection', err);
-                alert('An error occurred while saving the inspection.');
-            }
         };
 
         searchInput.addEventListener('input', renderTable);
