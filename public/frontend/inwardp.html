@@ -2073,19 +2073,21 @@
     <div id="remarksModal" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 24px; border-radius: 8px; z-index: 301; width: 650px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
         <h3 style="margin-top: 0; color: var(--navy); margin-bottom: 16px;">Enter Remarks Details</h3>
         <input type="hidden" id="currentRemarksId" />
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px;">
-            <thead>
-                <tr>
-                    <th style="text-align: left; padding-bottom: 8px; border-bottom: 1px solid var(--fog); font-size: 0.8rem; color: var(--steel);">Nature of Problem</th>
-                    <th style="text-align: left; padding-bottom: 8px; border-bottom: 1px solid var(--fog); font-size: 0.8rem; color: var(--steel);">Serial No</th>
-                    <th style="text-align: left; padding-bottom: 8px; border-bottom: 1px solid var(--fog); font-size: 0.8rem; color: var(--steel);">Spare Required</th>
-                    <th style="text-align: left; padding-bottom: 8px; border-bottom: 1px solid var(--fog); font-size: 0.8rem; color: var(--steel);">Quantity</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody id="remarksModalBody">
-            </tbody>
-        </table>
+        <div style="max-height: 50vh; overflow-y: auto; margin-bottom: 16px; border: 1px solid var(--fog); border-radius: 4px;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead style="position: sticky; top: 0; background: white; z-index: 1;">
+                    <tr>
+                        <th style="text-align: left; padding: 8px; border-bottom: 1px solid var(--fog); font-size: 0.8rem; color: var(--steel);">Nature of Problem</th>
+                        <th style="text-align: left; padding: 8px; border-bottom: 1px solid var(--fog); font-size: 0.8rem; color: var(--steel);">Serial No</th>
+                        <th style="text-align: left; padding: 8px; border-bottom: 1px solid var(--fog); font-size: 0.8rem; color: var(--steel);">Spare Required</th>
+                        <th style="text-align: left; padding: 8px; border-bottom: 1px solid var(--fog); font-size: 0.8rem; color: var(--steel);">Quantity</th>
+                        <th style="padding: 8px; border-bottom: 1px solid var(--fog);"></th>
+                    </tr>
+                </thead>
+                <tbody id="remarksModalBody">
+                </tbody>
+            </table>
+        </div>
         <button type="button" class="btn-outline-navy" style="font-size: 0.75rem; padding: 4px 8px; margin-bottom: 16px;" onclick="addRemarkRow()">+ Add Row</button>
         <div style="display: flex; justify-content: flex-end; gap: 8px;">
             <button type="button" class="btn-outline-navy" onclick="closeRemarksModal()">Cancel</button>
