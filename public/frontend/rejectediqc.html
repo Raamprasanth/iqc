@@ -529,6 +529,95 @@
                 padding: 0 16px;
             }
         }
+
+        /* ───────────────────────── MODAL STYLES ───────────────────────── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(13, 27, 42, 0.55);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 680px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 32px 80px rgba(13, 27, 42, 0.2);
+            animation: slideUp 0.25s cubic-bezier(0.34, 1.2, 0.64, 1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--fog);
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-family: 'Calibri', Calibri, sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .modal-sub {
+            font-size: 0.78rem;
+            color: var(--steel);
+            margin-top: 3px;
+        }
+
+        .modal-close {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: var(--steel);
+            transition: background 0.15s;
+        }
+
+        .modal-close:hover {
+            background: var(--fog);
+        }
+
+        .modal-body {
+            padding: 20px 24px;
+        }
+
+        .modal-footer {
+            padding: 16px 24px 20px;
+            border-top: 1px solid var(--fog);
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
     </style>
 </head>
 
@@ -855,65 +944,84 @@
             }];
         }
 
-        function updateRepRowField(id, index, rIdx, field, value) {
+        let currentEditingState = null;
+
+        window.openRepModal = function(id, index) {
             const entry = entries.find(e => e._id === id);
             if (!entry || !entry.itemDetails || !entry.itemDetails[index]) return;
             const item = entry.itemDetails[index];
-            if (!item.repRows) {
-                item.repRows = getRepRows(item);
-            }
-            if (!item.repRows[rIdx]) {
-                item.repRows[rIdx] = { repSerialNo: '', repInvoiceNo: '', repInvoiceDate: '' };
-            }
-            item.repRows[rIdx][field] = value;
-            item.repSerialNo = item.repRows.map(r => r.repSerialNo).filter(Boolean).join(', ');
-            item.repInvoiceNo = item.repRows.map(r => r.repInvoiceNo).filter(Boolean).join(', ');
-            item.repInvoiceDate = item.repRows.map(r => r.repInvoiceDate).filter(Boolean).join(', ');
+            currentEditingState = {
+                entryId: id,
+                itemIndex: index,
+                tempRows: JSON.parse(JSON.stringify(getRepRows(item)))
+            };
 
-            const timerKey = id + '-' + index + '-' + rIdx + '-' + field;
-            clearTimeout(updateTimers[timerKey]);
-            updateTimers[timerKey] = setTimeout(async () => {
-                try {
-                    await fetch('/api/rejected-iqc/' + id, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ itemDetails: entry.itemDetails })
-                    });
-                } catch (err) {
-                    console.error('Failed to auto-save:', err);
-                }
-            }, 600);
-        }
-
-        window.addRepRow = function (id, index) {
-            const entry = entries.find(e => e._id === id);
-            if (!entry || !entry.itemDetails || !entry.itemDetails[index]) return;
-            const item = entry.itemDetails[index];
-            if (!item.repRows) {
-                item.repRows = getRepRows(item);
+            const modalSub = document.getElementById('repModalSub');
+            if (modalSub) {
+                modalSub.textContent = `Part: ${entry.partNo || ''} | Nature: ${item.nature || '-'} | Defective SN: ${item.serial || '-'}`;
             }
-            item.repRows.push({ repSerialNo: '', repInvoiceNo: '', repInvoiceDate: '' });
-            item.repSerialNo = item.repRows.map(r => r.repSerialNo).filter(Boolean).join(', ');
-            item.repInvoiceNo = item.repRows.map(r => r.repInvoiceNo).filter(Boolean).join(', ');
-            item.repInvoiceDate = item.repRows.map(r => r.repInvoiceDate).filter(Boolean).join(', ');
 
-            saveItemDetailsAndRender(id, entry);
+            renderModalRows();
+            const modalEl = document.getElementById('repModal');
+            if (modalEl) modalEl.classList.add('open');
         };
 
-        window.removeRepRow = function (id, index, rIdx) {
-            const entry = entries.find(e => e._id === id);
-            if (!entry || !entry.itemDetails || !entry.itemDetails[index]) return;
-            const item = entry.itemDetails[index];
-            if (!item.repRows) {
-                item.repRows = getRepRows(item);
+        window.closeModal = function(modalId) {
+            const modalEl = document.getElementById(modalId);
+            if (modalEl) modalEl.classList.remove('open');
+        };
+
+        function renderModalRows() {
+            const tbody = document.getElementById('repModalBody');
+            if (!tbody || !currentEditingState) return;
+
+            tbody.innerHTML = currentEditingState.tempRows.map((r, rIdx) => `
+                <tr>
+                    <td style="padding:6px 8px; text-align:center; font-size:0.8rem; vertical-align:middle;">${rIdx + 1}</td>
+                    <td style="padding:6px 8px;">
+                        <input type="text" value="${r.repSerialNo || ''}" oninput="currentEditingState.tempRows[${rIdx}].repSerialNo = this.value" style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:4px; font-size:0.8rem;" placeholder="Rep Serial No" />
+                    </td>
+                    <td style="padding:6px 8px;">
+                        <input type="text" value="${r.repInvoiceNo || ''}" oninput="currentEditingState.tempRows[${rIdx}].repInvoiceNo = this.value" style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:4px; font-size:0.8rem;" placeholder="Rep Invoice No" />
+                    </td>
+                    <td style="padding:6px 8px;">
+                        <input type="date" value="${r.repInvoiceDate || ''}" onchange="currentEditingState.tempRows[${rIdx}].repInvoiceDate = this.value" style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:4px; font-size:0.8rem;" />
+                    </td>
+                    <td style="padding:6px 8px; text-align:center; vertical-align:middle;">
+                        ${rIdx > 0 ? `<button type="button" onclick="removeModalRow(${rIdx})" style="background:#ef4444; color:white; border:none; border-radius:4px; width:26px; height:26px; cursor:pointer; font-size:0.85rem;" title="Delete row">&times;</button>` : ''}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        window.addModalRow = function() {
+            if (!currentEditingState) return;
+            currentEditingState.tempRows.push({ repSerialNo: '', repInvoiceNo: '', repInvoiceDate: '' });
+            renderModalRows();
+        };
+
+        window.removeModalRow = function(rIdx) {
+            if (!currentEditingState) return;
+            if (currentEditingState.tempRows.length > 1) {
+                currentEditingState.tempRows.splice(rIdx, 1);
+                renderModalRows();
             }
-            if (item.repRows.length > 1) {
-                item.repRows.splice(rIdx, 1);
-                item.repSerialNo = item.repRows.map(r => r.repSerialNo).filter(Boolean).join(', ');
-                item.repInvoiceNo = item.repRows.map(r => r.repInvoiceNo).filter(Boolean).join(', ');
-                item.repInvoiceDate = item.repRows.map(r => r.repInvoiceDate).filter(Boolean).join(', ');
-                saveItemDetailsAndRender(id, entry);
-            }
+        };
+
+        window.saveRepModal = async function() {
+            if (!currentEditingState) return;
+            const { entryId, itemIndex, tempRows } = currentEditingState;
+            const entry = entries.find(e => e._id === entryId);
+            if (!entry || !entry.itemDetails || !entry.itemDetails[itemIndex]) return;
+
+            const item = entry.itemDetails[itemIndex];
+            item.repRows = tempRows;
+            item.repSerialNo = tempRows.map(r => r.repSerialNo).filter(Boolean).join(', ');
+            item.repInvoiceNo = tempRows.map(r => r.repInvoiceNo).filter(Boolean).join(', ');
+            item.repInvoiceDate = tempRows.map(r => r.repInvoiceDate).filter(Boolean).join(', ');
+
+            closeModal('repModal');
+            await saveItemDetailsAndRender(entryId, entry);
         };
 
         async function saveItemDetailsAndRender(id, entry) {
@@ -1177,24 +1285,20 @@
                                                                 <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; font-size: 0.8rem; vertical-align: top;">${item.serial || '-'}</td>
                                                                 <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; font-size: 0.8rem; vertical-align: top;">${item.spare || '-'}</td>
                                                                 <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; font-size: 0.8rem; text-align: center; vertical-align: top;">${item.qty}</td>
-                                                                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; vertical-align: top;">
-                                                                    ${repRows.map((r, rIdx) => `
-                                                                        <input type="text" value="${r.repSerialNo || ''}" oninput="updateRepRowField('${p._id}', ${idx}, ${rIdx}, 'repSerialNo', this.value)" style="width: 100%; min-width: 100px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.8rem; margin-bottom: 4px;" placeholder="Rep Serial No" />
-                                                                    `).join('')}
+                                                                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; cursor: pointer; vertical-align: top;" onclick="openRepModal('${p._id}', ${idx})" title="Click to edit replacement details">
+                                                                    <div style="display:flex; flex-direction:column; gap:3px;">
+                                                                        ${repRows.map(r => `<span style="font-size:0.8rem; color:${r.repSerialNo ? 'var(--text)' : '#94a3b8'}; font-weight:${r.repSerialNo ? '500' : 'normal'};">${r.repSerialNo || 'Click to edit...'}</span>`).join('')}
+                                                                    </div>
                                                                 </td>
-                                                                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; vertical-align: top;">
-                                                                    ${repRows.map((r, rIdx) => `
-                                                                        <input type="text" value="${r.repInvoiceNo || ''}" oninput="updateRepRowField('${p._id}', ${idx}, ${rIdx}, 'repInvoiceNo', this.value)" style="width: 100%; min-width: 100px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.8rem; margin-bottom: 4px;" placeholder="Rep Invoice No" />
-                                                                    `).join('')}
+                                                                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; cursor: pointer; vertical-align: top;" onclick="openRepModal('${p._id}', ${idx})" title="Click to edit replacement details">
+                                                                    <div style="display:flex; flex-direction:column; gap:3px;">
+                                                                        ${repRows.map(r => `<span style="font-size:0.8rem; color:${r.repInvoiceNo ? 'var(--text)' : '#94a3b8'}; font-weight:${r.repInvoiceNo ? '500' : 'normal'};">${r.repInvoiceNo || 'Click to edit...'}</span>`).join('')}
+                                                                    </div>
                                                                 </td>
-                                                                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; vertical-align: top;">
-                                                                    ${repRows.map((r, rIdx) => `
-                                                                        <div style="display:flex; align-items:center; gap:4px; margin-bottom:4px;">
-                                                                            <input type="date" value="${r.repInvoiceDate || ''}" onchange="updateRepRowField('${p._id}', ${idx}, ${rIdx}, 'repInvoiceDate', this.value)" style="width: 100%; min-width: 120px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.8rem;" />
-                                                                            ${rIdx > 0 ? `<button type="button" onclick="removeRepRow('${p._id}', ${idx}, ${rIdx})" style="background:#ef4444; color:white; border:none; border-radius:3px; padding:2px 6px; cursor:pointer; font-size:0.75rem; flex-shrink:0;" title="Remove row">&times;</button>` : ''}
-                                                                        </div>
-                                                                    `).join('')}
-                                                                    <button type="button" onclick="addRepRow('${p._id}', ${idx})" style="background:#f1f5f9; border:1px dashed #94a3b8; color:#475569; border-radius:4px; padding:2px 6px; font-size:0.7rem; cursor:pointer; margin-top:2px; display:inline-flex; align-items:center; gap:3px; font-weight:500;" title="Add replacement row">+ Add Row</button>
+                                                                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; cursor: pointer; vertical-align: top;" onclick="openRepModal('${p._id}', ${idx})" title="Click to edit replacement details">
+                                                                    <div style="display:flex; flex-direction:column; gap:3px;">
+                                                                        ${repRows.map(r => `<span style="font-size:0.8rem; color:${r.repInvoiceDate ? 'var(--text)' : '#94a3b8'}; font-weight:${r.repInvoiceDate ? '500' : 'normal'};">${r.repInvoiceDate ? formatDateDisplay(r.repInvoiceDate) : 'Click to edit...'}</span>`).join('')}
+                                                                    </div>
                                                                 </td>
                                                                 <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; vertical-align: top;">
                                                                     <input type="text" value="${item.additionalRemarks || ''}" oninput="updateSubItemField('${p._id}', ${idx}, 'additionalRemarks', this.value)" style="width: 100%; min-width: 100px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.8rem;" placeholder="Addl Remarks..." />
@@ -1304,7 +1408,42 @@
         });
     </script>
 
-<script>function highlightActiveSidebarLink() { const links = document.querySelectorAll('.sidebar-link'); const currentPath = window.location.pathname.split('/').pop(); links.forEach(l => { l.classList.remove('active'); if (l.getAttribute('href') === currentPath) { l.classList.add('active'); } });}document.addEventListener('DOMContentLoaded', highlightActiveSidebarLink);</script>
+    <!-- REPLACEMENT DETAILS MODAL -->
+    <div class="modal-overlay" id="repModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title">Edit Replacement Details</div>
+                    <div class="modal-sub" id="repModalSub">Part No: -</div>
+                </div>
+                <button type="button" class="modal-close" onclick="closeModal('repModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <table style="width: 100%; border-collapse: collapse; background: white; border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden;">
+                    <thead>
+                        <tr style="background: #f8fafc;">
+                            <th style="padding: 8px; text-align: center; font-size: 0.75rem; color: var(--steel); border-bottom: 1px solid #e2e8f0; width: 40px;">#</th>
+                            <th style="padding: 8px; text-align: left; font-size: 0.75rem; color: var(--steel); border-bottom: 1px solid #e2e8f0;">Rep Serial No</th>
+                            <th style="padding: 8px; text-align: left; font-size: 0.75rem; color: var(--steel); border-bottom: 1px solid #e2e8f0;">Rep Invoice No</th>
+                            <th style="padding: 8px; text-align: left; font-size: 0.75rem; color: var(--steel); border-bottom: 1px solid #e2e8f0;">Rep Invoice Date</th>
+                            <th style="padding: 8px; text-align: center; font-size: 0.75rem; color: var(--steel); border-bottom: 1px solid #e2e8f0; width: 50px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="repModalBody">
+                    </tbody>
+                </table>
+                <div style="margin-top: 12px; text-align: left;">
+                    <button type="button" onclick="addModalRow()" style="background:#f1f5f9; border:1px dashed #94a3b8; color:#475569; border-radius:6px; padding:6px 12px; font-size:0.8rem; cursor:pointer; font-weight:600; display:inline-flex; align-items:center; gap:5px;">+ Add Row</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-outline-navy" style="padding:6px 16px; font-size:0.85rem; border-radius:6px; cursor:pointer;" onclick="closeModal('repModal')">Cancel</button>
+                <button type="button" style="background:var(--navy); color:white; border:none; padding:6px 18px; font-size:0.85rem; border-radius:6px; cursor:pointer; font-weight:600;" onclick="saveRepModal()">Save Details</button>
+            </div>
+        </div>
+    </div>
+
+    <script>function highlightActiveSidebarLink() { const links = document.querySelectorAll('.sidebar-link'); const currentPath = window.location.pathname.split('/').pop(); links.forEach(l => { l.classList.remove('active'); if (l.getAttribute('href') === currentPath) { l.classList.add('active'); } });}document.addEventListener('DOMContentLoaded', highlightActiveSidebarLink);</script>
 </body>
 
 </html>
