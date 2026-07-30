@@ -619,6 +619,7 @@
             justify-content: flex-end;
         }
     </style>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 </head>
 
 <body>
@@ -1342,54 +1343,71 @@
 
         if (searchInput) searchInput.addEventListener('input', renderTable);
 
-        /* ── Overall Export ── */
+        /* ── Export All Excel (multi-sheet) ── */
         const exportBtn = document.getElementById('exportBtn');
         if (exportBtn) {
             exportBtn.addEventListener('click', () => {
-                const rows = [['Model', 'BLT Invoice No.', 'Received Date', 'Invoice Date', 'Received Qty', 'Problem QTY', 'Problem reported date to BLT', 'Replacement Status', 'Rep Serial No', 'Rep Invoice No', 'Rep Invoice Date']];
-                groupEntries(entries).forEach(g => {
+                const grouped = groupEntries(entries);
+                if (!grouped.length) return;
+
+                const wb = XLSX.utils.book_new();
+
+                grouped.forEach((g, i) => {
+                    const rows = [
+                        ['Inward Date', 'Invoice Date', 'Invoice NO', 'Inward Qty', 'Part No', 'Defective Items', 'Problem Description', 'Spares Required', 'Required Qty', 'Serial No / Lot No', 'Rep Serial No', 'Rep Invoice No', 'Rep Invoice Date']
+                    ];
+
                     g.parts.forEach(p => {
+                        const inwardQty = Number(p.totalQuantity || p.receivedQty || p.quantity || p.qty || 0);
                         if (p.itemDetails && p.itemDetails.length > 0) {
                             p.itemDetails.forEach(item => {
-                                const repRows = getRepRows(item);
-                                repRows.forEach(r => {
-                                    rows.push([
-                                        g.model || '',
-                                        g.invoiceNo || p.invoiceNo || '',
-                                        formatDateDisplay(g.date || p.date || ''),
-                                        formatDateDisplay(g.invoiceDate || p.invoiceDate || ''),
-                                        p.totalQuantity || p.receivedQty || '',
-                                        item.qty || 1,
-                                        '',
-                                        item.isReplaced ? 'Replaced' : 'Replacement Pending from BLT',
-                                        r.repSerialNo || '',
-                                        r.repInvoiceNo || '',
-                                        r.repInvoiceDate ? formatDateDisplay(r.repInvoiceDate) : ''
-                                    ]);
-                                });
+                                if (!item.isReplaced) {
+                                    const repRows = getRepRows(item);
+                                    repRows.forEach(r => {
+                                        rows.push([
+                                            formatDateDisplay(g.date),
+                                            formatDateDisplay(g.invoiceDate || p.invoiceDate || ''),
+                                            g.invoiceNo || p.invoiceNo || '',
+                                            inwardQty,
+                                            p.partNo || '',
+                                            p.partDescription || '',
+                                            item.nature || '',
+                                            item.spare || '',
+                                            item.qty || 1,
+                                            item.serial || '',
+                                            r.repSerialNo || '',
+                                            r.repInvoiceNo || '',
+                                            r.repInvoiceDate ? formatDateDisplay(r.repInvoiceDate) : ''
+                                        ]);
+                                    });
+                                }
                             });
                         } else {
                             rows.push([
-                                g.model || '',
-                                g.invoiceNo || p.invoiceNo || '',
-                                formatDateDisplay(g.date || p.date || ''),
+                                formatDateDisplay(g.date),
                                 formatDateDisplay(g.invoiceDate || p.invoiceDate || ''),
-                                p.totalQuantity || p.receivedQty || '',
+                                g.invoiceNo || p.invoiceNo || '',
+                                inwardQty,
+                                p.partNo || '',
+                                p.partDescription || '',
+                                p.remarks || p.reason || '',
+                                '',
                                 Number(p.quantity || p.qty || 0),
                                 '',
-                                p.isReplaced ? 'Replaced' : 'Replacement Pending from BLT',
                                 p.repSerialNo || '',
                                 p.repInvoiceNo || '',
                                 p.repInvoiceDate ? formatDateDisplay(p.repInvoiceDate) : ''
                             ]);
                         }
                     });
+
+                    const ws = XLSX.utils.aoa_to_sheet(rows);
+                    const rawInv = g.invoiceNo && g.invoiceNo !== '-' ? g.invoiceNo : ('Invoice_' + (i + 1));
+                    const sheetName = rawInv.replace(/[\\/:*?\[\]]/g, '_').substring(0, 31);
+                    XLSX.utils.book_append_sheet(wb, ws, sheetName);
                 });
-                const csv = '\uFEFF' + rows.map(r => r.map(c => '"' + (c == null ? '' : String(c)).replace(/"/g, '""') + '"').join(',')).join('\n');
-                const a = document.createElement('a');
-                a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-                a.download = 'rejected_iqc_' + new Date().toISOString().split('T')[0] + '.csv';
-                a.click();
+
+                XLSX.writeFile(wb, 'Rejected_IQC_' + new Date().toISOString().split('T')[0] + '.xlsx');
             });
         }
 
