@@ -944,6 +944,13 @@
             }];
         }
 
+        function hasRepDetails(item) {
+            const rows = getRepRows(item);
+            return rows.some(r => r.repSerialNo && String(r.repSerialNo).trim() !== '' &&
+                                  r.repInvoiceNo && String(r.repInvoiceNo).trim() !== '' &&
+                                  r.repInvoiceDate && String(r.repInvoiceDate).trim() !== '');
+        }
+
         let currentEditingState = null;
 
         window.openRepModal = function(id, index) {
@@ -1304,7 +1311,11 @@
                                                                     <input type="text" value="${item.additionalRemarks || ''}" oninput="updateSubItemField('${p._id}', ${idx}, 'additionalRemarks', this.value)" style="width: 100%; min-width: 100px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.8rem;" placeholder="Addl Remarks..." />
                                                                 </td>
                                                                 <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: center; vertical-align: top;">
-                                                                    <button onclick="acceptSubItem('${p._id}', ${idx}, this)" style="background: var(--green); color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">&#10004; </button>
+                                                                    ${hasRepDetails(item) ? `
+                                                                        <button onclick="acceptSubItem('${p._id}', ${idx}, this)" style="background: var(--green); color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;" title="Accept replacement">&#10004;</button>
+                                                                    ` : `
+                                                                        <button disabled style="background: #cbd5e1; color: #94a3b8; border: none; padding: 4px 8px; border-radius: 4px; cursor: not-allowed; font-size: 0.8rem;" title="Please enter Rep Serial No, Rep Invoice No & Date to enable">&#10004;</button>
+                                                                    `}
                                                                 </td>
                                                             </tr>
                                                             `;
