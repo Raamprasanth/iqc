@@ -844,6 +844,104 @@
             return items;
         }
 
+        function getRepRows(item) {
+            if (Array.isArray(item.repRows) && item.repRows.length > 0) {
+                return item.repRows;
+            }
+            return [{
+                repSerialNo: item.repSerialNo || '',
+                repInvoiceNo: item.repInvoiceNo || '',
+                repInvoiceDate: item.repInvoiceDate || ''
+            }];
+        }
+
+        function updateRepRowField(id, index, rIdx, field, value) {
+            const entry = entries.find(e => e._id === id);
+            if (!entry || !entry.itemDetails || !entry.itemDetails[index]) return;
+            const item = entry.itemDetails[index];
+            if (!item.repRows) {
+                item.repRows = getRepRows(item);
+            }
+            if (!item.repRows[rIdx]) {
+                item.repRows[rIdx] = { repSerialNo: '', repInvoiceNo: '', repInvoiceDate: '' };
+            }
+            item.repRows[rIdx][field] = value;
+            item.repSerialNo = item.repRows.map(r => r.repSerialNo).filter(Boolean).join(', ');
+            item.repInvoiceNo = item.repRows.map(r => r.repInvoiceNo).filter(Boolean).join(', ');
+            item.repInvoiceDate = item.repRows.map(r => r.repInvoiceDate).filter(Boolean).join(', ');
+
+            const timerKey = id + '-' + index + '-' + rIdx + '-' + field;
+            clearTimeout(updateTimers[timerKey]);
+            updateTimers[timerKey] = setTimeout(async () => {
+                try {
+                    await fetch('/api/rejected-iqc/' + id, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ itemDetails: entry.itemDetails })
+                    });
+                } catch (err) {
+                    console.error('Failed to auto-save:', err);
+                }
+            }, 600);
+        }
+
+        window.addRepRow = function (id, index) {
+            const entry = entries.find(e => e._id === id);
+            if (!entry || !entry.itemDetails || !entry.itemDetails[index]) return;
+            const item = entry.itemDetails[index];
+            if (!item.repRows) {
+                item.repRows = getRepRows(item);
+            }
+            item.repRows.push({ repSerialNo: '', repInvoiceNo: '', repInvoiceDate: '' });
+            item.repSerialNo = item.repRows.map(r => r.repSerialNo).filter(Boolean).join(', ');
+            item.repInvoiceNo = item.repRows.map(r => r.repInvoiceNo).filter(Boolean).join(', ');
+            item.repInvoiceDate = item.repRows.map(r => r.repInvoiceDate).filter(Boolean).join(', ');
+
+            saveItemDetailsAndRender(id, entry);
+        };
+
+        window.removeRepRow = function (id, index, rIdx) {
+            const entry = entries.find(e => e._id === id);
+            if (!entry || !entry.itemDetails || !entry.itemDetails[index]) return;
+            const item = entry.itemDetails[index];
+            if (!item.repRows) {
+                item.repRows = getRepRows(item);
+            }
+            if (item.repRows.length > 1) {
+                item.repRows.splice(rIdx, 1);
+                item.repSerialNo = item.repRows.map(r => r.repSerialNo).filter(Boolean).join(', ');
+                item.repInvoiceNo = item.repRows.map(r => r.repInvoiceNo).filter(Boolean).join(', ');
+                item.repInvoiceDate = item.repRows.map(r => r.repInvoiceDate).filter(Boolean).join(', ');
+                saveItemDetailsAndRender(id, entry);
+            }
+        };
+
+        async function saveItemDetailsAndRender(id, entry) {
+            try {
+                await fetch('/api/rejected-iqc/' + id, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ itemDetails: entry.itemDetails })
+                });
+            } catch (err) {
+                console.error('Failed to save:', err);
+            }
+
+            const expandedIds = [];
+            document.querySelectorAll('tr[id^="subrow-"]').forEach(el => {
+                if (el.style.display !== 'none') {
+                    expandedIds.push(el.id);
+                }
+            });
+
+            renderTable();
+
+            expandedIds.forEach(subId => {
+                const el = document.getElementById(subId);
+                if (el) el.style.display = 'table-row';
+            });
+        }
+
         const updateTimers = {};
         async function updateSubItemField(id, index, field, value) {
             const entry = entries.find(e => e._id === id);
@@ -922,37 +1020,34 @@
             if (!g) return;
 
             const rows = [
-                ['Inward Date', 'Invoice Date', 'Invoice NO', 'Inward Qty', 'Part No', 'Defective Items', 'Problem Description', 'Spares Required', 'Required Qty', 'Serial No / Lot No']
+                ['Inward Date', 'Invoice Date', 'Invoice NO', 'Inward Qty', 'Part No', 'Defective Items', 'Problem Description', 'Spares Required', 'Required Qty', 'Serial No / Lot No', 'Rep Serial No', 'Rep Invoice No', 'Rep Invoice Date']
             ];
 
             g.parts.forEach(p => {
                 const inwardQty = Number(p.totalQuantity || p.receivedQty || p.quantity || p.qty || 0);
                 
                 if (p.itemDetails && p.itemDetails.length > 0) {
-                    const aggregated = {};
                     p.itemDetails.forEach(item => {
                         if (!item.isReplaced) {
-                            const key = (item.nature || '') + '|' + (item.serial || '') + '|' + (item.spare || '');
-                            if (!aggregated[key]) {
-                                aggregated[key] = { ...item, qty: 0 };
-                            }
-                            aggregated[key].qty += Number(item.qty || 1);
+                            const repRows = getRepRows(item);
+                            repRows.forEach(r => {
+                                rows.push([
+                                    formatDateDisplay(g.date),
+                                    formatDateDisplay(g.invoiceDate || p.invoiceDate || ''),
+                                    g.invoiceNo || p.invoiceNo || '',
+                                    inwardQty,
+                                    p.partNo || '',
+                                    p.partDescription || '',
+                                    item.nature || '',
+                                    item.spare || '',
+                                    item.qty || 1,
+                                    item.serial || '',
+                                    r.repSerialNo || '',
+                                    r.repInvoiceNo || '',
+                                    r.repInvoiceDate ? formatDateDisplay(r.repInvoiceDate) : ''
+                                ]);
+                            });
                         }
-                    });
-                    
-                    Object.values(aggregated).forEach(item => {
-                        rows.push([
-                            formatDateDisplay(g.date),
-                            formatDateDisplay(g.invoiceDate || p.invoiceDate || ''),
-                            g.invoiceNo || p.invoiceNo || '',
-                            inwardQty,
-                            p.partNo || '',
-                            p.partDescription || '',
-                            item.nature || '',
-                            item.spare || '',
-                            item.qty,
-                            item.serial || ''
-                        ]);
                     });
                 } else {
                     rows.push([
@@ -965,7 +1060,10 @@
                         p.remarks || p.reason || '',
                         '',
                         Number(p.quantity || p.qty || 0),
-                        ''
+                        '',
+                        p.repSerialNo || '',
+                        p.repInvoiceNo || '',
+                        p.repInvoiceDate ? formatDateDisplay(p.repInvoiceDate) : ''
                     ]);
                 }
             });
@@ -1063,6 +1161,8 @@
                                                             <th style="padding: 8px; text-align: left; font-size: 0.75rem; color: var(--steel); border-bottom: 1px solid #e2e8f0;">Spare</th>
                                                             <th style="padding: 8px; text-align: center; font-size: 0.75rem; color: var(--steel); border-bottom: 1px solid #e2e8f0;">Qty</th>
                                                             <th style="padding: 8px; text-align: left; font-size: 0.75rem; color: var(--steel); border-bottom: 1px solid #e2e8f0;">Rep Serial No</th>
+                                                            <th style="padding: 8px; text-align: left; font-size: 0.75rem; color: var(--steel); border-bottom: 1px solid #e2e8f0;">Rep Invoice No</th>
+                                                            <th style="padding: 8px; text-align: left; font-size: 0.75rem; color: var(--steel); border-bottom: 1px solid #e2e8f0;">Rep Invoice Date</th>
                                                             <th style="padding: 8px; text-align: left; font-size: 0.75rem; color: var(--steel); border-bottom: 1px solid #e2e8f0;">Addl Remarks</th>
                                                             <th style="padding: 8px; text-align: center; font-size: 0.75rem; color: var(--steel); border-bottom: 1px solid #e2e8f0;">Action</th>
                                                         </tr>
@@ -1070,19 +1170,36 @@
                                                     <tbody>
                                                         ${p.itemDetails.map((item, idx) => {
                                                             if (item.isReplaced) return '';
+                                                            const repRows = getRepRows(item);
                                                             return `
                                                             <tr>
-                                                                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; font-size: 0.8rem;">${item.nature || '-'}</td>
-                                                                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; font-size: 0.8rem;">${item.serial || '-'}</td>
-                                                                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; font-size: 0.8rem;">${item.spare || '-'}</td>
-                                                                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; font-size: 0.8rem; text-align: center;">${item.qty}</td>
-                                                                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">
-                                                                    <input type="text" value="${item.repSerialNo || ''}" oninput="updateSubItemField('${p._id}', ${idx}, 'repSerialNo', this.value)" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.8rem;" placeholder="Rep Serial No" />
+                                                                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; font-size: 0.8rem; vertical-align: top;">${item.nature || '-'}</td>
+                                                                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; font-size: 0.8rem; vertical-align: top;">${item.serial || '-'}</td>
+                                                                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; font-size: 0.8rem; vertical-align: top;">${item.spare || '-'}</td>
+                                                                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; font-size: 0.8rem; text-align: center; vertical-align: top;">${item.qty}</td>
+                                                                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; vertical-align: top;">
+                                                                    ${repRows.map((r, rIdx) => `
+                                                                        <input type="text" value="${r.repSerialNo || ''}" oninput="updateRepRowField('${p._id}', ${idx}, ${rIdx}, 'repSerialNo', this.value)" style="width: 100%; min-width: 100px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.8rem; margin-bottom: 4px;" placeholder="Rep Serial No" />
+                                                                    `).join('')}
                                                                 </td>
-                                                                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">
-                                                                    <input type="text" value="${item.additionalRemarks || ''}" oninput="updateSubItemField('${p._id}', ${idx}, 'additionalRemarks', this.value)" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.8rem;" placeholder="Addl Remarks..." />
+                                                                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; vertical-align: top;">
+                                                                    ${repRows.map((r, rIdx) => `
+                                                                        <input type="text" value="${r.repInvoiceNo || ''}" oninput="updateRepRowField('${p._id}', ${idx}, ${rIdx}, 'repInvoiceNo', this.value)" style="width: 100%; min-width: 100px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.8rem; margin-bottom: 4px;" placeholder="Rep Invoice No" />
+                                                                    `).join('')}
                                                                 </td>
-                                                                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: center;">
+                                                                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; vertical-align: top;">
+                                                                    ${repRows.map((r, rIdx) => `
+                                                                        <div style="display:flex; align-items:center; gap:4px; margin-bottom:4px;">
+                                                                            <input type="date" value="${r.repInvoiceDate || ''}" onchange="updateRepRowField('${p._id}', ${idx}, ${rIdx}, 'repInvoiceDate', this.value)" style="width: 100%; min-width: 120px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.8rem;" />
+                                                                            ${rIdx > 0 ? `<button type="button" onclick="removeRepRow('${p._id}', ${idx}, ${rIdx})" style="background:#ef4444; color:white; border:none; border-radius:3px; padding:2px 6px; cursor:pointer; font-size:0.75rem; flex-shrink:0;" title="Remove row">&times;</button>` : ''}
+                                                                        </div>
+                                                                    `).join('')}
+                                                                    <button type="button" onclick="addRepRow('${p._id}', ${idx})" style="background:#f1f5f9; border:1px dashed #94a3b8; color:#475569; border-radius:4px; padding:2px 6px; font-size:0.7rem; cursor:pointer; margin-top:2px; display:inline-flex; align-items:center; gap:3px; font-weight:500;" title="Add replacement row">+ Add Row</button>
+                                                                </td>
+                                                                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; vertical-align: top;">
+                                                                    <input type="text" value="${item.additionalRemarks || ''}" oninput="updateSubItemField('${p._id}', ${idx}, 'additionalRemarks', this.value)" style="width: 100%; min-width: 100px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.8rem;" placeholder="Addl Remarks..." />
+                                                                </td>
+                                                                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: center; vertical-align: top;">
                                                                     <button onclick="acceptSubItem('${p._id}', ${idx}, this)" style="background: var(--green); color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">&#10004; </button>
                                                                 </td>
                                                             </tr>
@@ -1114,19 +1231,43 @@
         const exportBtn = document.getElementById('exportBtn');
         if (exportBtn) {
             exportBtn.addEventListener('click', () => {
-                const rows = [['Model', 'BLT Invoice No.', 'Received Date', 'Invoice Date', 'Received Qty', 'Problem QTY', 'Problem reported date to BLT', 'Replacement Status']];
+                const rows = [['Model', 'BLT Invoice No.', 'Received Date', 'Invoice Date', 'Received Qty', 'Problem QTY', 'Problem reported date to BLT', 'Replacement Status', 'Rep Serial No', 'Rep Invoice No', 'Rep Invoice Date']];
                 groupEntries(entries).forEach(g => {
                     g.parts.forEach(p => {
-                        rows.push([
-                            g.model || '',
-                            g.invoiceNo || p.invoiceNo || '',
-                            formatDateDisplay(g.date || p.date || ''),
-                            formatDateDisplay(g.invoiceDate || p.invoiceDate || ''),
-                            p.totalQuantity || p.receivedQty || '',
-                            Number(p.quantity || p.qty || 0),
-                            '',
-                            p.isReplaced ? 'Replaced' : 'Replacement Pending from BLT'
-                        ]);
+                        if (p.itemDetails && p.itemDetails.length > 0) {
+                            p.itemDetails.forEach(item => {
+                                const repRows = getRepRows(item);
+                                repRows.forEach(r => {
+                                    rows.push([
+                                        g.model || '',
+                                        g.invoiceNo || p.invoiceNo || '',
+                                        formatDateDisplay(g.date || p.date || ''),
+                                        formatDateDisplay(g.invoiceDate || p.invoiceDate || ''),
+                                        p.totalQuantity || p.receivedQty || '',
+                                        item.qty || 1,
+                                        '',
+                                        item.isReplaced ? 'Replaced' : 'Replacement Pending from BLT',
+                                        r.repSerialNo || '',
+                                        r.repInvoiceNo || '',
+                                        r.repInvoiceDate ? formatDateDisplay(r.repInvoiceDate) : ''
+                                    ]);
+                                });
+                            });
+                        } else {
+                            rows.push([
+                                g.model || '',
+                                g.invoiceNo || p.invoiceNo || '',
+                                formatDateDisplay(g.date || p.date || ''),
+                                formatDateDisplay(g.invoiceDate || p.invoiceDate || ''),
+                                p.totalQuantity || p.receivedQty || '',
+                                Number(p.quantity || p.qty || 0),
+                                '',
+                                p.isReplaced ? 'Replaced' : 'Replacement Pending from BLT',
+                                p.repSerialNo || '',
+                                p.repInvoiceNo || '',
+                                p.repInvoiceDate ? formatDateDisplay(p.repInvoiceDate) : ''
+                            ]);
+                        }
                     });
                 });
                 const csv = '\uFEFF' + rows.map(r => r.map(c => '"' + (c == null ? '' : String(c)).replace(/"/g, '""') + '"').join(',')).join('\n');
